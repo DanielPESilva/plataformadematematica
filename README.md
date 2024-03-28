@@ -29,18 +29,18 @@ Um aluno tem acesso aos Módulos que estão vinculados à Turma que ele está vi
 Apenas professores podem cadastrar Questões;<br/>
 Uma Questão pode pertencer a vários Módulos;<br/>
 
-#Banco de dados
+# Banco de dados
 
 -[] Adicionar a pasta do banco de dados no GitLab
 -[] Transformar as tabelas do banco em código;
 
-##Banco de dados Descrição
+## Banco de dados Descrição
 
 
-#Classes e métodos - POO
+# Classes e métodos - POO
 
 -[] Adicioar a pasta das classes no GitLab;
 -[] Colocar cada classe na pasta;
 
 
-##Classes e métodos - POO Descrição
+## Classes e métodos - POO Descrição
