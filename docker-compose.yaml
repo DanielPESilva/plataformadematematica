@@ -1,0 +1,36 @@
+# Plataforma Matemática
+  db_Plataforma_Matematica:
+    image: mysql:latest
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: db_Plataforma_Matematica
+      MYSQL_USER: fslab
+      MYSQL_PASSWORD: fslab
+      MYSQL_ROOT_PASSWORD: fslab
+      # Ajuste de configurações de memória
+      MYSQL_INITDB_SKIP_TZINFO: 1
+      MYSQL_INNODB_BUFFER_POOL_SIZE: 2G
+      MYSQL_INNODB_LOG_FILE_SIZE: 512M
+      MYSQL_KEY_BUFFER_SIZE: 256M
+    expose:
+      - "3331"
+    ports:
+      - "3331:3306"
+    networks:
+      fslab-bancos-fabrica-network:
+        ipv4_address: 171.21.0.31
+    volumes:
+      - ./data:/var/lib/mysql
+
+  phpmyadmin_Plataforma_Matematica:
+    image: phpmyadmin/phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: db_Plataforma_Matematica
+      MYSQL_ROOT_PASSWORD: fslab
+    ports:
+      - '8031:80'
+    networks:
+      fslab-bancos-fabrica-network:
+        ipv4_address: 171.21.0.32
+

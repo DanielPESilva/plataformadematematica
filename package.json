@@ -1,0 +1,30 @@
+{
+  "name": "plataforma-matematica",
+  "version": "1.0.0",
+  "description": "##README 1. O README.md criado com sucesso; 2. [Link para códigos do README.MD](https://raullesteves.medium.com/github-como-fazer-um-readme-md-bonit%C3%A3o-c85c8f154f8);",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node src/seed/seed.js",
+    "dev": "nodemon server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^5.12.0",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "faker-br": "^0.4.1",
+    "mariadb": "^3.3.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.9.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0",
+    "prisma": "^5.12.0"
+  }
+}
