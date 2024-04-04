@@ -5,7 +5,7 @@ PORT=3051
 DEBUGLOG=true
 
 # banco de dados
-DATABASE_URL="mysql://fslab:fslab@edurondon.tplinkdns.com:3372/edurondon"
+DATABASE_URL="mysql://fslab:fslab@edurondon.tplinkdns.com:3331/db_Plataforma_Matematica"
 DATABASE_HOST="edurondon.tplinkdns.com"
 DATABASE_PORT=3372
 DATABASE_NAME="edurondon"
@@ -14,3 +14,6 @@ DATABASE_PASSWORD="fslab"
 
 
 DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+
+#git pull
+#npx prisma db pull
