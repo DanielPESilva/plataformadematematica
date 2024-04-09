@@ -1,4 +1,5 @@
 # Plataforma Matemática
+# http://edurondon.tplinkdns.com:8031/
   db_Plataforma_Matematica:
     image: mysql:latest
     restart: unless-stopped
