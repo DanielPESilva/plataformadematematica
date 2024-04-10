@@ -1,14 +1,73 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model modulo {
+  mod_id           Int                @id
+  mod_tema         String             @db.VarChar(200)
+  mod_descricao    String?            @db.Text
+  mod_pdf          String             @db.VarChar(255)
+  mod_link_video   String             @db.VarChar(200)
+  modulo_has_turma modulo_has_turma[]
+  questao          questao[]
+}
+
+model modulo_has_turma {
+  modulo_mod_id Int
+  turma_tur_id  Int
+  modulo        modulo @relation(fields: [modulo_mod_id], references: [mod_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_modulo_has_turma_modulo1")
+  turma         turma  @relation(fields: [turma_tur_id], references: [tur_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_modulo_has_turma_turma1")
+
+  @@id([modulo_mod_id, turma_tur_id])
+  @@index([modulo_mod_id], map: "fk_modulo_has_turma_modulo1_idx")
+  @@index([turma_tur_id], map: "fk_modulo_has_turma_turma1_idx")
+}
+
+model questao {
+  que_id         Int
+  que_posicao    Int?
+  que_titulo     String? @db.VarChar(45)
+  que_pdf        String? @db.VarChar(255)
+  que_link_video String? @db.VarChar(200)
+  modulo_mod_id  Int
+  modulo         modulo  @relation(fields: [modulo_mod_id], references: [mod_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_questao_modulo1")
+
+  @@id([que_id, modulo_mod_id])
+  @@index([modulo_mod_id], map: "fk_questao_modulo1_idx")
+}
+
+model turma {
+  tur_id            Int                 @id
+  tur_titulo        String              @db.VarChar(45)
+  tur_descricao     String?             @db.Text
+  modulo_has_turma  modulo_has_turma[]
+  turma_has_usuario turma_has_usuario[]
+}
+
+model turma_has_usuario {
+  turma_tur_id   Int
+  usuario_usu_id Int
+  turma          turma   @relation(fields: [turma_tur_id], references: [tur_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_turma_has_usuario_turma1")
+  usuario        usuario @relation(fields: [usuario_usu_id], references: [usu_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_turma_has_usuario_usuario1")
+
+  @@id([turma_tur_id, usuario_usu_id])
+  @@index([turma_tur_id], map: "fk_turma_has_usuario_turma1_idx")
+  @@index([usuario_usu_id], map: "fk_turma_has_usuario_usuario1_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model usuario {
+  usu_id            Int                 @id
+  usu_nome          String              @db.VarChar(200)
+  usu_tel_          String?             @map("usu_tel.") @db.VarChar(45)
+  usu_email         String              @db.VarChar(200)
+  usu_matricula     Int
+  usu_cpf           String              @db.VarChar(45)
+  usu_senha         String              @db.VarChar(45)
+  turma_has_usuario turma_has_usuario[]
 }
