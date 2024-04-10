@@ -1,98 +1,128 @@
-const { PrismaClient } = require('@prisma/client');
-const express = require('express');
-const router = express.Router();
+import bcrypt from "bcryptjs";
+import env from "dotenv";
+import { prisma } from ".../configs/prismaClient.js";
 
-const prisma = new PrismaClient();
+env.config();
 
-
-router.post('/usuarios', async (req, res) => {
-    const { id, nome, telefone, email, matricula, cpf } = req.body;
+class usuarioController {
+  // GET
+  static listar = async (req, res) => {
     try {
-        const novoUsuario = await prisma.usuario.create({
-            data: {
-                id,
-                nome,
-                telefone,
-                email,
-                matricula,
-                cpf
-            }
+      const { nome, tel, email, matricula, cpf } = req.query;
+
+      let filtros = {
+        select: {
+          usu_id: true,
+          usu_nome: true,
+          usu_tel: true,
+          usu_email: true,
+          usu_matricula: true,
+          usu_cpf: true,
+          usu_senha: false,
+        },
+      };
+
+      // filtra se houver valor
+      if (nome) {
+        filtros.where.usu_nome = {
+          contains: nome,
+        };
+      }
+      if (tel) {
+        filtros.where.usu_tel = {
+          contains: tel,
+        };
+      }
+      if (email) {
+        filtros.where.usu_email = {
+          contains: email,
+        };
+      }
+      if (matricula) {
+        filtros.where.usu_matricula = {
+          contains: matricula,
+        };
+      }
+      if (cpf) {
+        filtros.where.usu_cpf = {
+          contains: cpf,
+        };
+      }
+
+      //chamada no prisma
+      const users = await prisma.usuario.findMany(filtros);
+
+      // tratamento da resposta
+      if (users.length === 0) {
+        return res.status(400).json([
+          {
+            error: true,
+            code: 400,
+            message: "Usuário não encontrado.",
+          },
+        ]);
+      } else {
+        return res.status(200).json({
+          error: false,
+          code: 200,
+          data: users,
         });
-        res.status(201).json(novoUsuario);
+      }
     } catch (error) {
-        console.error('Erro ao criar usuário:', error);
-        res.status(500).json({ error: 'Erro interno do servidor' });
+      if (process.env.DEBUG === "true") {
+        console.log(err);
+      }
+      return res.status(500).json([
+        {
+          error: true,
+          code: 500,
+          message: "Erro interno.",
+          data: [],
+        },
+      ]);
     }
-});
-
-
-router.get('/usuarios', async (req, res) => {
+  };
+  // GET by ID
+  static listarPorID = async (req, res) => {
     try {
-        const usuarios = await prisma.usuario.findMany();
-        res.json(usuarios);
+      const useExists = await prisma.usuarios.findFirst({
+        where: {
+          usu_id: parseInt(req.params.usu_id),
+        },
+        select: {
+          usu_id: true,
+          usu_nome: true,
+          usu_tel: true,
+          usu_email: true,
+          usu_matricula: true,
+          usu_cpf: true,
+          usu_senha: false,
+        },
+      });
+      if (useExists) {
+        return res.status(200).json(useExists);
+      }
     } catch (error) {
-        console.error('Erro ao obter usuários:', error);
-        res.status(500).json({ error: 'Erro interno do servidor' });
+      console.log(error);
+      return res
+        .status(500)
+        .json([{ error: true, code: 500, message: "Erro interno." }]);
     }
-});
+  };
 
-
-router.get('/usuarios/:id', async (req, res) => {
-    const { id } = req.params;
+  //POST
+  static inserir = async (req, res) => {
     try {
-        const usuario = await prisma.usuario.findUnique({
-            where: {
-                id
-            }
-        });
-        if (!usuario) {
-            return res.status(404).json({ error: 'Usuário não encontrado' });
+      const { name, tel, email, matricula, cpf, senha } = req.body;
+
+      const senhaCrypt = bcrypt.hashSync(senha, parseInt(process.env.SALT));
+
+      const userCreated = await prisma.usuarios.create({
+        data: {
         }
-        res.json(usuario);
-    } catch (error) {
-        console.error('Erro ao obter usuário por ID:', error);
-        res.status(500).json({ error: 'Erro interno do servidor' });
-    }
-});
+      })
+    } catch (error) {}
+  };
+}
 
-
-router.put('/usuarios/:id', async (req, res) => {
-    const { id } = req.params;
-    const { nome, telefone, email, matricula, cpf } = req.body;
-    try {
-        const usuario = await prisma.usuario.update({
-            where: {
-                id
-            },
-            data: {
-                nome,
-                telefone,
-                email,
-                matricula,
-                cpf
-            }
-        });
-        res.json(usuario);
-    } catch (error) {
-        console.error('Erro ao atualizar usuário por ID:', error);
-        res.status(500).json({ error: 'Erro interno do servidor' });
-    }
-});
-
-
-router.delete('/usuarios/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        await prisma.usuario.delete({
-            where: {
-                id
-            }
-        });
-        res.json({ message: 'Usuário excluído com sucesso' });
-    } catch (error) {
-        console.error('Erro ao excluir usuário por ID:', error);
-        res.status(500).json({ error: 'Erro interno do servidor' });
-    }
-});
-
-module.exports = router;
+export default usuarioController;
