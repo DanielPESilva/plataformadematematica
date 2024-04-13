@@ -4,7 +4,7 @@ import { prisma } from "../configs/prismaClient.js";
 
 env.config();
 
-class turmaController{
+class TurmaController{
     static listarPorID = async(req,res)=>{        
        try {
         const tituloExists = await prisma.turma.findFirst({
@@ -47,3 +47,4 @@ class turmaController{
     }
   }
 }
+export default TurmaController;

@@ -4,10 +4,10 @@ import systemUsuarioController from "../controllers/systemUsuarioController.js";
 const router = express.Router();
 
 router
-  .get("/usuario", systemUsuarioController.listar)
-  .get("/usuario/:id", systemUsuarioController.listarPorID)
-  .post("/usuario", systemUsuarioController.inserir)
-  .patch("/usuario/:id", systemUsuarioController.atualizar)
-  .delete("/usuario/:id", systemUsuarioController.excluir)
-
+  .get("/usuario", TurmaController.listar)
+  .get("/usuario/:id", TurmaController.listarPorID)
+  .post("/usuario", TurmaController.inserir)
+  .patch("/usuario/:id", TurmaController.atualizar)
+  .delete("/usuario/:id", TurmaController.excluir)
+ 
   export default router;

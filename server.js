@@ -1,7 +1,4 @@
-import express from 'express' // importando express
-import app from './src/app.js' // importando apps
 import * as dotenv from 'dotenv'; // necessário para leitura do arquivo de variáveis
-
 import swaggerUI from 'swagger-ui-express'; // para documentação com o swagger
 import swaggerJsDoc from 'swagger-jsdoc';  // para documentação com o swagger
 import swaggerOptions from './src/docs/head.js'; // importando configurações do swagger
