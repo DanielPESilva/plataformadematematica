@@ -4,6 +4,7 @@ import TurmaController from "../controllers/turmaController.js";
 const router = express.Router();
 
 routerTurma
+  .get("/usuario", TurmaController.listar)
   .get("/turma",TurmaController.listarPorID)
   .post("/turma")
   .patch("/turma/:id")
