@@ -12,7 +12,8 @@ const routes = (app) => {
 
     app.use(
         express.json(),
-        turma
+        turma,
+        users
     )
 }
 

@@ -7,7 +7,7 @@ env.config();
 class TurmaController{
     static listar = async (req, res) => {
         try {
-          // fazer uma busca no banco de dados por todos os registros em system_usuario
+          // fazer uma busca no banco de dados por todos os registros em turma
           const turmaExists = await prisma.turma.findMany({
             where: {
               tur_titulo:notnull,
