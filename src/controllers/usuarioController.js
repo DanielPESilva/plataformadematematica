@@ -211,7 +211,7 @@ class usuarioController {
       return res.status(500).json([{ error: true, code: 500, message: "Erro interno."}])
     }
   }
-
+  // DELETE
   static excluir = async (req, res) => {
     try {
       const errors = []
