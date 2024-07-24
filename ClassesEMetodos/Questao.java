@@ -7,6 +7,16 @@ public class Questao {
     private String pdf;
     private String link_video;
 
+    public Questao(int id, int posicao, String titulo, String pdf, String link_video) {
+        this.id = id;
+        this.posicao = posicao;
+        this.titulo = titulo;
+        this.pdf = pdf;
+        this.link_video = link_video;
+
+
+    }
+
     public int getId() {
         return id;
     }
@@ -45,15 +55,5 @@ public class Questao {
 
     public void setLink_video(String link_video) {
         this.link_video = link_video;
-    }
-
-    public Questao(int id, int posicao, String titulo, String pdf, String link_video) {
-        this.id = id;
-        this.posicao = posicao;
-        this.titulo = titulo;
-        this.pdf = pdf;
-        this.link_video = link_video;
-
-
     }
 }

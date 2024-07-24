@@ -1,69 +1,50 @@
-import PrismaClient from '@prisma/client';
-import env from "dotenv"
-import express from "express";
+import bcrypt from "bcryptjs";
+import env from "dotenv";
+import { prisma } from "../configs/prismaClient.js"
 
 env.config();
 
 class QuestaoController{
-
     static listar = async (req, res) => {
         try{
-            const{
-                id,
-                posicao,
-                titulo,
-                pdf,
-                link_video
-            } = req.query;
-
-            let filtros = {
+            const questaoExists = await prisma.questao.findMany({
                 where: {
-                    active: id || 'y',
+                    que_titulo:notnull
                 },
                 select: {
-                    posicao: true,
-                    titulo: true,
-                    pdf: true,
-                    link_video: true,
-                    active: true,
-                    Modulo: {
-                        select: {
-                            id: true,
-                            tema: true,
-                            descricao: true,
-                            pdf: true,
-                            linkVideo: true,
+                    que_id: true,
+                    que_posicao: true,
+                    que_titulo: true,
+                    que_pdf: true,
+                    que_link_video: true,
+                    questao: {
+                        select:{
+                            turma: {
+                                select: {
+                                    tur_id: true,
+                            }
                         }
-                    },
-                }
-            };
-            
-            if (posicao) {
-                filtros.where.posicao = {
-                    contains: posicao,
-                };
+                    }
+                },
             }
-            
-            if (titulo) {
-                filtros.where.titulo = {
-                    contains: titulo,
-                };
             }
+        );
 
-            const Questao = await prisma.Questao.findMany(filtros);
-            if(users.leng === 0){
+            
+            if (!questaoExists) {
                 return res.status(400).json([{
                     error: true,
                     code: 400,
-                    message:"Nenhuma questão escontrado"
-                }]);
-            }else{
+                    massage: "Nenhuma questão encontrada"}])
+            } else{
                 return res.status(200).json({
                     error: false,
                     code: 200,
-                    message:"Questão encontrada"
+                    massage: "Questão encontrada",
+                    data: questaoExists
                 });
             }
+            
             
         } catch (err) {
             if (process.env.DEBUG === 'true'){
@@ -73,38 +54,76 @@ class QuestaoController{
                 error: true,
                 code: 500,
                 message: "Erro interno do Servidor",
-                data: []
-            }])
+                data: [] }])
         }
     }
-
     static listarPorID = async (req, res) => {
         try{
-            const
-        }
-    }
-
-
-}
-
-
-router.get('/questoes/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        const questao = await prisma.questao.findUnique({
-            where: {
-                id: parseInt(req.params.id)
+            const questaoExists = await prisma.questao.findFirst({
+                where:{
+                    que_id: parseInt(req.params.id),
+                },
+                select:{
+                    id: true,
+                    posicao: true,
+                    titulo: true,
+                    pdf: true,
+                    link_video: true,
+                    questao: {
+                        select:{
+                            turma: {
+                                select: {
+                                    tur_id: true,
+                            }
+                        }
+                    }
+                }
             }
         });
-        if (!questao) {
-            return res.status(404).json({ error: 'Questão não encontrada' });
+        if(questaoExists){
+            return res.status(200).json (questaoExists);
         }
-        res.json(questao);
-    } catch (error) {
-        console.error('Erro ao obter questão por ID:', error);
-        res.status(500).json({ error: 'Erro interno do servidor' });
+    } catch (err){
+        console.error(err);
+        return res.status(500).json ([{
+            error: true, code: 500, message: "Erro interno do Servidor"
+        }])
     }
-});
+    }
+    static inserir = async(req,res)=>{
+        try{
+            const{ titulo, posicao} = req.body;
+            const tur_id = parseInt(req.body.tur_id);
+        } catch (error) {
+
+        }
+    }
+    static get = async (req, res) => {
+        try {
+            const questoes = await prisma.questao.findMany({
+                select: {
+                    id: true,
+                    posicao: true,
+                    titulo: true,
+                    pdf: true,
+                    link_video: true,
+                    turma: {
+                        select: {
+                            tur_id: true,
+                        }
+                    }
+                }
+            });
+
+            return res.status(200).json(questoes);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json([{
+                error: true, code: 500, message: "Erro interno do Servidor"
+            }]);
+        }
+    }
+}
 
 
 router.put('/questoes/:id', async (req, res) => {
