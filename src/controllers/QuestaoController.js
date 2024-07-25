@@ -123,45 +123,75 @@ class QuestaoController{
             }]);
         }
     }
+    static put = async (req, res) => {
+        try {
+            const id = parseInt(req.params.id);
+            const { titulo, posicao, pdf, link_video } = req.body;
+
+            const questaoAtualizada = await prisma.questao.update({
+                where: { que_id: id },
+                data: {
+                    titulo,
+                    posicao,
+                    pdf,
+                    link_video,
+                }
+            });
+            if (!questaoAtualizada) {
+                return res.status(400).json([{
+                    error: true,
+                    code: 400,
+                    massage: "Questão não foi atualizada"}])
+            } else{
+                return res.status(200).json({
+                    error: false,
+                    code: 200,
+                    massage: "Questão atualizada",
+                    data: questaoAtualizada
+                });
+            }
+        } catch (err) {
+            if (process.env.DEBUG === 'true'){
+                console.log(err);
+            };
+            return res.status(500).json([{
+                error: true,
+                code: 500,
+                message: "Erro interno do Servidor",
+                data: [] }])
+        }
+    }
+    static deletar = async (req, res) => {
+        try {
+            const id = parseInt(req.params.id);
+
+            const questaoDeletada = await prisma.questao.delete({
+                where: { que_id: id }
+            });
+
+            if (!questaoDeletada) {
+                return res.status(400).json([{
+                    error: true,
+                    code: 400,
+                    massage: "Questão não foi deletada"}])
+            } else{
+                return res.status(200).json({
+                    error: false,
+                    code: 200,
+                    massage: "Questão deletada",
+                    data: questaoDeletada
+                });
+            }
+        } catch (err) {
+            if (process.env.DEBUG === 'true'){
+                console.log(err);
+            };
+            return res.status(500).json([{
+                error: true,
+                code: 500,
+                message: "Erro interno do Servidor",
+                data: [] }])
+        }
+    }
 }
-
-
-router.put('/questoes/:id', async (req, res) => {
-    const { id } = req.params;
-    const { posicao, titulo, pdf, link_video } = req.body;
-    try {
-        const questao = await prisma.questao.update({
-            where: {
-                id: parseInt(id)
-            },
-            data: {
-                posicao,
-                titulo,
-                pdf,
-                link_video
-            }
-        });
-        res.json(questao);
-    } catch (error) {
-        console.error('Erro ao atualizar questão por ID:', error);
-        res.status(500).json({ error: 'Erro interno do servidor' });
-    }
-});
-
-
-router.delete('/questoes/:id', async (req, res) => {
-    const { id } = req.params;
-    try {
-        await prisma.questao.delete({
-            where: {
-                id: parseInt(id)
-            }
-        });
-        res.json({ message: 'Questão excluída com sucesso' });
-    } catch (error) {
-        console.error('Erro ao excluir questão por ID:', error);
-        res.status(500).json({ error: 'Erro interno do servidor' });
-    }
-});
-
 module.exports = router;
