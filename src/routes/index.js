@@ -1,5 +1,4 @@
 import express from "express";
-import users from "./systemUsersRoutes.js";
 import turma from "./TurmaRoutes.js"
 // import compras from "./comprasRoutes.js";
 
@@ -12,8 +11,7 @@ const routes = (app) => {
 
     app.use(
         express.json(),
-        turma,
-        users
+        turma
     )
 }
 
