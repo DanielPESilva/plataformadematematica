@@ -33,6 +33,7 @@ class TurmaController{
                error: true, 
                code: 400, 
                message: "Nenhuma turma encontrada" }])
+               
           } else {
             return res.status(200).json(
               {
@@ -79,6 +80,7 @@ class TurmaController{
             return res.status(200).json (tituloExists);
 
         }
+        if()
        } catch (err){
         console.error(err);
         return res.status(500).json([{
