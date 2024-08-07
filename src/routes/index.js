@@ -1,5 +1,6 @@
 import express from "express";
 import turma from "./TurmaRoutes.js"
+import questao from "./QuestaoRoute.js"
 // import compras from "./comprasRoutes.js";
 
 
@@ -11,7 +12,8 @@ const routes = (app) => {
 
     app.use(
         express.json(),
-        turma
+        turma,
+        questao
     )
 }
 

@@ -4,7 +4,7 @@ import { prisma } from "../configs/prismaClient.js"
 
 env.config();
 
-class QuestaoController{
+class questaoController{
     static listar = async (req, res) => {
         try {
           const response = await prisma.questao.findMany()
@@ -20,4 +20,4 @@ class QuestaoController{
       }
 }
 
-export default QuestaoController
+export default questaoController
