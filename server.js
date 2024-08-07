@@ -1,15 +1,11 @@
-import express from 'express' // importando express
-import * as dotenv from 'dotenv'; // necessário para leitura do arquivo de variáveis
-
-import swaggerUI from 'swagger-ui-express'; // para documentação com o swagger
-import swaggerJsDoc from 'swagger-jsdoc';  // para documentação com o swagger
-import swaggerOptions from './src/docs/head.js'; 
-
-
+import express from 'express'
+import * as dotenv from 'dotenv';
+import app from "./src/app.js";
 
 dotenv.config()
 
-// definição de porta condicional do proxy ou na 3030
-const port = process.env.PORT || 3060;
-
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
+// definição de porta condicional do proxy ou na 8086
+const port = process.env.PORT || 8086;
+app.listen(port, ()=>{
+    console.log(`Rodando na porta ${port}`);
+})

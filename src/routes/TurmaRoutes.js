@@ -1,13 +1,10 @@
 import express from "express";
-import TurmaController from "../controllers/TurmaController.js";
+import TurmaController from "../controllers/turmaController.js";
 
-const routerTurma = express.Router();
+const router = express.Router();
 
-routerTurma
-  .get("/turma" )
-  .get("/turma/:id" )
-  .post("/turma")
-  .patch("/turma/:id")
-  .delete("/turma/:id")
+router
+  .get("/usuario", TurmaController.listar)
+  .get("/turma",TurmaController.listarPorID)
  
-  export default routerTurma;
+  export default router;

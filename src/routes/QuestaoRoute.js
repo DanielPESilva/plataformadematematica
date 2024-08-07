@@ -1,13 +1,8 @@
 import express from "express"
-import QuestaoController from "../controllers/QuestaoController"
+import questaoController from "../controllers/questaoController"
 
 const router = express.Router();
 
-routerQuestao
-    .get("/turma",QuestaoController.listar)
-    .get("/turma",QuestaoController.listarPorID)
-    .post("/Questao")
-    .patch("/Questao/:id")
-    .delete("/Questao/:id")
+    router.get("/questao",questaoController.listar)
  
     export default router;
