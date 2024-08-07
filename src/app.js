@@ -1,15 +1,14 @@
-import express from "express";
+import express, { json } from "express";
 import routes from "./routes/index.js";
 import { prisma } from "./configs/prismaClient.js";
-import cors from "cors";
+import cors from "cors"; // permite o fornt-end usar essa api (resumindo)
 
-//instanciando express
+//instanciando o express
 const app = express();
 
-// Habilita o CORS para todas as origens
 app.use(cors());
 // app.use(cors([
-//   { origin: ['http://edurondon.tplinkdns.com:3030', 'http://edurondon.tplinkdns.com:3031', 'http://localhost:3030', 'http://localhost:3031'] },
+//   { origin: ['http://cloud.fslab.dev:8806', 'http://cloud.fslab.dev:8807', 'http://cloud.fslab.dev:8806', 'http://cloud.fslab.dev:8807] },
 //   { methods: ['GET', 'POST', 'DELETE', 'PUT', 'PATCH'] }
 // ])); //  Mude apenas isso: origin: ['http://www.section.io', 'http://www.google.com/']
 

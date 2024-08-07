@@ -1,12 +1,12 @@
-import express from 'express' // importando express
+import app from './src/app.js'
 import * as dotenv from 'dotenv';
-import app from "./src/app.js";
 
 dotenv.config()
 
-// definição de porta condicional do proxy ou na 3030
-const port = process.env.PORT || 3060;
+const port = process.env.PORT || 3051;
 
-app.listen(port, ()=>{
-    console.log(`Rodando na porta ${port}`);
+app.listen(port, () => {
+  console.log(`Servidor escutando em http://localhost:${port}`)
 })
+
+// executar node server.js ou  npm run dev
