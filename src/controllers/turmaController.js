@@ -1,5 +1,7 @@
 import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js";
+import turmaService from "../services/turmaService.js"
+import CommonResponse from '../utils/commonResponse.js';
 
 env.config();
 
@@ -18,37 +20,24 @@ class TurmaController{
     }
   }
 
-    static listarPorID = async(req,res)=>{        
-       try {
-        const tituloExists = await prisma.turma.findFirst({
-            where:{
-                tur_id: parseInt(req.params.id),                
-            },
-            select:{
-                id:true,
-                titulo:true,
-                descricao:true,
-                turma:{
-                    select: {
-                        usuario:{
-                            select:{
-                                usu_id:true,
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        if (tituloExists) {
-            return res.status(200).json (tituloExists);
+  static listarPorID = async (req, res) => {
+    try {
+      
+      const id_turma = parseInt(req.params.id);
 
-        }
-       } catch (err){
-        console.error(err);
-        return res.status(500).json([{
-        error: true, code: 500, message: "Erro interno do Servidor"
-        }])
-       }
+
+      const turmaExists = await turmaService.listarPorID(id_turma);
+    
+      if (turmaExists) {
+        return res.status(200).json(CommonResponse.success(turmaExists));
+      } else {
+        return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('turma')));
+      }
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json(CommonResponse.serverError());
+    }
   }
+
 }
 export default TurmaController;
