@@ -6,6 +6,22 @@
 
 ## Downloads de pastas 
 
-- npm install -D jest
-- npm install @prisma/client
-- npx prisma generate
+- npm install node;
+- npm install -D jest;
+- npm install supertest;
+- npm install @prisma/client;
+- npx prisma generate;
+- npm install supertest;
+
+# Banco de dados
+
+- [] Adicionar a pasta do banco de dados no GitLab
+- [] Transformar as tabelas do banco em código;
+
+## Banco de dados Descrição
+
+
+# Classes e métodos - POO
+
+- [] Adicioar a pasta das classes no GitLab;
+- [] Colocar cada classe na pasta;
