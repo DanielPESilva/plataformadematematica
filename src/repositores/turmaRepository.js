@@ -2,6 +2,7 @@ import { prisma } from "../configs/prismaClient.js";
 
 class turmaRepository {
      async findAll(filtros) {
+      
         return await prisma.turma.findMany(filtros);
     }
 

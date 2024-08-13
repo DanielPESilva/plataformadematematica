@@ -6,6 +6,7 @@ import CommonResponse from '../utils/commonResponse.js';
 env.config();
 
 class TurmaController{
+  
   static listar = async (req, res) => {
     try {
       const response = await prisma.turma.findMany()
