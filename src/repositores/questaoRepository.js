@@ -28,5 +28,10 @@ class questaoRepository {
    
    return filtros;
   }
+
+  static async update(id, titulo, posicao) {
+    return await prisma.questao.update({ where: { id }, titulo, posicao, link_video, pdf});
+}
+
 }
 export default new questaoRepository();

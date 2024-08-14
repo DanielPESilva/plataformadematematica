@@ -14,6 +14,12 @@ class questaoService {
         }
         return questaoRepository.findById(id);
       }
+
+    static async atualizar(id, titulo, posicao) {
+      // Regra de negócio e validações
+      return await questaoRepository.update(id, titulo, posicao, link_video,pdf);
+    }
+
 }
 
 export default new questaoService();
