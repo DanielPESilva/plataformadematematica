@@ -17,7 +17,7 @@ model questao {
 }
 
 model turma {
-  id               Int                 @id
+  id                Int                 @id
   titulo            String              @db.VarChar(45)
   modulo_has_turma  modulo_has_turma[]
   turma_has_modulo  turma_has_modulo[]

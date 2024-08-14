@@ -2,6 +2,7 @@ import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js";
 import turmaService from "../services/turmaService.js"
 import CommonResponse from '../utils/commonResponse.js';
+import messages from '../utils/messages.js';
 
 env.config();
 
@@ -17,26 +18,28 @@ class TurmaController{
    * @pagination Como o page irá operar
    *
    */
+
   static listar = async (req, res) => {
     try {
-      const usuarios = await usuarioRepository.findById(id);
-  
-  if (!usuarios) {
-    return res.status(404).json(CommonResponse.notFound('Usuário não encontrado.'));
-  }
+      const { titulo, usuario_id, page = 1, perPage = 10 } = req.query;
+      const { turmas, total } = await turmaService.listar(titulo, usuario_id, parseInt(page), parseInt(perPage));
 
-  const { titulo, page = 1, perPage = 10 } = req.query;
-  const { turmas, total } = await turmaService.listar(titulo, usuarios.nome, parseInt(page), parseInt(perPage));
+      console.log(turmas);  
 
-  if (turmas.length === 0) {
-    return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('Turmas')));
-  }
-
-  const resultado = {
-    titulo,
-    usuarios 
-  };
-  
+      // continua deopis que voltar do service
+      if (turmas.length === 0) {
+        return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('Turmas')));
+      } else {
+        return res.status(200).json({
+          ...CommonResponse.success(turmas, messages.validationGeneric.resourceFound('Turmas')),
+          pagination: {
+            total,
+            page: parseInt(page),
+            perPage: parseInt(perPage),
+            totalPages: Math.ceil(total / parseInt(perPage))
+          }
+        });
+      }
     } catch (err) {
       if (process.env.DEBUGLOG === 'true') {
         console.log(err);

@@ -1,10 +1,21 @@
 import { prisma } from "../configs/prismaClient.js";
 
 class turmaRepository {
-     async findAll(filtros) {
-      
-        return await prisma.turma.findMany(filtros);
+     async findAll(filtros, page, perPage){
+       const skip = (page - 1) * perPage;
+       const take = perPage;
+
+       const [turmas, total] = await Promise.all([
+        prisma.turma.findMany({
+          ...filtros,
+          skip,
+          take,
+        }),
+        prisma.turma.count({ where: filtros.where })
+      ]);
+        return { turmas, total, page, perPage };
     }
+
 
     async findById(id) {
         const filtros = this.constructFilters();
@@ -15,14 +26,22 @@ class turmaRepository {
         return Turma;
       }
 
-      constructFilters(nome, email, grupo) {
+      constructFilters(usuario_id, titulo) {
         let filtros = {
           select: {
             id: true,
-            titulo: true
+            titulo: true,
+            usuario_has_turma: {
+              select: {
+                usuario: {
+                  select: {
+                    nome: true,
+                  }
+                }
+              }
+            },
           }
         };
-
 
         return filtros
     }    
