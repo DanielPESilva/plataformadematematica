@@ -1,0 +1,15 @@
+# servidor
+PORT=3051
+
+# DBUGLOG TRUE SOMENTE PARA DESENVOLVIMENTO
+DEBUGLOG=true
+
+# banco de dados
+DATABASE_URL="mysql://fslab:fslab@edurondon.tplinkdns.com:3331/db_Plataforma_Matematica"
+DATABASE_HOST="edurondon.tplinkdns.com"
+DATABASE_PORT=3331
+DATABASE_NAME="db_Plataforma_Matematica"
+DATABASE_USER="fslab"
+DATABASE_PASSWORD="fslab"
+
+
