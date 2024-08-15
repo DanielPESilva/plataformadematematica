@@ -1,0 +1,92 @@
+Controller:
+static listar = async (req, res) => {
+    try {
+      const { titulo, usuario_id, page = 1, perPage = 10 } = req.query;
+      const { turmas, total } = await turmaService.listar(titulo, usuario_id, parseInt(page), parseInt(perPage));
+      console.log(turmas);
+      
+      // continua deopis que voltar do service
+      if (turmas.length === 0) {
+        return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('Turmas')));
+      } else {
+        return res.status(200).json({
+          ...CommonResponse.success(turmas, messages.validationGeneric.resourceFound('Turmas')),
+          pagination: {
+            total,
+            page: parseInt(page),
+            perPage: parseInt(perPage),
+            totalPages: Math.ceil(total / parseInt(perPage))
+          }
+        });
+      }
+    } catch (err) {
+      if (process.env.DEBUGLOG === 'true') {
+        console.log(err);
+      }
+      return res.status(500).json(CommonResponse.serverError());
+    }
+
+  }
+
+Service:
+
+async listar( titulo, usuario_id, page = 1, perPage = 10) {
+    
+    const filtros = turmaRepository.constructFilters(usuario_id, titulo);
+    const turmas = await turmaRepository.findAll(filtros, page, perPage);
+
+    //Aqui vão as regras de negócios...
+
+      return turmas;
+  }
+
+Repository:
+
+class turmaRepository {
+     async findAll(filtros, page, perPage){
+       const skip = (page - 1) * perPage;
+       const take = perPage;
+
+       const [turmas, total] = await Promise.all([
+        prisma.turma.findMany({
+          ...filtros,
+          skip,
+          take,
+        }),
+        prisma.turma.count({ where: filtros.where })
+      ]);
+        return { turmas, total, page, perPage };
+    }
+
+
+    async findById(id) {
+      const filtros = this.constructFilters();
+      const turmas = await prisma.turma.findUnique({
+        where: { id },
+        select: filtros.select,
+      });
+      return turmas;
+      constructFilters(usuario_id, titulo) {
+        let filtros = {
+          select: {
+            id: true,
+            titulo: true,
+            usuario_has_turma: {
+              select: {
+                usuario: {
+                  select: {
+                    nome: true,
+                  }
+                }
+              }
+            },
+          }
+        };
+
+        if (titulo) filtros.where.titulo = { contains: titulo };
+        if (usuario_id) filtros.where.usuario_has_turma = { some: { usuario_id: { name: usuario_id } } };    
+
+        return filtros
+    } 
+        }
+
