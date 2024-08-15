@@ -24,8 +24,6 @@ class TurmaController{
       const { titulo, usuario_id, page = 1, perPage = 10 } = req.query;
       const { turmas, total } = await turmaService.listar(titulo, usuario_id, parseInt(page), parseInt(perPage));
 
-      console.log(turmas);  
-
       // continua deopis que voltar do service
       if (turmas.length === 0) {
         return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('Turmas')));
@@ -49,24 +47,32 @@ class TurmaController{
 
   }
 
+  /**
+   * @listarPorId Listará as turma cujo o id foi especificado
+   * @page O primeiro é quantidade de tabelas que aparecerão e o segundo é a quantidade de colunas que cada tabela terá...
+   * @error200 Deu certo :)
+   * @error400 sintaxe de requisição mal formada ou enquadramento de mensagem de requisição inválida
+   * @error500 problema generalizado no servidor interno da api
+   * @pagination Como o page irá operar
+   *
+   */
   static listarPorID = async (req, res) => {
     try {
-      
-      const id_turma = parseInt(req.params.id);
+      const idTurma = parseInt(req.params.id);
 
-
-      const turmaExists = await turmaService.listarPorID(id_turma);
+      // resposta commonResponse
+      const turmaExiste = await userService.listarPorID(idTurma);
     
-      if (turmaExists) {
-        return res.status(200).json(CommonResponse.success(turmaExists));
+      if (turmaExiste) {
+        return res.status(200).json(CommonResponse.success(turmaExiste));
       } else {
-        return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('turma')));
+        return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('Turma')));
       }
     } catch (err) {
       console.error(err);
       return res.status(500).json(CommonResponse.serverError());
     }
   }
+  }
 
-}
 export default TurmaController;
