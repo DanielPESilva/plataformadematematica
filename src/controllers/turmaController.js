@@ -23,7 +23,8 @@ class TurmaController{
     try {
       const { titulo, usuario_id, page = 1, perPage = 10 } = req.query;
       const { turmas, total } = await turmaService.listar(titulo, usuario_id, parseInt(page), parseInt(perPage));
-
+      console.log(turmas);
+      
       // continua deopis que voltar do service
       if (turmas.length === 0) {
         return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('Turmas')));
@@ -44,7 +45,6 @@ class TurmaController{
       }
       return res.status(500).json(CommonResponse.serverError());
     }
-
   }
 
   /**
@@ -59,10 +59,9 @@ class TurmaController{
   static listarPorID = async (req, res) => {
     try {
       const idTurma = parseInt(req.params.id);
-
-      // resposta commonResponse
-      const turmaExiste = await userService.listarPorID(idTurma);
+      const turmaExiste = await turmaService.listarPorID(idTurma);
     
+      //voltar aqui após o service
       if (turmaExiste) {
         return res.status(200).json(CommonResponse.success(turmaExiste));
       } else {

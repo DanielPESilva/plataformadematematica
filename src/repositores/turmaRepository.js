@@ -1,6 +1,29 @@
 import { prisma } from "../configs/prismaClient.js";
 
 class turmaRepository {
+  constructFilters(usuario_id, titulo) {
+    let filtros = {
+      select: {
+        id: true,
+        titulo: true,
+        usuario_has_turma: {
+          select: {
+            usuario: {
+              select: {
+                nome: true,
+              }
+            }
+          }
+        },
+      }
+    };
+
+    if (titulo) filtros.where.titulo = { contains: titulo };
+    if (usuario_id) filtros.where.usuario_has_turma = { some: { usuario_id: { name: usuario_id } } };    
+
+    return filtros
+}
+
      async findAll(filtros, page, perPage){
        const skip = (page - 1) * perPage;
        const take = perPage;
@@ -18,37 +41,12 @@ class turmaRepository {
 
 
     async findById(id) {
-        const filtros = this.constructFilters();
-        const Turma = await prisma.turma.findUnique({
-          where: { id },
-          select: filtros.select,
-        });
-        return Turma;
-      }
-
-      constructFilters(usuario_id, titulo) {
-        let filtros = {
-          select: {
-            id: true,
-            titulo: true,
-            usuario_has_turma: {
-              select: {
-                usuario: {
-                  select: {
-                    nome: true,
-                  }
-                }
-              }
-            },
-          }
-        };
-
-        if (titulo) filtros.where.titulo = { contains: titulo };
-        if (usuario_id) filtros.where.usuario_has_turma = { some: { usuario_id: { name: usuario_id } } };    
-
-        return filtros
-    }    
-    
-
+      const filtros = this.constructFilters();
+      const turmas = await prisma.turma.findUnique({
+        where: { id },
+        select: filtros.select,
+      });
+      return turmas;
+    }
 }
 export default new turmaRepository();
