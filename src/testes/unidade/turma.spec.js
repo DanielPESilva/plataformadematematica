@@ -15,7 +15,7 @@ describe('turmaService', () => {
         jest.clearAllMocks();
     });
 
-    test('should return all users', async () => {
+    test('should return all turmas', async () => {
         // Arrange
         const mockTurmas = [
             { id: 1, titulo: 'Turma 1', usuario_id: 'nome' },
@@ -44,14 +44,14 @@ describe('turmaService', () => {
     //voltar aqui quando terminar o listar
     test('should return user by ID', async () => {
         // Arrange
-        const mockUser = { id: 1, name: 'User 1' };
-        userRepository.findById.mockResolvedValue(mockUser);
+        const mockTurmas = { id: 1, titulo: 'Turma 1', usuario_id: 'nome' };
+        turmaRepository.findById.mockResolvedValue(mockTurmas);
 
         // Act
-        const user = await userService.listarPorID(1);
+        const turma = await turmaService.listarPorID(1);
 
         // Assert
-        expect(user).toEqual(mockUser);
-        expect(userRepository.findById).toHaveBeenCalledWith(1);
+        expect(turma).toEqual(mockTurmas);
+        expect(turmaRepository.findById).toHaveBeenCalledWith(1);
     });
 });
