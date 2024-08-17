@@ -5,7 +5,7 @@ class questaoService {
         // Regra de negócio e validações
         
 
-        return await questaoRepositoryRepository.findMany(filtro);
+        return await questaoRepository.findMany(filtro);
     }
     async listarPorID(id) {
         // teste se o id é um número
@@ -15,9 +15,9 @@ class questaoService {
         return questaoRepository.findById(id);
       }
 
-    static async atualizar(id, titulo, posicao) {
+    static async atualizar(id, titulo, posicao, pdf, link_video) {
       // Regra de negócio e validações
-      return await questaoRepository.update(id, titulo, posicao, link_video,pdf);
+      return await questaoRepository.update(id, titulo, posicao, pdf, link_video);
     }
 
 }
