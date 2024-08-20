@@ -1,7 +1,9 @@
-import prisma from '../configs/prismaClient.js';
+import {prisma} from '../configs/prismaClient.js';
 
 class LoginRepository {
   async findByMatricula(matricula) {
+    console.log(matricula);
+    
     console.log("4 - Recebendo dados de filtro para buscar usuário no repository - loginRepository");
 
     const userEncontrado = await prisma.system_users.findUnique({

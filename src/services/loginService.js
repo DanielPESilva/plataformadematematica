@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import loginRepository from '../repositories/loginRepository.js';
+import loginRepository from '../repositores/loginRepository.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
