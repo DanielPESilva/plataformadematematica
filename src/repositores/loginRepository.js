@@ -1,42 +1,21 @@
 import prisma from '../configs/prismaClient.js';
 
 class LoginRepository {
-  async findByEmail(email) {
+  async findByMatricula(matricula) {
     console.log("4 - Recebendo dados de filtro para buscar usuário no repository - loginRepository");
 
     const userEncontrado = await prisma.system_users.findUnique({
       where: {
-        email: email
+        matricula: matricula
       },
       select: {
         id: true,
-        name: true,
+        nome: true,
+        telefone: true,
         email: true,
-        site: true,
-        active: true,
-        phone: true,
-        password: true, // Certifique-se de incluir o campo password
-        system_user_group: {
-          select: {
-            system_group: {
-              select: {
-                id: true,
-                name: true,
-              }
-            }
-          }
-        },
-        system_user_unit: {
-          select: {
-            system_unit: {
-              select: {
-                id: true,
-                name: true,
-              }
-            },
-          }
-        },
-
+        matricula: true,
+        cpf: true,
+        senha: true, // Certifique-se de incluir o campo senha
       }
     });
 

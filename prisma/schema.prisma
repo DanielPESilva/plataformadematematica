@@ -32,6 +32,7 @@ model usuario {
   email             String              @db.VarChar(45)
   matricula         Int
   cpf               String              @db.VarChar(45)
+  senha             String              @unique(map: "senha_UNIQUE") @db.VarChar(50)
   usuario_has_turma usuario_has_turma[]
 }
 

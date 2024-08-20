@@ -6,24 +6,24 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 class LoginService {
-  async buscarUser(email, password) {
+  async buscarUser(matricula, senha) {
     try {
-      console.log("2 - Recebido dados de email e senha no serviço - loginService");
+      console.log("2 - Recebido dados da matrícula e senha no serviço - loginService");
 
-      if (!email || !password) {
+      if (!matricula || !senha) {
         return null;
       }
 
       // Imprimir no console a senha criptografada pelo bcrypt para entender como funciona
-      const bcryptHashedPassword = await bcrypt.hash(password, 10);
-      console.log("Senha criptografada com bcrypt: ", bcryptHashedPassword);
+      const bcryptHashedsenha = await bcrypt.hash(senha, 10);
+      console.log("Senha criptografada com bcrypt: ", bcryptHashedsenha);
 
       // Imprimir no console a senha criptografada pelo MD5 para entender como funciona
-      const md5HashedPassword = crypto.createHash('md5').update(password).digest('hex');
-      console.log("Senha criptografada com MD5: ", md5HashedPassword);
+      const md5Hashedsenha = crypto.createHash('md5').update(senha).digest('hex');
+      console.log("Senha criptografada com MD5: ", md5Hashedsenha);
 
-      console.log("3 - repassando email recebido para o repository - loginService");
-      const userEncontrado = await loginRepository.findByEmail(email);
+      console.log("3 - repassando a matrícula recebida para o repository - loginService");
+      const userEncontrado = await loginRepository.findByMatricula(matricula);
 
       if (!userEncontrado) {
         return null;
@@ -31,20 +31,20 @@ class LoginService {
 
       console.log("6 - Recebendo usuário encontrado no repository para validar senha - loginService");
 
-      if (!userEncontrado.password) {
+      if (!userEncontrado.senha) {
         return null;
       }
 
       // Primeiro tenta comparar a senha usando bcrypt
-      let passwordValida = await bcrypt.compare(bcryptHashedPassword, userEncontrado.password);
+      let senhaValida = await bcrypt.compare(bcryptHashedsenha, userEncontrado.senha);
 
       // Se a senha não for válida com bcrypt, tenta com MD5
-      if (!passwordValida) {
-        const hash = crypto.createHash('md5').update(password).digest('hex');
-        passwordValida = (hash === userEncontrado.password);
+      if (!senhaValida) {
+        const hash = crypto.createHash('md5').update(senha).digest('hex');
+        senhaValida = (hash === userEncontrado.senha);
       }
 
-      if (!passwordValida) {
+      if (!senhaValida) {
         return null;
       }
 

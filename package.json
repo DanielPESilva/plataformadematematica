@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "prisma":"npx prisma db pull",
+    "prisma": "npx prisma db pull",
     "test": "jest",
-    "test:watch":"jest --watchAll",
+    "test:watch": "jest --watchAll",
     "test:coverage": "jest --coverage",
     "seed": "node src/seed/seed.js",
     "dev": "nodemon server.js"
@@ -19,6 +19,7 @@
     "@prisma/client": "^5.18.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "env": "^0.0.2",
     "express": "^4.19.2",
