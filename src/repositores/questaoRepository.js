@@ -31,13 +31,12 @@ class questaoRepository {
    return filtros;
   }
 
-  static async update(id, data) {
-    return await prisma.questao.update({
-      where: { id },
-      data: data,
-    });
+    async update(id, posicao, titulo, pdf, link_video) {
+      return await prisma.questao.update({
+        where: { id },
+        data: { posicao, titulo, pdf, link_video }
+      });
+    }
   }
   
-
-}
 export default new questaoRepository();

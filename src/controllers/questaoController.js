@@ -2,6 +2,7 @@ import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js";
 import questaoService from "../services/questaoService.js";
 import CommonResponse from "../utils/commonResponse.js";
+import questaoRepository from "../repositores/questaoRepository.js";
 
 env.config();
 
@@ -43,17 +44,26 @@ class questaoController {
 
   static atualizar = async (req, res) => {
     try {
-      console.log(req.body)
+      console.log(req.body);
+  
       if (!req.params.id) {
         return res.status(400).json(CommonResponse.notFound("ID da questão é obrigatório"));
       }
   
       const id = parseInt(req.params.id);
-      const { titulo, posicao, pdf, link_video } = req.body;
+      const { data } = req.body;
   
+      // Verifica se o campo "data" existe e contém algum valor
+      if (!data || Object.keys(data).length === 0) {
+        return res.status(400).json(CommonResponse.notFound("Nenhum campo fornecido para atualização"));
+      }
+  
+      const { titulo, posicao, pdf, link_video } = data;
+  
+      // Verifica se pelo menos um campo válido foi fornecido para atualização
       if (titulo || posicao || pdf || link_video) {
         // Chama o repositório para atualizar a questão
-        const questaoAtualizada = await questaoRepository.update(id, { titulo, posicao, pdf, link_video });
+        const questaoAtualizada = await questaoRepository.update(id, posicao, titulo, pdf, link_video);
   
         return res.status(200).json(CommonResponse.success(questaoAtualizada, "Questão atualizada com sucesso"));
       } else {
