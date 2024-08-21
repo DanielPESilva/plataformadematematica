@@ -33,7 +33,6 @@ model usuario {
   matricula         String              @unique(map: "matricula") @default("00000000000") @db.VarChar(11)
   cpf               String              @db.VarChar(45)
   senha             String              @db.VarChar(255)
-  Coluna_8          String              @map("Coluna 8") @db.VarChar(255)
   usuario_has_turma usuario_has_turma[]
 }
 

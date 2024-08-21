@@ -6,7 +6,7 @@ class LoginRepository {
 
     console.log("4 - Recebendo dados de filtro para buscar usuário no repository - loginRepository");
 
-    const userEncontrado = await prisma.usuario.findFirst({
+    const userEncontrado = await prisma.usuario.findUnique({
       where: {
         email: matricula,
       },
@@ -17,7 +17,7 @@ class LoginRepository {
         matricula: true,
         email: true,
         cpf: true,
-        senha: true, // Certifique-se de incluir o campo senha
+        senha: true // Certifique-se de incluir o campo senha
       }
     });
     console.log("Usuário encontrado no repository: " + userEncontrado);
