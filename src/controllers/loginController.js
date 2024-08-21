@@ -1,14 +1,16 @@
 import jwt from 'jsonwebtoken';
 import loginService from '../services/loginService.js';
+import { log } from 'console';
 
 class LoginController {
   static logar = async (req, res) => {
     try {
       const { matricula, senha } = req.body;
-
       console.log("1 - Recebendo requisição de login no controller - loginController");
 
       const userEncontrado = await loginService.buscarUser(matricula, senha);
+
+      
 
       // remover a senha do usuário antes de retornar
       if (userEncontrado) {

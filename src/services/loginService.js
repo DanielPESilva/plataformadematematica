@@ -17,11 +17,7 @@ class LoginService {
       // Imprimir no console a senha criptografada pelo bcrypt para entender como funciona
       const bcryptHashedsenha = await bcrypt.hash(senha, 10);
       console.log("Senha criptografada com bcrypt: ", bcryptHashedsenha);
-
-      // Imprimir no console a senha criptografada pelo MD5 para entender como funciona
-      const md5Hashedsenha = crypto.createHash('md5').update(senha).digest('hex');
-      console.log("Senha criptografada com MD5: ", md5Hashedsenha);
-
+      
       console.log("3 - repassando a matrícula recebida para o repository - loginService");
       const userEncontrado = await loginRepository.findByMatricula(matricula);
 
