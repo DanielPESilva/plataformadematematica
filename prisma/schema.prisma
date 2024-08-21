@@ -26,6 +26,16 @@ model turma {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model usuario {
+<<<<<<< HEAD
+  usu_id            Int                 @id
+  usu_nome          String              @db.VarChar(200)
+  usu_tel          String?             @map("usu_tel.") @db.VarChar(45)
+  usu_email         String              @db.VarChar(200)
+  usu_matricula     Int
+  usu_cpf           String              @db.VarChar(45)
+  usu_senha         String              @db.VarChar(45)
+  turma_has_usuario turma_has_usuario[]
+=======
   id                Int                 @id
   nome              String              @db.VarChar(45)
   telefone          String?             @db.VarChar(45)
@@ -82,4 +92,5 @@ model turma_has_modulo {
   @@id([turma_id, modulo_id, modulo_questao_id])
   @@index([modulo_id, modulo_questao_id], map: "fk_turma_has_modulo_modulo1_idx")
   @@index([turma_id], map: "fk_turma_has_modulo_turma1_idx")
+>>>>>>> bf20c78e46aaeb6da82b7b3804ffc0b6d9d4596a
 }
