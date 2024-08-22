@@ -1,51 +1,55 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import loginRepository from '../repositores/loginRepository.js';
+import loginRepository from '../repositories/loginRepository.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-class LoginService {
-  async buscarUser(matricula, senha) {
+class loginService {
+  async buscarUser(email, senha) {
     try {
-      console.log("2 - Recebido dados da matrícula e senha no serviço - loginService");
+      console.log("2 - Recebido dados de usuario e senha no serviço - loginService");
 
-      if (!matricula || !senha) {
+      console.log(email);
+      if (!email || !senha) {
         return null;
       }
 
-      // Imprimir no console a senha criptografada pelo bcrypt para entender como funciona
+      
+      // console da senha recebida para entender como funciona
+
+      /**
+       * Imprimir no console a senha criptografada pelo bcrypt, 
+       * O hash gerado não será o mesmo que o hash armazenado no banco de dados,
+       * pois o bcrypt gera um hash diferente a cada execução.
+       * Mesmo assim a senha será verificada com sucesso será apenas necessário
+       * que informe a senha correta. 
+      */
       const bcryptHashedsenha = await bcrypt.hash(senha, 10);
       console.log("Senha criptografada com bcrypt: ", bcryptHashedsenha);
-      
-      console.log("3 - repassando a matrícula recebida para o repository - loginService");
-      const userEncontrado = await loginRepository.findByMatricula(matricula);
 
-      if (!userEncontrado) {
+      console.log("3 - repassando usuario recebido para o repository - loginService");
+      const usuarioEncontrado = await loginRepository.findByEmail(email);
+
+      if (!usuarioEncontrado) {
         return null;
       }
 
       console.log("6 - Recebendo usuário encontrado no repository para validar senha - loginService");
 
-      if (!userEncontrado.senha) {
+      if (!usuarioEncontrado.senha) {
         return null;
       }
 
       // Primeiro tenta comparar a senha usando bcrypt
-      let senhaValida = await bcrypt.compare(bcryptHashedsenha, userEncontrado.senha);
-
-      // Se a senha não for válida com bcrypt, tenta com MD5
-      if (!senhaValida) {
-        const hash = crypto.createHash('md5').update(senha).digest('hex');
-        senhaValida = (hash === userEncontrado.senha);
-      }
+      let senhaValida = await bcrypt.compare(senha, usuarioEncontrado.senha);
 
       if (!senhaValida) {
         return null;
       }
 
       console.log("7 - Retornando usuário encontrado no serviço para o controller - loginService");
-      return userEncontrado;
+      return usuarioEncontrado;
     } catch (err) {
       console.error(err);
       throw new Error(err.message);
@@ -53,4 +57,4 @@ class LoginService {
   }
 }
 
-export default new LoginService();
+export default new loginService();

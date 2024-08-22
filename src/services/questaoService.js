@@ -1,4 +1,4 @@
-import questaoRepository from "../repositores/questaoRepository.js";
+import questaoRepository from "../repositories/questaoRepository.js";
 
 class questaoService {
     async listar(filtro) {

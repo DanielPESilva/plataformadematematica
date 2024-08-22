@@ -1,16 +1,14 @@
 import jwt from 'jsonwebtoken';
 import loginService from '../services/loginService.js';
-import { log } from 'console';
 
-class LoginController {
+class loginController {
   static logar = async (req, res) => {
     try {
-      const { matricula, senha } = req.body;
-      console.log("1 - Recebendo requisição de login no controller - loginController");
+      const { email, senha } = req.body;
 
-      const userEncontrado = await loginService.buscarUser(matricula, senha);
+      console.log("1 - Recebendo requisição de email no controller - loginController");
 
-      
+      const userEncontrado = await loginService.buscarUser(email, senha);   
 
       // remover a senha do usuário antes de retornar
       if (userEncontrado) {
@@ -48,4 +46,4 @@ class LoginController {
   }
 }
 
-export default LoginController;
+export default loginController;
