@@ -17,20 +17,7 @@ class systemUsuarioController {
             contains: '@gmail.com' //like
           }
         },
-
-        // include: {
-        //   system_user_group: {
-        //     select: {
-        //       system_group: {
-        //         select: {
-        //           name: true,
-        //         }
-        //       }
-        //     }
-        //   }
-        // },
       
-
         select: {
           usu_id: true,
           usu_nome: true,

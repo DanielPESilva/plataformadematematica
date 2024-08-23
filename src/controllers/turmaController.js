@@ -1,5 +1,4 @@
 import env from "dotenv";
-import { prisma } from "../configs/prismaClient.js";
 import turmaService from "../services/turmaService.js"
 import CommonResponse from '../utils/commonResponse.js';
 import messages from '../utils/messages.js';
@@ -72,6 +71,30 @@ class TurmaController{
       return res.status(500).json(CommonResponse.serverError());
     }
   }
-  }
 
+  static inserir = async (req, res) => {
+    try {
+      const turmaCriada = await turmaService.inserir(req.body);
+      let camposExcluidos = ['titulo', 'turma_id','turma_id'];
+
+      // Excluindo campos do retorno
+      camposExcluidos.forEach(campo => {
+        delete userCreated[campo];
+      });
+
+      return res.status(201).json(CommonResponse.created(userCreated, messages.validationGeneric.resourceCreated('turma')));
+    } catch (err) {
+      if (err instanceof ZodError) {
+        // Formatar os erros para exibir apenas `path` e `message`
+        const formattedErrors = err.errors.map(error => ({
+          path: error.path.join('.'), // Converte o path para uma string (ex: "email")
+          message: error.message // A mensagem de erro do Zod
+        }));
+        return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
+      }
+      // console.error(err);
+      return res.status(500).json(CommonResponse.unprocessableEntity(Error, err.message));
+    }
+}
+}
 export default TurmaController;

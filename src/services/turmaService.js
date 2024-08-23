@@ -34,8 +34,15 @@ class turmaService {
     return turmaRepository.findById(id);
   }
 
-  async create(data) {
-    return await prisma.system_users.create({ data });
+  async inserir(data) {
+    // Validação com Zod
+    const validatedData = turmaSchema.parse(data);
+
+    const errors = [];
+    const emailExists = await turmaRepository.findByEmail(validatedData.email);
+    if (emailExists) {
+      errors.push(messages.validationGeneric.resourceAlreadyExists('Email').message);
+    }
   }
 }
 export default new turmaService();

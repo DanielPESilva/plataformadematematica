@@ -22,6 +22,24 @@ class usuarioRepository {
     return user;
   }
 
+  async findByEmail(email) {
+    const filtros = this.constructFilters();
+    const user = await prisma.usuario.findUnique({
+      where: { email },
+      select: filtros.select,
+    });
+    return user;
+  }
+
+  async findById(id) {
+    const filtros = this.constructFilters();
+    const user = await prisma.usuario.findUnique({
+      where: { id },
+      select: filtros.select,
+    });
+    return user;
+  }
+
   async findAll(filtros, page, perPage) {
     const skip = (page -1) * perPage;
     const take = perPage;
