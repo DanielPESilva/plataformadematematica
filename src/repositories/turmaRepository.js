@@ -1,6 +1,7 @@
 import { prisma } from "../configs/prismaClient.js";
 
 class turmaRepository {
+
   constructFilters(usuario_id, titulo) {
     let filtros = {
       select: {
@@ -48,5 +49,16 @@ class turmaRepository {
       });
       return turmas;
     }
+
+    async create(data) {
+      // validaria constraints - regras de integridade
+      
+      return await prisma.turma.create({ data });
+    }
+
+    async findByUser(usuario_id) {
+      return await prisma.usuario.findFirst({ where: { usuario_id } });
+    }
+
 }
 export default new turmaRepository();

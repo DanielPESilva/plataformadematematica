@@ -1,35 +1,44 @@
+import bcrypt from "bcryptjs";
 import turmaRepository from "../repositories/turmaRepository.js";
+import messages from "../utils/messages.js";
+import { turmaSchema, updateTurmaSchema } from "../schemas/turmaSchemas.js";
 
 class turmaService {
   async listar(titulo, usuario_id, page = 1, perPage = 10) {
     try {
-        const filtros = turmaRepository.constructFilters(usuario_id, titulo);
-        const { turmas, total } = await turmaRepository.findAll(filtros, page, perPage);
+      const filtros = turmaRepository.constructFilters(usuario_id, titulo);
+      const { turmas, total } = await turmaRepository.findAll(
+        filtros,
+        page,
+        perPage
+      );
 
-        // Regra de negócio: Filtrar turmas com pelo menos um aluno
-        const turmasComAlunos = turmas.filter(turma => turma.usuario_has_turma.length > 1);
-        const totalFiltrado = turmasComAlunos.length;
+      // Regra de negócio: Filtrar turmas com pelo menos um aluno
+      const turmasComAlunos = turmas.filter(
+        (turma) => turma.usuario_has_turma.length > 1
+      );
+      const totalFiltrado = turmasComAlunos.length;
 
-        if (totalFiltrado === 0) {
-            throw new Error('Nenhuma turma com alunos encontrada');
-        }
+      if (totalFiltrado === 0) {
+        throw new Error("Nenhuma turma com alunos encontrada");
+      }
 
-        // Retornando turmas filtradas e ajustando a paginação
-        return {
-            turmas: turmasComAlunos,
-            total: totalFiltrado,
-            page,
-            perPage
-        };
+      // Retornando turmas filtradas e ajustando a paginação
+      return {
+        turmas: turmasComAlunos,
+        total: totalFiltrado,
+        page,
+        perPage,
+      };
     } catch (error) {
-        console.error('Erro ao listar turmas:', error.message);
-        throw new Error('Erro ao listar turmas com alunos');
+      console.error("Erro ao listar turmas:", error.message);
+      throw new Error("Erro ao listar turmas com alunos");
     }
-}
+  }
 
   async listarPorID(id) {
     if (isNaN(id)) {
-      throw new Error('ID deve ser um número inteiro)');
+      throw new Error("ID deve ser um número inteiro");
     }
     return turmaRepository.findById(id);
   }
@@ -39,10 +48,14 @@ class turmaService {
     const validatedData = turmaSchema.parse(data);
 
     const errors = [];
-    const emailExists = await turmaRepository.findByEmail(validatedData.email);
-    if (emailExists) {
-      errors.push(messages.validationGeneric.resourceAlreadyExists('Email').message);
+
+    if (errors.length > 0) {
+      throw new Error(errors.join('\n'));
     }
+    console.log(data);
+    
+    return await turmaRepository.create(validatedData);
   }
+
 }
 export default new turmaService();

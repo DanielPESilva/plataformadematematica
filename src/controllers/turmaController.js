@@ -2,6 +2,7 @@ import env from "dotenv";
 import turmaService from "../services/turmaService.js"
 import CommonResponse from '../utils/commonResponse.js';
 import messages from '../utils/messages.js';
+import { ZodError } from 'zod';
 
 env.config();
 
@@ -75,14 +76,8 @@ class TurmaController{
   static inserir = async (req, res) => {
     try {
       const turmaCriada = await turmaService.inserir(req.body);
-      let camposExcluidos = ['titulo', 'turma_id','turma_id'];
 
-      // Excluindo campos do retorno
-      camposExcluidos.forEach(campo => {
-        delete userCreated[campo];
-      });
-
-      return res.status(201).json(CommonResponse.created(userCreated, messages.validationGeneric.resourceCreated('turma')));
+      return res.status(201).json(CommonResponse.created(turmaCriada, messages.validationGeneric.resourceCreated('turma')));
     } catch (err) {
       if (err instanceof ZodError) {
         // Formatar os erros para exibir apenas `path` e `message`
