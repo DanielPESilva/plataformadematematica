@@ -52,9 +52,11 @@ class turmaRepository {
 
     async create(data) {
       // validaria constraints - regras de integridade
-      
-      return await prisma.turma.create({ data });
+
+      return await prisma.turma.create({ data }); 
     }
+    
+    
 
     async findByUser(usuario_id) {
       return await prisma.usuario.findFirst({ where: { usuario_id } });

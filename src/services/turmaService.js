@@ -47,12 +47,17 @@ class turmaService {
     // Validação com Zod
     const validatedData = turmaSchema.parse(data);
 
+    console.log(userExists);
     const errors = [];
+
+    const userExists = await turmaRepository.findByUser(validatedData.usuario_id);
+    if (userExists) {
+      errors.push(messages.validationGeneric.resourceAlreadyExists('Usuário').message);
+    }
 
     if (errors.length > 0) {
       throw new Error(errors.join('\n'));
     }
-    console.log(data);
     
     return await turmaRepository.create(validatedData);
   }

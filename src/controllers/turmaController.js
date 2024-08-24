@@ -77,6 +77,7 @@ class TurmaController{
     try {
       const turmaCriada = await turmaService.inserir(req.body);
 
+      
       return res.status(201).json(CommonResponse.created(turmaCriada, messages.validationGeneric.resourceCreated('turma')));
     } catch (err) {
       if (err instanceof ZodError) {
