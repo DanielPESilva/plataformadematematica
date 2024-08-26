@@ -20,6 +20,10 @@ class questaoService {
       return await questaoRepository.update(id, titulo, posicao, pdf, link_video);
     }
 
+    async inserir(data) {
+      return await userRepository.create(data);
+    }
+  
 }
 
 export default new questaoService();

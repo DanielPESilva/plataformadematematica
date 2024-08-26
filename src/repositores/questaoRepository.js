@@ -1,3 +1,4 @@
+import id from "faker-br/lib/locales/id_ID/index.js";
 import { prisma } from "../configs/prismaClient.js";
 
 class questaoRepository {
@@ -37,6 +38,20 @@ class questaoRepository {
         data: { posicao, titulo, pdf, link_video }
       });
     }
+    async create(data) {
+      return await prisma.questao.create({
+        data: {
+          titulo,
+          posicao,
+          pdf,
+          link_video
+        },
+      });
+    }
+  
+  
   }
   
+  
+
 export default new questaoRepository();
