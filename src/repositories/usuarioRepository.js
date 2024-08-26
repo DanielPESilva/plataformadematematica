@@ -1,4 +1,4 @@
-import {prisma} from "../configs/prismaClient.js";
+import prisma from "../configs/prismaClient.js";
 
 class usuarioRepository {
   async create(data) {
@@ -17,6 +17,24 @@ class usuarioRepository {
     const filtros = this.constructFilters();
     const user = await prisma.usuario.findUnique({
       where: { matricula },
+      select: filtros.select,
+    });
+    return user;
+  }
+
+  async findByEmail(email) {
+    const filtros = this.constructFilters();
+    const user = await prisma.usuario.findUnique({
+      where: { email },
+      select: filtros.select,
+    });
+    return user;
+  }
+
+  async findById(id) {
+    const filtros = this.constructFilters();
+    const user = await prisma.usuario.findUnique({
+      where: { id },
       select: filtros.select,
     });
     return user;
