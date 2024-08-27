@@ -1,4 +1,4 @@
-import turmaRepository from "../repositores/turmaRepository.js";
+import turmaRepository from "../repositories/turmaRepository.js";
 
 class turmaService {
   async listar(titulo, usuario_id, page = 1, perPage = 10) {
