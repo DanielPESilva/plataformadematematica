@@ -18,7 +18,8 @@
 - [] Adicionar a pasta do banco de dados no GitLab
 - [] Transformar as tabelas do banco em código;
 
-## Banco de dados Descrição
+## Comandos diversos
+- sudo kill -9 $(sudo lsof -t -i:3051)
 
 
 # Classes e métodos - POO

@@ -73,13 +73,15 @@ class TurmaController{
     }
   }
 
-  static inserir = async (req, res) => {
-    try {
-      const turmaCriada = await turmaService.inserir(req.body);
+  static inserirTurma = async (req, res) => {
+    try{
 
+        const turma = await turmaService.inserirTurma(req.body);
+    
+        return res.status(res,201, {data: turma,});  
       
-      return res.status(201).json(CommonResponse.created(turmaCriada, messages.validationGeneric.resourceCreated('turma')));
-    } catch (err) {
+
+    }catch(err){
       if (err instanceof ZodError) {
         // Formatar os erros para exibir apenas `path` e `message`
         const formattedErrors = err.errors.map(error => ({
@@ -91,6 +93,8 @@ class TurmaController{
       // console.error(err);
       return res.status(500).json(CommonResponse.unprocessableEntity(Error, err.message));
     }
+
 }
+
 }
 export default TurmaController;

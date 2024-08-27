@@ -4,6 +4,6 @@ import TurmaController from "../controllers/turmaController.js";
 const router = express.Router();
   router.get("/turma", TurmaController.listar)
   router.get("/turma/:id",TurmaController.listarPorID)
-  router.post("/turma", TurmaController.inserir)
+  router.post("/inserirTurma", TurmaController.inserirTurma)
  
   export default router;

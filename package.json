@@ -10,7 +10,8 @@
     "test:watch": "jest --watchAll",
     "test:coverage": "jest --coverage",
     "seed": "node src/seed/seed.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "kill3051":"sudo kill -9 $(sudo lsof -t -i:3051)"
   },
   "author": "",
   "license": "ISC",

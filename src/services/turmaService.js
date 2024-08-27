@@ -1,7 +1,6 @@
-import bcrypt from "bcryptjs";
 import turmaRepository from "../repositories/turmaRepository.js";
 import messages from "../utils/messages.js";
-import { turmaSchema, updateTurmaSchema } from "../schemas/turmaSchemas.js";
+import {turmaSchema} from "../schemas/turmaSchemas.js";
 
 class turmaService {
   async listar(titulo, usuario_id, page = 1, perPage = 10) {
@@ -43,24 +42,28 @@ class turmaService {
     return turmaRepository.findById(id);
   }
 
-  async inserir(data) {
-    // Validação com Zod
-    const validatedData = turmaSchema.parse(data);
+   async inserirTurma(turma){
 
-    console.log(userExists);
-    const errors = [];
-
-    const userExists = await turmaRepository.findByUser(validatedData.usuario_id);
-    if (userExists) {
-      errors.push(messages.validationGeneric.resourceAlreadyExists('Usuário').message);
-    }
-
-    if (errors.length > 0) {
-      throw new Error(errors.join('\n'));
-    }
+        
+    const {titulo,usuario_id} = turmaSchema.create.parse(turma);
+    //Vou ter que espeara alguem criar a rota de listar campus por id para
+    //concluir essa funcao pois vou precisar o listar campus por id
+    let body = {
+        data:{
+            titulo:titulo,
+            usuario_id:usuario_id,
+        }
+    };
+    console.log(body);
     
-    return await turmaRepository.create(validatedData);
-  }
+
+    const novaTurma = turmaRepository.create(body);
+
+
+    return novaTurma;
+
+}
+
 
 }
 export default new turmaService();

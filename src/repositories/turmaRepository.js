@@ -50,17 +50,10 @@ class turmaRepository {
       return turmas;
     }
 
-    async create(data) {
-      // validaria constraints - regras de integridade
-
-      return await prisma.turma.create({ data }); 
+    static async create(turma) {
+      return await prisma.turma.create(turma);
     }
-    
-    
-
-    async findByUser(usuario_id) {
-      return await prisma.usuario.findFirst({ where: { usuario_id } });
-    }
+  
 
 }
 export default new turmaRepository();
