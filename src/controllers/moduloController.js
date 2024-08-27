@@ -64,11 +64,11 @@ class ModuloController{
                     que_id: parseInt(req.params.id),
                 },
                 select:{
-                    id: true,
-                    tema: true,
-                    descricao: true,
-                    pdf: true,
-                    link_video: true,
+                    mod_id: true,
+                    mod_tema: true,
+                    mod_descricao: true,
+                    mod_pdf: true,
+                    mod_linkVideo: true,
                     modulo: {
                         select:{
                             turma: {
@@ -90,77 +90,34 @@ class ModuloController{
         }])
     }
     }
-    static inserir = async(req,res)=>{
-        try{
-            const{ tema, descricao} = req.body;
-            const tur_id = parseInt(req.body.tur_id);
-        } catch (error) {
 
-        }
-    }
-    static get = async (req, res) => {
-        try {
-            const modulos = await prisma.modulo.findMany({
-                select: {
-                    id: true,
-                    tema: true,
-                    descricao: true,
-                    pdf: true,
-                    link_video: true,
-                    turma: {
-                        select: {
-                            tur_id: true,
-                        }
-                    }
-                }
-            });
+  //POST
+  static inserir = async (req, res) => {
+    try {
+        const { mod_id, mod_tema, mod_descricao, mod_pdf, mod_linkVideo } = req.body
 
-            return res.status(200).json(modulos);
-        } catch (err) {
-            console.error(err);
-            return res.status(500).json([{
-                error: true, code: 500, message: "Erro interno do Servidor"
-            }]);
+      const moduloCreated = await prisma.usuarios.create({
+        data: {
+            mod_id,
+            mod_tema,
+            mod_descricao,
+            mod_pdf,
+            mod_linkVideo
         }
-    }
-    static put = async (req, res) => {
-        try {
-            const id = parseInt(req.params.id);
-            const { tema, descricao, pdf, link_video } = req.body;
+      })
 
-            const moduloAtualizada = await prisma.modulo.update({
-                where: { que_id: id },
-                data: {
-                    tema,
-                    descricao,
-                    pdf,
-                    link_video,
-                }
-            });
-            if (!moduloAtualizada) {
-                return res.status(400).json([{
-                    error: true,
-                    code: 400,
-                    massage: "Modulo não foi atualizada"}])
-            } else{
-                return res.status(200).json({
-                    error: false,
-                    code: 200,
-                    massage: "Modulo atualizada",
-                    data: moduloAtualizada
-                });
-            }
-        } catch (err) {
-            if (process.env.DEBUG === 'true'){
-                console.log(err);
-            };
-            return res.status(500).json([{
-                error: true,
-                code: 500,
-                message: "Erro interno do Servidor",
-                data: [] }])
-        }
-    }
+      return res.status(201).json({
+        error: false,
+        code: 201,
+        message: "Modulo criado.",
+        data: moduloCreated
+      })
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json([{ error: true, code: 500, mesasge: "Erro interno."}])
+      }
+  };    
+
     static deletar = async (req, res) => {
         try {
             const id = parseInt(req.params.id);
@@ -193,5 +150,40 @@ class ModuloController{
                 data: [] }])
         }
     }
+    // PUT
+  static atualizar = async (req, res) => {
+    try {
+      if (!req.params.id) {
+        return res.status(400).json([{ error: true, code: 400, message: "ID obrigatório."}])
+      }
+
+      const id = req.params.id
+      const { tema, descricao, pdf, link_video } = req.body
+
+      if (!tema|| !descricao || !pdf || !link_video && !id) {
+        return res.status(400).json([{error: true, code: 400, message: "Deve haver alguma alteração."}])
+      }
+
+      const moduloUpdate = await prisma.users.update({
+        where: {
+          mod_id: id
+        },
+        data: {
+            mod_id: true,
+            mod_tema: true,
+            mod_descricao: true,
+            mod_pdf: true,
+            mod_linkVideo: true
+        }
+      })
+
+      return res.status(201).json(moduloUpdate)
+
+    } catch (error) {
+      console.error(error)
+      return res.status(500).json([{ error: true, code: 500, message: "Erro interno."}])
+    }
+  }
 }
-module.exports = route;
+
+export default ModuloController;
