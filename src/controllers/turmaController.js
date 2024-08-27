@@ -3,6 +3,7 @@ import turmaService from "../services/turmaService.js"
 import CommonResponse from '../utils/commonResponse.js';
 import messages from '../utils/messages.js';
 import { ZodError } from 'zod';
+import { turmaSchema } from "../schemas/turmaSchemas.js";
 
 env.config();
 
@@ -73,28 +74,49 @@ class TurmaController{
     }
   }
 
-  static inserirTurma = async (req, res) => {
-    try{
+  static inserirTurma = async(req, res) => {
+    try {
+        const {titulo,usuario_id} = req.body;
 
-        const turma = await turmaService.inserirTurma(req.body);
-    
-        return res.status(res,201, {data: turma,});  
-      
+        const { error } = turmaSchema.validate({titulo,usuario_id });
 
-    }catch(err){
-      if (err instanceof ZodError) {
-        // Formatar os erros para exibir apenas `path` e `message`
-        const formattedErrors = err.errors.map(error => ({
-          path: error.path.join('.'), // Converte o path para uma string (ex: "email")
-          message: error.message // A mensagem de erro do Zod
-        }));
-        return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
-      }
-      // console.error(err);
-      return res.status(500).json(CommonResponse.unprocessableEntity(Error, err.message));
+        if (error) {
+            return res.status(400).json({ error: true, code: 400, message: error.details[0].message });
+        }
+
+        const siapeExistente = await docenteServices.findBySiape(n_siape);
+        if (siapeExistente) {
+            return res.status(400).json({ error: true, code: 400, message: 'Número SIAPE já existe' });
+        }
+
+        const emailExistente = await docenteServices.findByEmail(email_docente);
+        if (emailExistente) {
+            console.log('Email recebido:', email_docente);
+            return res.status(400).json({ error: true, code: 400, message: 'Email já existe' });
+        }
+
+        const senhaCrypt = bcrypt.hashSync(senha_docente, parseInt(process.env.SALT));
+
+        const docenteCreate = await docenteServices.inserir({
+            data: {
+                n_siape,
+                nome_docente,
+                email_docente,
+                senha_docente: senhaCrypt,
+                turma_docente,
+                curso_docente,
+                tipo_usuario
+
+            },
+        });
+        return res.status(201).json(docenteCreate);
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: true, message: 'Erro interno do servidor' });
     }
-
 }
+
 
 }
 export default TurmaController;

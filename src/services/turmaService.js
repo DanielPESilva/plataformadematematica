@@ -1,5 +1,4 @@
 import turmaRepository from "../repositories/turmaRepository.js";
-import messages from "../utils/messages.js";
 import {turmaSchema} from "../schemas/turmaSchemas.js";
 
 class turmaService {

@@ -1,18 +1,14 @@
 const usersSchemas = {
-    UsuarioFiltro: {
+    TurmaFiltro: {
         type: "object",
         properties: {
-            name: {
+            titulo: {
                 type: "string",
-                description: "Nome do usuário"
+                description: "Titulo da Turma"
             },
-            email: {
+            usuario_id: {
                 type: "string",
-                description: "Email do usuário"
-            },
-            grupo: {
-                type: "string",
-                description: "Nome de um grupo que o usuário faça parte"
+                description: "Id do usuário para que possa aparecer o nome do mesmo"
             },
         }
     },
