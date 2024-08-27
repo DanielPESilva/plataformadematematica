@@ -1,4 +1,4 @@
-import {prisma} from "../configs/prismaClient.js";
+import prisma from "../configs/prismaClient.js";
 
 class usuarioRepository {
   async create(data) {
@@ -22,6 +22,24 @@ class usuarioRepository {
     return user;
   }
 
+  async findByEmail(email) {
+    const filtros = this.constructFilters();
+    const user = await prisma.usuario.findUnique({
+      where: { email },
+      select: filtros.select,
+    });
+    return user;
+  }
+
+  async findById(id) {
+    const filtros = this.constructFilters();
+    const user = await prisma.usuario.findUnique({
+      where: { id },
+      select: filtros.select,
+    });
+    return user;
+  }
+
   async findAll(filtros, page, perPage) {
     const skip = (page -1) * perPage;
     const take = perPage;
@@ -32,7 +50,7 @@ class usuarioRepository {
             skip,
             take,
         }),
-        prisma.usuaeio.count({ where: filtros.where })
+        prisma.usuario.count({ where: filtros.where })
     ])
     return { users, total, page, perPage };
   }
