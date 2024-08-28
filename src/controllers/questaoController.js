@@ -2,8 +2,8 @@ import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js";
 import questaoService from "../services/questaoService.js";
 import CommonResponse from "../utils/commonResponse.js";
-import questaoRepository from "../repositores/questaoRepository.js";
-import {zod} from "zod"
+import {ZodError} from "zod"
+import questaoRepository from "../repositories/questaoRepository.js";
 
 env.config();
 
@@ -78,40 +78,26 @@ class questaoController {
 
   static inserir = async (req, res) => {
     try {
-      console.log(req.body)
-      
-      const { data } = req.body;
+        const questaoCriada = await questaoService.inserir(req.body);
 
-      if (!data || Object.keys(data).length === 0) {
-        return res.status(400).json(CommonResponse.notFound("Nenhum campo fornecido para criação"));
-      }
+        let camposExcluidos = ['modulo']; // Adicione outros campos se necessário
 
-      const { titulo, posicao, pdf, link_video } = data;
+        camposExcluidos.forEach(campo => {
+            delete questaoCriada[campo];
+        });
 
-      if (!titulo || !posicao || !pdf || !link_video) {
-        return res.status(400).json(CommonResponse.notFound("Todos os campos obrigatórios devem ser fornecidos"));
-      }
-
-      const novaQuestao = await questaoRepository.create({ titulo, posicao, pdf, link_video });
-
-      let camposExcluidos = [];
-
-      camposExcluidos.forEach(campo => {
-        delete novaQuestao[campo];
-      });
-
-      return res.status(201).json(CommonResponse.created(novaQuestao, "Questão criada com sucesso"));
+        return res.status(201).json(CommonResponse.created(questaoCriada, "Questão criada com sucesso"));
     } catch (err) {
-      if (err instanceof ZodError) {
-        const formattedErrors = err.errors.map(error => ({
-          path: error.path.join('.'),
-          message: error.message
-        }));
-        return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
-      }
-      return res.status(500).json(CommonResponse.serverError(err.message));
+        if (err instanceof ZodError) {
+            const formattedErrors = err.errors.map(error => ({
+                path: error.path.join('.'),
+                message: error.message
+            }));
+            return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
+        }
+        return res.status(500).json(CommonResponse.serverError(err.message));
     }
-  };
+};
   
   
   
