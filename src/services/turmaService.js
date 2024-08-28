@@ -1,41 +1,45 @@
-import turmaRepository from "../repositores/turmaRepository.js";
+import TurmaRepository from "../repositories/turmaRepository.js"
+import turmaSchema from "../schemas/turmaSchema.js";
 
-class turmaService {
-  async listar(titulo, usuario_id, page = 1, perPage = 10) {
-    try {
-        const filtros = turmaRepository.constructFilters(usuario_id, titulo);
-        const { turmas, total } = await turmaRepository.findAll(filtros, page, perPage);
+class TurmaService{
 
-        // Regra de negócio: Filtrar turmas com pelo menos um aluno
+    async listar(parametros){
+
+        const schema = new turmaSchema().listarSchema()
+        parametros = schema.parse(parametros)
+
+        const filtro = TurmaRepository.createFilter(parametros)
+        const turmas =  await TurmaRepository.findAll(filtro)
+
+        //Novo presente aqui: 
         const turmasComAlunos = turmas.filter(turma => turma.usuario_has_turma.length > 1);
-        const totalFiltrado = turmasComAlunos.length;
 
-        if (totalFiltrado === 0) {
+        if (totalFiltrado.length !==0) {
             throw new Error('Nenhuma turma com alunos encontrada');
         }
-
-        // Retornando turmas filtradas e ajustando a paginação
-        return {
-            turmas: turmasComAlunos,
-            total: totalFiltrado,
-            page,
-            perPage
-        };
-    } catch (error) {
-        console.error('Erro ao listar turmas:', error.message);
-        throw new Error('Erro ao listar turmas com alunos');
+        
+        //executar o if após verificar o repositório
+        if(turmas.length == 0){
+            throw new Error("Nem uma turma encontrada.");
+        }
+        return turmas
     }
-}
-
-  async listarPorID(id) {
-    if (isNaN(id)) {
-      throw new Error('ID deve ser um número inteiro)');
+/**
+async listarPorId(parametros){
+    const schema = new turmaSchema().listarPorIdSchema()
+    parametros = schema.parse(parametros)
+    
+    const filtro = TurmaRepository.createFilter(parametros)
+    const turma = await TurmaRepository.findById(filtro)
+    
+    if(!turma){
+        throw new Error("Nem um registro encontrado.");
     }
-    return turmaRepository.findById(id);
-  }
-
-  async create(data) {
-    return await prisma.system_users.create({ data });
-  }
+    return turma
 }
-export default new turmaService();
+}
+*/
+
+
+}
+export default new TurmaService();

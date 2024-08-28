@@ -2,7 +2,7 @@ import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js";
 import questaoService from "../services/questaoService.js";
 import CommonResponse from "../utils/commonResponse.js";
-import questaoRepository from "../repositores/questaoRepository.js";
+import questaoRepository from "../repositories/questaoRepository.js";
 
 env.config();
 
