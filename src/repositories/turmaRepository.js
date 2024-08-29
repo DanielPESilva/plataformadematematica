@@ -59,7 +59,32 @@ class turmaRepository {
       async findByTitulo(titulo) {
         return await prisma.turma.findFirst({ where: { titulo } });
       }
-    
+
+     async turmaExist(titulo){
+        return await prisma.turma.findFirst({
+            where:{
+                titulo: titulo
+            },
+            select:{
+                titulo:true
+            }
+        })
+      }
+
+      async userExist(usuario_id){
+        return await prisma.usuario_has_turma.findFirst({
+            where:{
+                usuario_id: usuario_id
+            },
+            select:{
+              usuario_has_turma:{
+                usuario_id:true
+              },
+            }
+        })
+    }
+
+
 
 }
 export default new turmaRepository();

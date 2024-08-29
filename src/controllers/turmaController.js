@@ -1,7 +1,7 @@
 import env from "dotenv";
 import turmaService from "../services/turmaService.js"
 import CommonResponse from '../utils/commonResponse.js';
-import messages from '../utils/messages.js';
+import {sendError,sendResponse} from '../utils/messages.js';
 import { z, ZodError } from 'zod';
 
 env.config();
@@ -72,29 +72,29 @@ class TurmaController{
     }
   }
 
-  static inserir = async (req, res) => {
-    try{
+  static createTurma = async (req, res) => {
+    try {
+        const parametros = {
+          titulo: req.body.titulo,
+          usuario_id: parseInt(req.body.usuario_id),
+        };
+        const turmaCreate = await turmaService.create(parametros)
+        return sendResponse(res,201,{data: turmaCreate})
 
-        const turmaCreated = await turmaService.inserir(req.body);
-    
-        //voltar aqui
-        res.status(201).json({data: turmaCreated});
-      
-console.log(data)
     }catch(err){
-      if (err instanceof ZodError) {
-        // Formatar os erros para exibir apenas `path` e `message`
-        const formattedErrors = err.errors.map(error => ({
-          path: error.path.join('.'), // Converte o path para uma string (ex: "email")
-          message: error.message // A mensagem de erro do Zod
-        }));
-        return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
-      }
-      // console.error(err);
-      return res.status(500).json(CommonResponse.serverError(err.message));
+        if (err.message === "Turma informada não existe.") {
+            return sendError(res, 404, ["Turma informada não existe."])
 
-    }
+        }else if (err instanceof z.ZodError) {
+            const errorMessages = err.issues.map((issue) => issue.message);
+            return sendError(res, 400, errorMessages)
+
+        }else{
+            return sendError(res, 500, ["OCORREU UM ERRO INTERNO"])
+        }
+    } 
 }
+
 
 
 }

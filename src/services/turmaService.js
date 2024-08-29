@@ -1,12 +1,11 @@
-import turmaRepository from "../repositories/turmaRepository.js";
+import TurmaRepository from "../repositories/turmaRepository.js";
 import turmaSchema from "../schemas/turmaSchemas.js";
-import messages from "../utils/messages.js";
 
 class turmaService {
   async listar(titulo, usuario_id, page = 1, perPage = 10) {
     try {
-      const filtros = turmaRepository.constructFilters(usuario_id, titulo);
-      const { turmas, total } = await turmaRepository.findAll(
+      const filtros = TurmaRepository.constructFilters(usuario_id, titulo);
+      const { turmas, total } = await TurmaRepository.findAll(
         filtros,
         page,
         perPage
@@ -39,25 +38,36 @@ class turmaService {
     if (isNaN(id)) {
       throw new Error("ID deve ser um número inteiro");
     }
-    return turmaRepository.findById(id);
+    return TurmaRepository.findById(id);
   }
 
-   async inserir(data) {
-    // Validação com Zod
-    const validatedData = turmaSchema.parse(data);
+  async create(parametros){
 
-    console.log(validatedData);
+    console.log(parametros);
+    const schema = new turmaSchema().createTurmasSchema()
+    parametros = schema.parse(parametros)
     
-    const tituloExists = await turmaRepository.findByTitulo(validatedData.titulo);
-    if (tituloExists) {
-      errors.push(messages.validationGeneric.resourceAlreadyExists('Titulo').message);
-    }
-    const errors = [];
+    const turmaExists = await TurmaRepository.turmaExist(parametros.titulo)
+    const usuarioExists = await TurmaRepository.userExist(parametros.usuario_id)
 
-    if (errors.length > 0) {
-      throw new Error(errors.join('\n'));
+    if(turmaExists && usuarioExists){
+        throw new Error("A turma já existe.");
     }
+    
+    const { titulo, usuario_id, ...camposInsert } = parametros;
+    const insertTurma = {
+        turma: { connect: { titulo: titulo } },
+        usuario_has_turma: { connect: { usuario_id: usuario_id } },
+        ...camposInsert
+    };
+    
+    const turma =  await TurmaRepository.create({
+        data: insertTurma, 
+        
+        select: TurmaRepository.constructFilters({}).select
+      })
 
+    return turma
 }
 
 
