@@ -78,29 +78,34 @@ class questaoController {
 
   static inserir = async (req, res) => {
     try {
-        const questaoCriada = await questaoService.inserir(req.body);
-
-        let camposExcluidos = ['modulo']; // Adicione outros campos se necessário
-
+        // Inserir nova questão usando o service
+        const questaoCreated = await questaoService.inserir(req.body);
+        
+        // Campos que você pode querer excluir do retorno
+        const camposExcluidos = ['pdf', 'link_video']; // Ajuste conforme necessário
+        
+        // Excluindo campos do retorno
         camposExcluidos.forEach(campo => {
-            delete questaoCriada[campo];
+            delete questaoCreated[campo];
         });
-
-        return res.status(201).json(CommonResponse.created(questaoCriada, "Questão criada com sucesso"));
+        
+        // Retornar a resposta formatada
+        return res.status(201).json(CommonResponse.created(questaoCreated, messages.validationGeneric.resourceCreated('Questão')));
     } catch (err) {
+      console.log(err)
         if (err instanceof ZodError) {
+            // Formatar os erros para exibir apenas `path` e `message`
             const formattedErrors = err.errors.map(error => ({
-                path: error.path.join('.'),
-                message: error.message
+                path: error.path.join('.'), // Converte o path para uma string (ex: "titulo")
+                message: error.message // A mensagem de erro do Zod
             }));
             return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
         }
-        return res.status(500).json(CommonResponse.serverError(err.message));
+        // Caso não seja erro de validação
+        return res.status(500).json(CommonResponse.unprocessableEntity(Error, err.message));
     }
-};
-  
-  
-  
-  
+}
+
+    
 }
 export default questaoController;

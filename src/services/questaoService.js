@@ -1,4 +1,5 @@
 import questaoRepository from "../repositories/questaoRepository.js";
+import messages from "../utils/messages.js";
 
 class questaoService {
     async listar(filtro) {
@@ -21,9 +22,26 @@ class questaoService {
     }
 
     async inserir(data) {
-      return await questaoRepository.create(data);
+      const ValidarData = questaoSchama.parse(data);
+      const errors = [];
+    
+      const tituloExists = await questaoRepository.findByTitulo(ValidarData.titulo);
+      if (tituloExists) {
+        errors.push(messages.validationGeneric.resourceAlreadyExists('Título').message);
+      }
+    
+      const posicaoExists = await questaoRepository.findByPosicao(ValidarData.posicao); // Supondo que haja um método findByPosicao
+      if (posicaoExists) {
+        errors.push(messages.validationGeneric.resourceAlreadyExists('Posição').message);
+      }
+    
+      if (errors.length > 0) {
+        throw new Error(errors.join('\n'));
+      }
+    
+      return await questaoRepository.create(ValidarData);
     }
-  
-}
+  }    
+
 
 export default new questaoService();
