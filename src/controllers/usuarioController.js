@@ -12,39 +12,39 @@ class usuarioController {
 
       let filtros = {
         select: {
-          usu_id: true,
-          usu_nome: true,
-          usu_tel: true,
-          usu_email: true,
-          usu_matricula: true,
-          usu_cpf: true,
-          usu_senha: false,
+          id: true,
+          nome: true,
+          tel: true,
+          email: true,
+          matricula: true,
+          cpf: true,
+          senha: false,
         },
       };
 
       // filtra se houver valor
       if (nome) {
-        filtros.where.usu_nome = {
+        filtros.where.nome = {
           contains: nome,
         };
       }
       if (tel) {
-        filtros.where.usu_tel = {
+        filtros.where.tel = {
           contains: tel,
         };
       }
       if (email) {
-        filtros.where.usu_email = {
+        filtros.where.email = {
           contains: email,
         };
       }
       if (matricula) {
-        filtros.where.usu_matricula = {
+        filtros.where.matricula = {
           contains: matricula,
         };
       }
       if (cpf) {
-        filtros.where.usu_cpf = {
+        filtros.where.cpf = {
           contains: cpf,
         };
       }
@@ -87,16 +87,16 @@ class usuarioController {
     try {
       const useExists = await prisma.usuarios.findFirst({
         where: {
-          usu_id: parseInt(req.params.usu_id),
+          id: parseInt(req.params.id),
         },
         select: {
-          usu_id: true,
-          usu_nome: true,
-          usu_tel: true,
-          usu_email: true,
-          usu_matricula: true,
-          usu_cpf: true,
-          usu_senha: false,
+          id: true,
+          nome: true,
+          tel: true,
+          email: true,
+          matricula: true,
+          cpf: true,
+          senha: false,
         },
       });
       if (useExists) {
@@ -113,23 +113,23 @@ class usuarioController {
   //POST
   static inserir = async (req, res) => {
     try {
-      const { usu_nome, usu_tel, usu_email, usu_matricula, usu_cpf, usu_senha } = req.body;
+      const { nome, tel, email, matricula, cpf, senha } = req.body;
 
       const senhaCrypt = bcrypt.hashSync(senha, parseInt(process.env.SALT));
 
       const userCreated = await prisma.usuarios.create({
         data: {
-          usu_id,
-          usu_nome,
-          usu_tel,
-          usu_email,
-          usu_matricula,
-          usu_cpf,
-          usu_senha
+          id,
+          nome,
+          tel,
+          email,
+          matricula,
+          cpf,
+          senha
         }
       })
 
-      delete userCreated.usu_senha;
+      delete userCreated.senha;
       return res.status(201).json({
         error: false,
         code: 201,
@@ -145,14 +145,14 @@ class usuarioController {
   // PUT
   static atualizar = async (req, res) => {
     try {
-      if (!req.params.usu_id) {
+      if (!req.params.id) {
         return res.status(400).json([{ error: true, code: 400, message: "ID obrigatório."}])
       }
 
-      const id = req.params.usu_id
-      const { usu_nome, usu_tel, usu_email, usu_matricula, usu_cpf, usu_senha } = req.body
+      const id = req.params.id
+      const { nome, tel, email, matricula, cpf, senha } = req.body
 
-      if (!usu_nome || !usu_tel || !usu_email || !usu_matricula || !usu_cpf || !usu_senha && !id) {
+      if (!nome || !tel || !email || !matricula || !cpf || !senha && !id) {
         return res.status(400).json([{error: true, code: 400, message: "Deve haver alguma alteração."}])
       }
 
@@ -194,12 +194,12 @@ class usuarioController {
           id: id
         },
         data: {
-          usu_nome,
-          usu_tel,
-          usu_email,
-          usu_matricula,
-          usu_cpf,
-          usu_senha
+          nome,
+          tel,
+          email,
+          matricula,
+          cpf,
+          senha
         }
       })
 
@@ -216,7 +216,7 @@ class usuarioController {
     try {
       const errors = []
 
-      if(!req.params.usu_id) {
+      if(!req.params.id) {
         return res.status(400).json([{error: true, code: 400, message: "ID obrigatorio."}])
       }
 
@@ -234,7 +234,7 @@ class usuarioController {
 
       const userExistsRotas = await prisma.usuariosRotas.findMany({
         where: {
-          usu_id: id
+          id: id
         }
       })
 
