@@ -23,7 +23,6 @@ class TurmaController{
     try {
       const { titulo, usuario_id, page = 1, perPage = 10 } = req.query;
       const { turmas, total } = await turmaService.listar(titulo, usuario_id, parseInt(page), parseInt(perPage));
-      console.log(turmas);
       
       // continua deopis que voltar do service
       if (turmas.length === 0) {
@@ -73,12 +72,13 @@ class TurmaController{
     }
   }
 
-  static inserirTurma = async (req, res) => {
+  static inserir = async (req, res) => {
     try{
 
-        const turma = await turmaService.inserirTurma(req.body);
+        const turma = await turmaService.inserir(req.body);
     
-        return res.status(res,201, {data: turma,});  
+        //voltar aqui
+        return res.status(res,201, {data: turma});  
       
 
     }catch(err){

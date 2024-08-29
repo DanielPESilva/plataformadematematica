@@ -42,25 +42,19 @@ class turmaService {
     return turmaRepository.findById(id);
   }
 
-   async inserirTurma(turma){
+   async inserir(data) {
+    // Validação com Zod
+    const validatedData = turmaSchema.parse(data);
 
-        
-    const {titulo,usuario_id} = turmaSchema.create.parse(turma);
-    //Vou ter que espeara alguem criar a rota de listar campus por id para
-    //concluir essa funcao pois vou precisar o listar campus por id
-    let body = {
-        data:{
-            titulo:titulo,
-            usuario_id:usuario_id,
-        }
-    };
-    console.log(body);
-    
+    const errors = [];
+    const tituloExists = await turmaRepository.findByTitulo(validatedData.titulo);
+    if (tituloExists) {
+      errors.push(messages.validationGeneric.resourceAlreadyExists('Email').message);
+    }
 
-    const novaTurma = turmaRepository.create(body);
-
-
-    return novaTurma;
+    if (errors.length > 0) {
+      throw new Error(errors.join('\n'));
+    }
 
 }
 
