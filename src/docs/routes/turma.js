@@ -1,44 +1,36 @@
-import usersSchemas from "../schemas/usersSchema.js";
+import turmaSchema from "../schemas/turmaSchema.js";
 import authSchemas from "../schemas/authSchema.js";
 import commonResponses from "../schemas/commonResponses.js";
 
-const usersRoutes = {
-    "/users": {
+const turmaRoutes = {
+    "/turma": {
         get: {
-            tags: ["Usuários"],
-            summary: "Lista todos os usuários",
+            tags: ["Turmas"],
+            summary: "Lista todas as turmas",
             security: [{ bearerAuth: [] }],
             parameters: [
                 {
-                    name: "nome",
+                    name: "Titulo",
                     in: "query",
                     required: false,
                     schema: {
-                        $ref: "#/components/schemas/UsuarioFiltro/properties/name"
+                        $ref: "#/components/schemas/TurmaFiltro/properties/titulo"
                     },
-                    description: "Nome do usuário"
+                    description: "Nome da turma"
                 },
+
                 {
-                    name: "email",
+                    name: "Turma_id",
                     in: "query",
                     required: false,
                     schema: {
-                        $ref: "#/components/schemas/UsuarioFiltro/properties/email"
+                        $ref: "#/components/schemas/TurmaFiltro/properties/Turma_id"
                     },
-                    description: "Email do usuário"
-                },
-                {
-                    name: "grupo",
-                    in: "query",
-                    required: false,
-                    schema: {
-                        $ref: "#/components/schemas/UsuarioFiltro/properties/grupo"
-                    },
-                    description: "Nome completo de um grupo que o usuário faça parte"
+                    description: "ID o qual irá chamar o usuário pertencente a ele"
                 }
             ],
             responses: {
-                200: commonResponses[200]("#/components/schemas/UsuarioListagem"),
+                200: commonResponses[200]("#/components/schemas/TurmaListagem"),
                 400: commonResponses[400](),
                 401: commonResponses[401](),
                 500: commonResponses[500]()
@@ -46,25 +38,26 @@ const usersRoutes = {
         },
         post: {
             tags: ["Usuários"],
-            summary: "Cria um novo usuário",
+            summary: "Cria uma nova turma",
             security: [{ bearerAuth: [] }],
             requestBody: {
                 content: {
                     "application/json": {
                         schema: {
-                            $ref: "#/components/schemas/UsuarioPost"
+                            $ref: "#/components/schemas/TurmaPost"
                         }
                     }
                 }
             },
             responses: {
-                201: commonResponses[201]("#/components/schemas/UsuarioDetalhes"),
+                201: commonResponses[201]("#/components/schemas/TurmaDetalhes"),
                 400: commonResponses[400](),
                 401: commonResponses[401](),
                 500: commonResponses[500]()
             }
         }
     },
+    
 };
 
 export default usersRoutes;

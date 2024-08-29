@@ -50,7 +50,7 @@ class usuarioRepository {
             skip,
             take,
         }),
-        prisma.usuaeio.count({ where: filtros.where })
+        prisma.usuario.count({ where: filtros.where })
     ])
     return { users, total, page, perPage };
   }

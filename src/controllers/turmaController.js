@@ -3,6 +3,7 @@ import turmaService from "../services/turmaService.js"
 import CommonResponse from '../utils/commonResponse.js';
 import messages from '../utils/messages.js';
 import { ZodError } from 'zod';
+import { turmaSchema } from "../schemas/turmaSchemas.js";
 
 env.config();
 
@@ -10,7 +11,7 @@ env.config();
 class TurmaController{
 
   /**
-   * @listar Listará todas as turmas, caso não exista turma dará erro
+   * @listar Listará todas as turmas, caso não exista turmaCreated dará erro
    * @page O primeiro é quantidade de tabelas que aparecerão e o segundo é a quantidade de colunas que cada tabela terá...
    * @error200 Deu certo :)
    * @error400 sintaxe de requisição mal formada ou enquadramento de mensagem de requisição inválida
@@ -47,7 +48,7 @@ class TurmaController{
   }
 
   /**
-   * @listarPorId Listará as turma cujo o id foi especificado
+   * @listarPorId Listará as turmaCreated cujo o id foi especificado
    * @page O primeiro é quantidade de tabelas que aparecerão e o segundo é a quantidade de colunas que cada tabela terá...
    * @error200 Deu certo :)
    * @error400 sintaxe de requisição mal formada ou enquadramento de mensagem de requisição inválida
@@ -75,10 +76,10 @@ class TurmaController{
   static inserir = async (req, res) => {
     try{
 
-        const turma = await turmaService.inserir(req.body);
+        const turmaCreated = await turmaService.inserir(req.body);
     
         //voltar aqui
-        return res.status(res,201, {data: turma});  
+        return res.status(res,201, {data: turmaCreated});  
       
 
     }catch(err){
@@ -93,8 +94,8 @@ class TurmaController{
       // console.error(err);
       return res.status(500).json(CommonResponse.unprocessableEntity(Error, err.message));
     }
-
 }
+
 
 }
 export default TurmaController;

@@ -19,7 +19,7 @@
 - [] Transformar as tabelas do banco em código;
 
 ## Comandos diversos
-- sudo kill -9 $(sudo lsof -t -i:3051)
+- sudo kill -9 $(sudo lsof -t -i:3051) ---> Derruba uma porta
 
 
 # Classes e métodos - POO
