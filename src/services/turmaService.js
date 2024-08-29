@@ -1,5 +1,6 @@
 import turmaRepository from "../repositories/turmaRepository.js";
-import {turmaSchema} from "../schemas/turmaSchemas.js";
+import turmaSchema from "../schemas/turmaSchemas.js";
+import messages from "../utils/messages.js";
 
 class turmaService {
   async listar(titulo, usuario_id, page = 1, perPage = 10) {
@@ -45,11 +46,13 @@ class turmaService {
     // Validação com Zod
     const validatedData = turmaSchema.parse(data);
 
-    const errors = [];
+    console.log(validatedData);
+    
     const tituloExists = await turmaRepository.findByTitulo(validatedData.titulo);
     if (tituloExists) {
-      errors.push(messages.validationGeneric.resourceAlreadyExists('Email').message);
+      errors.push(messages.validationGeneric.resourceAlreadyExists('Titulo').message);
     }
+    const errors = [];
 
     if (errors.length > 0) {
       throw new Error(errors.join('\n'));

@@ -2,8 +2,7 @@ import env from "dotenv";
 import turmaService from "../services/turmaService.js"
 import CommonResponse from '../utils/commonResponse.js';
 import messages from '../utils/messages.js';
-import { ZodError } from 'zod';
-import { turmaSchema } from "../schemas/turmaSchemas.js";
+import { z, ZodError } from 'zod';
 
 env.config();
 
@@ -79,9 +78,9 @@ class TurmaController{
         const turmaCreated = await turmaService.inserir(req.body);
     
         //voltar aqui
-        return res.status(res,201, {data: turmaCreated});  
+        res.status(201).json({data: turmaCreated});
       
-
+console.log(data)
     }catch(err){
       if (err instanceof ZodError) {
         // Formatar os erros para exibir apenas `path` e `message`
@@ -92,7 +91,8 @@ class TurmaController{
         return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
       }
       // console.error(err);
-      return res.status(500).json(CommonResponse.unprocessableEntity(Error, err.message));
+      return res.status(500).json(CommonResponse.serverError(err.message));
+
     }
 }
 

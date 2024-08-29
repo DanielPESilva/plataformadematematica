@@ -20,7 +20,7 @@ class turmaRepository {
     };
 
     if (titulo) filtros.where.titulo = { contains: titulo };
-    if (usuario_id) filtros.where.usuario_has_turma = { some: { usuario_id: { name: usuario_id } } };    
+    if (usuario_id) filtros.where.usuario_has_turma = { some: { usuario_id: { usuario_id: usuario_id } } };    
 
     return filtros
 }
@@ -53,7 +53,7 @@ class turmaRepository {
     async create(data) {
         // validaria constraints - regras de integridade
         
-        return await prisma.turma.create({ data });
+        return await prisma.turma.create(data);
       }
     
       async findByTitulo(titulo) {

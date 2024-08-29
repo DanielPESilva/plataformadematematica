@@ -51,7 +51,7 @@ const getSwaggerOptions = () => {
                 },
                 schemas: {
                     ...authSchemas,
-                    ...usersSchemas
+                    ...turmaSchema
                 }
             },
             security: [{
