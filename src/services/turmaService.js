@@ -1,5 +1,5 @@
 import TurmaRepository from "../repositories/turmaRepository.js";
-import turmaSchema from "../schemas/turmaSchemas.js";
+import TurmaSchema from "../schemas/turmaSchemas.js";
 
 class turmaService {
   async listar(titulo, usuario_id, page = 1, perPage = 10) {
@@ -41,35 +41,45 @@ class turmaService {
     return TurmaRepository.findById(id);
   }
 
-  async create(parametros){
+  async create(dados) {
+    const {id,titulo} = TurmaSchema.createTurmasSchema.parse(dados);
 
-    console.log(parametros);
-    const schema = new turmaSchema().createTurmasSchema()
-    parametros = schema.parse(parametros)
-    
-    const turmaExists = await TurmaRepository.turmaExist(parametros.titulo)
-    const usuarioExists = await TurmaRepository.userExist(parametros.usuario_id)
+    console.log(titulo + "pós validação");
 
-    if(turmaExists && usuarioExists){
-        throw new Error("A turma já existe.");
-    }
-    
-    const { titulo, usuario_id, ...camposInsert } = parametros;
-    const insertTurma = {
-        turma: { connect: { titulo: titulo } },
-        usuario_has_turma: { connect: { usuario_id: usuario_id } },
-        ...camposInsert
-    };
-    
-    const turma =  await TurmaRepository.create({
-        data: insertTurma, 
+    // const turmaExists = await TurmaRepository.turmaExist(parametros.titulo)
+    // console.log(turmaExists + "Turma")
+
+    // const usuarioExists = await TurmaRepository.userExist(parametros.usuario_id)
+    // console.log(usuarioExists + "usuario")
+
+    // if(turmaExists && usuarioExists){
+    //     throw new Error("A turma já existe.");
+    // }
+
+    // const { titulo, usuario_id, ...camposInsert } = parametros;
+    // const insertTurma = {
+    //     turma: { connect: { titulo: titulo } },
+    //     usuario_has_turma: { connect: { usuario_id: usuario_id } },
+    //     ...camposInsert
+    // };
+    console.log("após validações");
+
+    let data ={data:{id:id,titulo:titulo,}}
+
+  // Pass 'user' object into query
+
+
+    const turma = await TurmaRepository.create(data);
+    if(!turma){
+      throw{
+        code: 404,
+        mensage: `Não foi possivel criar turma com o nome: ${titulo}`
         
-        select: TurmaRepository.constructFilters({}).select
-      })
+      }
+    }
+    console.log(turma)
 
-    return turma
-}
-
-
+    return turma;
+  }
 }
 export default new turmaService();

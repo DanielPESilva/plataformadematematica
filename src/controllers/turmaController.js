@@ -75,13 +75,17 @@ class TurmaController{
   static createTurma = async (req, res) => {
     try {
         const parametros = {
+          id:req.body.id,
           titulo: req.body.titulo,
-          usuario_id: parseInt(req.body.usuario_id),
+          //usuario_id: parseInt(req.body.usuario_id),
         };
         const turmaCreate = await turmaService.create(parametros)
+        
+        console.log("resposta")
         return sendResponse(res,201,{data: turmaCreate})
 
     }catch(err){
+      console.log(err)
         if (err.message === "Turma informada não existe.") {
             return sendError(res, 404, ["Turma informada não existe."])
 
