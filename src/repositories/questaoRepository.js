@@ -38,32 +38,8 @@ class questaoRepository {
       });
     }
     async create(data) {
-      // Validações adicionais
-      if (!data.titulo || !data.pdf || !data.link_video) {
-        throw new Error('Título, PDF e link de vídeo são obrigatórios.');
-      }
-    
-      // Verificar se o título ou a posição já existem
-      const tituloExists = await this.findByTitulo(data.titulo);
-      if (tituloExists) {
-        throw new Error('Já existe uma questão com este título.');
-      }
-    
-      const posicaoExists = await this.findByPosicao(data.posicao);
-      if (posicaoExists) {
-        throw new Error('Já existe uma questão com esta posição.');
-      }
-    
-      // Criar o registro no banco de dados
-      return await prisma.questao.create({
-        data: {
-          posicao: data.posicao,
-          titulo: data.titulo,
-          pdf: data.pdf,
-          link_video: data.link_video
-        }
-      });  
-  }
+      return await prisma.questao.create({data})
+    }
 }
   
 

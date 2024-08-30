@@ -2,7 +2,6 @@ import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js";
 import questaoService from "../services/questaoService.js";
 import CommonResponse from "../utils/commonResponse.js";
-import {ZodError} from "zod"
 import questaoRepository from "../repositories/questaoRepository.js";
 
 env.config();
@@ -76,35 +75,39 @@ class questaoController {
     }
   }
 
-  static inserir = async (req, res) => {
+  static async inserir(req, res) {
+    console.log('Chamando questaoService.inserir...');
     try {
-        // Inserir nova questão usando o service
-        const questaoCreated = await questaoService.inserir(req.body);
+        const {  posicao, titulo, pdf, link_video } = req.body;
+        const data = {
+            posicao: posicao,
+            titulo: titulo,
+            pdf: pdf,
+            link_video: link_video
+        };
+
+        console.log('questaoService:', questaoService);
         
-        // Campos que você pode querer excluir do retorno
-        const camposExcluidos = ['pdf', 'link_video']; // Ajuste conforme necessário
-        
-        // Excluindo campos do retorno
-        camposExcluidos.forEach(campo => {
-            delete questaoCreated[campo];
+        // Chamada ao serviço para inserir os dados no banco
+        const response = await questaoService.inserir(data);
+
+        //Volta do service depois que fizer as regras de negócios
+        return res.status(201).json({
+            data: response,
+            error: false,
+            code: 201,
+            message: 'Questões inseridos com sucesso.',
         });
         
-        // Retornar a resposta formatada
-        return res.status(201).json(CommonResponse.created(questaoCreated, messages.validationGeneric.resourceCreated('Questão')));
-    } catch (err) {
-      console.log(err)
-        if (err instanceof ZodError) {
-            // Formatar os erros para exibir apenas `path` e `message`
-            const formattedErrors = err.errors.map(error => ({
-                path: error.path.join('.'), // Converte o path para uma string (ex: "titulo")
-                message: error.message // A mensagem de erro do Zod
-            }));
-            return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
-        }
-        // Caso não seja erro de validação
-        return res.status(500).json(CommonResponse.unprocessableEntity(Error, err.message));
+        
+    } catch (error) {
+        return res.status(error.code || 500).json({
+            error: true,
+            message: error.message || 'Erro interno do servidor.',
+        });
     }
 }
+
 
     
 }

@@ -1,5 +1,7 @@
 import questaoRepository from "../repositories/questaoRepository.js";
 import messages from "../utils/messages.js";
+import { z } from 'zod'
+import { prisma } from "../configs/prismaClient.js";
 
 class questaoService {
     async listar(filtro) {
@@ -22,26 +24,49 @@ class questaoService {
     }
 
     async inserir(data) {
-      const ValidarData = questaoSchama.parse(data);
-      const errors = [];
-    
-      const tituloExists = await questaoRepository.findByTitulo(ValidarData.titulo);
-      if (tituloExists) {
-        errors.push(messages.validationGeneric.resourceAlreadyExists('Título').message);
+      try {
+          const questaoSchema = z.object({
+              id: z.number().optional(),  // Não é necessário para inserção, mas pode ser incluído se necessário
+              posicao: z.string().nullable().optional(),
+              titulo: z.string().min(1, "Título é obrigatório."),
+              pdf: z.string().nullable().optional(),
+              link_video: z.string().nullable().optional()
+          });
+  
+          // Validação dos dados com o schema
+          const questaoValidated = questaoSchema.parse(data);
+  
+          // Inserção dos dados no repositório
+          const response = await questaoRepository.create(questaoValidated);
+  
+          if (!response) throw {
+              error: true,
+              code: 400,
+              message: "Não foi possível inserir as Questões no banco de dados.",
+          };
+  
+          return response;
+      } catch (error) {
+          if (error instanceof z.ZodError) {
+              const errorMessages = error.issues.map((issue) => ({
+                  path: issue.path[0],
+                  message: issue.message,
+              }));
+              throw {
+                  error: true,
+                  code: 400,
+                  message: errorMessages,
+              };
+          } else {
+              throw {
+                error: true,
+                code: 500,
+                message: error.message || 'Erro interno do servidor'
+              }
+          }
       }
-    
-      const posicaoExists = await questaoRepository.findByPosicao(ValidarData.posicao); // Supondo que haja um método findByPosicao
-      if (posicaoExists) {
-        errors.push(messages.validationGeneric.resourceAlreadyExists('Posição').message);
-      }
-    
-      if (errors.length > 0) {
-        throw new Error(errors.join('\n'));
-      }
-    
-      return await questaoRepository.create(ValidarData);
-    }
-  }    
+  }  
+  }
 
 
 export default new questaoService();
