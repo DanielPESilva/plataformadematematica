@@ -1,4 +1,4 @@
-import usersSchemas from "../schemas/usersSchema.js";
+import turmaSchema from "../schemas/turmaSchema.js";
 import authSchemas from "../schemas/authSchema.js";
 import commonResponses from "../schemas/commonResponses.js";
 

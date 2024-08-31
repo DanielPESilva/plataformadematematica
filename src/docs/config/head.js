@@ -1,7 +1,7 @@
 import authPaths from "../routes/auth.js";
 import usersPaths from "../routes/users.js";
 import authSchemas from "../schemas/authSchema.js";
-import usersSchemas from "../schemas/usersSchema.js";
+import turmaSchema from "../schemas/turmaSchema.js";
 
 // Função para definir as URLs do servidor dependendo do ambiente
 const getServersInCorrectOrder = () => {
@@ -51,7 +51,7 @@ const getSwaggerOptions = () => {
                 },
                 schemas: {
                     ...authSchemas,
-                    ...usersSchemas
+                    ...turmaSchema
                 }
             },
             security: [{

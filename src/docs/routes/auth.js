@@ -1,4 +1,3 @@
-import authSchemas from "../schemas/authSchema.js";
 import commonResponses from "../schemas/commonResponses.js";
 
 const authRoutes = {
@@ -12,10 +11,10 @@ const authRoutes = {
                         schema: {
                             type: "object",
                             properties: {
-                                email: { type: "string", example: "john@gmail.com" },
-                                password: { type: "string", example: "ABCDabcd1234" }
+                                titulo: { type: "string", example: "john@gmail.com" },
+                                senha: { type: "string", example: "ABCDabcd1234" }
                             },
-                            required: ["email", "password"]
+                            required: ["titulo", "senha"]
                         }
                     }
                 }

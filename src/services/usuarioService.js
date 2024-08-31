@@ -1,4 +1,4 @@
-import usuarioRepository from "../repositories/usuarioRepository";
+import usuarioRepository from "../repositories/usuarioRepository.js";
 
 class UsuarioService {
     async listar(nome,matricula, page = 1, perPage = 10) {
