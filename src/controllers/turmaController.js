@@ -1,8 +1,8 @@
 import env from "dotenv";
 import turmaService from "../services/turmaService.js"
 import CommonResponse from '../utils/commonResponse.js';
-import {sendError,sendResponse} from '../utils/messages.js';
-import { z, ZodError } from 'zod';
+import {sendError,sendResponse, messages} from '../utils/messages.js';
+import { z } from 'zod';
 
 env.config();
 

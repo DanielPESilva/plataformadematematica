@@ -1,4 +1,4 @@
-const messages = {
+export const messages = {
 
     // Mensagens para respostas via rotas da api
     httpCodes: {
@@ -110,23 +110,9 @@ const messages = {
 
     // Mensagens de validação personalizadas
     customValidation: {
-        invalidCPF: { message: "CPF inválido. Verifique o formato e tente novamente." },
-        invalidCNPJ: { message: "CNPJ inválido. Verifique o formato e tente novamente." },
-        invalidCEP: { message: "CEP inválido. Verifique o formato e tente novamente." },
-        invalidPhoneNumber: { message: "Número de telefone inválido. Verifique o formato e tente novamente." },
-        invalidMail: { message: "Email no formato inválido." },
-        invalidYear: { message: "Ano inválido. Verifique o formato e tente novamente." },
-        invalidDate: "Data inválida. Verifique o formato e tente novamente.",
-        invalidKilometerInitial: "Quilometragem inicial inválida.",
-        invalidKilometer: "Quilometragem inválida.",
-        invalidDatePast: { message: "Data do inicio deve ser uma data atual ou futura." },
-        invalidDateFuture: { message: "A data de conclusão deve ser maior do que a data de inicio!" },
-        invalidDateCurrent: { message: "Data do inicio deve ser uma data atual ou passada." },
-        invalidDateMonths: { message: "A data final da vigência não pode ser um período maior que 12 meses após a data de início da vigência." },
-        invalidDataNascimento: { message: "Data de nascimento deve ser uma data passada e maior que 18." },
-        invalidDataAdmissao: { message: "Data de admissão deve ser uma data atual ou passada." },
-        invalidYearSemester: { message: "Ano/semestre. Verifique o formato e tente novamente." },
-        invalidYearStartSemester: { message: "Data do inicio do semestre deve ser menor que data fim de semestre" },
+        invalidTitulo: { message: "Título inválido. Verifique o formato e tente novamente." },
+        invalidNome: { message: "Nome inválido. Verifique o formato e tente novamente." },
+        invalidMatricula: { message: "Matrícula inválido. Verifique o formato e tente novamente." },
 
         lengthTooBig: (fieldName, length) => `O campo ${fieldName} deve ter no máximo ${length} de tamanho.`,
         lengthTooShort: (fieldName, length) => `O campo ${fieldName} deve ter no mínimo ${length} de tamanho.`,
@@ -213,20 +199,6 @@ export const sendResponse = (res, code, resp = {}) => {
     });
 };
 
-// Padronizar o tratamento de validações do mongoose na API
-export const catchMongooseValidationError = (err) => {
-    if (err.name === "ValidationError") {
-        let errors = [{ message: "Erros no model do Mongoose" }];
 
-        Object.keys(err.errors).forEach((key) => {
-            errors.push({
-                message: err.errors[key].message,
-                path: key
-            });
-        });
-
-        return errors;
-    } else throw err;
-};
 
 export default messages;
