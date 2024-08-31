@@ -82,4 +82,4 @@ class turmaService {
     return turma;
   }
 }
-export default new turmaService();
+export default new TurmaService();
