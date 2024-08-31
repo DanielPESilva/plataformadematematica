@@ -1,4 +1,4 @@
-const messages = {
+export const messages = {
 
     httpCodes: {
         200: "Requisição bem sucedida.",
@@ -40,8 +40,108 @@ const messages = {
         503: "O servidor está temporariamente indisponível, em manutenção ou em sobrecarga."
     },
 
-};
+    // Mensagens informativas
+    info: {
+        welcome: "Bem-vindo à nossa aplicação!",
+        userLoggedIn: (username) => `Usuário ${username} logado com sucesso.`,
+    },
 
+    success: {
+        success: "Operação concluída com sucesso.",
+    },
+
+    error: {
+        error: "Ocorreu um erro ao processar a solicitação.",
+        serverError: "Erro interno do servidor. Tente novamente mais tarde.",
+        invalidRequest: "Requisição inválida. Verifique os parâmetros fornecidos.",
+        unauthorizedAccess: "Acesso não autorizado. Faça login para continuar.",
+        invalidURL: "URL inválida. Verifique a URL fornecida.",
+        unsupportedOperation: "Operação não suportada neste contexto.",
+        dataParsingError: "Erro ao analisar os dados recebidos.",
+        externalServiceError: "Erro ao se comunicar com um serviço externo.",
+        invalidApiKey: "Chave de API inválida.",
+        operationCanceled: "Operação cancelada pelo usuário.",
+        resourceNotFound: (id) => `O campo ${id} não foi encontrado.`,
+        pageIsNotAvailable: (page) => `A página ${page} não está disponível.`,
+        pageNotContainsData: (page) => `A página ${page} não contém dados.`,
+    },
+
+    // Mensagens de validação genéricas
+    validationGeneric: {
+        // deve retornar um objeto com a propriedade message
+        fieldIsRequired: (fieldName) => {
+            return { message: `O campo ${fieldName} é obrigatório.` };
+        },
+        fieldIsRepeated: (fieldName) => {
+            return { message: `O campo ${fieldName} informado já está cadastrado.` };
+        },
+        invalidInputFormatForField: (fieldName) => {
+            return { message: `Formato de entrada inválido para o campo ${fieldName}.` };
+        },
+        resourceInUse: (fieldName) => {
+            return { message: `Recurso em uso em ${fieldName}.` };
+        },
+        invalid: (fieldName) => {
+            return { message: `Valor informado em ${fieldName} é inválido.` };
+        },
+        notFound: (fieldName) => {
+            return { message: `Valor informado para o campo ${fieldName} não foi encontrado.` };
+        },
+        resourceFound: (fieldName) => {
+            return { message: `${fieldName} encontrado(a).` };
+        },
+        resourceNotFound: (fieldName) => {
+            return { message: `${fieldName} não encontrado(a).` };
+        },
+        mustBeOneOf: (fieldName, values) => {
+            return { message: `O campo ${fieldName} deve ser um dos seguintes valores: ${values.join(", ")}` };
+        }
+    },
+
+    // categorias de erros para referencias e integridades
+    validationReference: {
+        resourceWithReference: (resource, reference) => {
+            return { message: `${resource} com referência em ${reference}. Exclusão impedida.` };
+        },
+
+    },
+
+    // Mensagens de validação personalizadas
+    customValidation: {
+        invalidTitulo: { message: "Título inválido. Verifique o formato e tente novamente." },
+        invalidNome: { message: "Nome inválido. Verifique o formato e tente novamente." },
+        invalidMatricula: { message: "Matrícula inválido. Verifique o formato e tente novamente." },
+
+        lengthTooBig: (fieldName, length) => `O campo ${fieldName} deve ter no máximo ${length} de tamanho.`,
+        lengthTooShort: (fieldName, length) => `O campo ${fieldName} deve ter no mínimo ${length} de tamanho.`,
+
+        valueTooBig: (fieldName, value) => `O campo ${fieldName} deve ser no máximo ${value}.`,
+        valueTooSmall: (fieldName, value) => `O campo ${fieldName} deve ser no mínimo ${value}.`
+    },
+
+
+    auth: {
+        authenticationFailed: "Falha na autenticação. Credenciais inválidas.",
+
+        userNotFound: (userId) => `Usuário com ID ${userId} não encontrado.`,
+        
+        invalidPermission: "Permissão insuficiente para executar a operação.",
+        
+        duplicateEntry: (fieldName) => `Já existe um registro com o mesmo ${fieldName}.`,
+
+        accountLocked: "Conta bloqueada. Entre em contato com o suporte.",
+        
+        invalidToken: "Token inválido. Faça login novamente.",
+
+        timeoutError: "Tempo de espera excedido. Tente novamente mais tarde.",
+        
+        databaseConnectionError: "Erro de conexão com o banco de dados. Tente novamente mais tarde.",
+        
+        emailAlreadyExists: (email) => `O endereço de e-mail ${email} já está em uso.`,
+
+        invalidCredentials: "Credenciais inválidas. Verifique seu usuário e senha.",
+    },
+};
 
 /**
  * Envia uma resposta de erro com o código e a mensagem especificada
@@ -97,5 +197,7 @@ export const sendResponse = (res,code, resp = {}) => {
         }, ...resp
     });
 };
+
+
 
 export default messages;

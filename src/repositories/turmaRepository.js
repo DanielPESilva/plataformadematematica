@@ -1,52 +1,86 @@
-import { prisma } from "../configs/prismaClient.js"
+import { prisma } from "../configs/prismaClient.js";
 
-class TurmaRepository{
-
-    async findAll(filtro){
-        return await prisma.turma.findMany(filtro);
-    }
-
-    /**
-     * 
-     
-    async findById(filtro){
-        return await prisma.turma.findUnique(filtro);
-    }
-
-    async createBem(data){
-        return await prisma.turma.create(data);
-    }
-
-    async createLevantamento(data){
-        return await prisma.levantamento.create(data)
-    }
-    */
-    createFilter(parametros){
-        let filtro = {
-            where: {
-                ...(parametros.id && { id: parametros.id }),
-                ...(parametros.titulo && { titulo: parametros.titulo }),
-                ...(parametros.bem_id && { id: parametros.bem_id }),
-                ...(parametros.nome && { nome: {contains: parametros.nome }}),
+class turmaRepository {
+  constructFilters(usuario_id, titulo) {
+    let filtros = {
+      select: {
+        id: true,
+        titulo: true,
+        usuario_has_turma: {
+          select: {
+            usuario: {
+              select: {
+                nome: true,
+              },
             },
-            select: {
-                id:true,
-                titulo: true,
-                usuario_has_turma: {
-                    select: {
-                      system_group: {
-                        select: {    
-                        nome:true,
-                        }
-                      }
-                    }
-                  },
-            }
-        }
-        return filtro;
-    }
+          },
+        },
+      },
+    };
+
+    if (titulo) filtros.where.titulo = { contains: titulo };
+    if (usuario_id)
+      filtros.where.usuario_has_turma = {
+        some: { usuario_id: { usuario_id: usuario_id } },
+      };
+
+    return filtros;
+  }
+
+  async findAll(filtros, page, perPage) {
+    const skip = (page - 1) * perPage;
+    const take = perPage;
+
+    const [turmas, total] = await Promise.all([
+      prisma.turma.findMany({
+        ...filtros,
+        skip,
+        take,
+      }),
+      prisma.turma.count({ where: filtros.where }),
+    ]);
+    return { turmas, total, page, perPage };
+  }
+
+  async findById(id) {
+    const filtros = this.constructFilters();
+    const turmas = await prisma.turma.findUnique({
+      where: { id },
+      select: filtros.select,
+    });
+    return turmas;
+  }
+
+  async create(data) {
+    return await prisma.turma.create(data);
+  }
+
+  async findByTitulo(titulo) {
+    return await prisma.turma.findFirst({ where: { titulo } });
+  }
+
+  async turmaExist(titulo) {
+    return await prisma.turma.findFirst({
+      where: {
+        titulo: titulo,
+      },
+      select: {
+        titulo: true,
+      },
+    });
+  }
+
+  async userExist(usuario_id) {
+    return await prisma.usuario_has_turma.findFirst({
+      where: {
+        usuario_id: usuario_id,
+      },
+      select: {
+        usuario_has_turma: {
+          usuario_id: true,
+        },
+      },
+    });
+  }
 }
-
-
-
-export default new TurmaRepository();
+export default new turmaRepository();

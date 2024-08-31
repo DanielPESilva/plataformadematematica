@@ -1,21 +1,40 @@
 import express from "express";
-import turma from "./TurmaRoutes.js"
-import questao from "./QuestaoRoute.js"
-// import compras from "./comprasRoutes.js";
+import users from "./UsuarioRoutes.js";
+import login from "./loginRoute.js";
+import turma from "./TurmaRoutes.js";
+import questao from "./QuestaoRoute.js";
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUI from "swagger-ui-express";
+import getSwaggerOptions from "../docs/config/head.js";
+import logRoutes from "../middlewares/LogRoutesMiddleware.js";
 
 
 const routes = (app) => {
-    app.route('/').get((rep, res) => {
-        res.status(200).redirect("/docs") // redirecionando para documentação
-    })
 
+    if (process.env.DEBUGLOG === "true") {
+        app.use(logRoutes);
+    }
 
-    app.use(
-        express.json(),
+    // Configurando a documentação da Swagger UI para ser servida diretamente em '/'
+    const swaggerDocs = swaggerJsDoc(getSwaggerOptions());
+    app.use(swaggerUI.serve);
+    app.get("/", (req, res, next) => {
+        swaggerUI.setup(swaggerDocs)(req, res, next);
+    });
+
+    app.use(express.json(),
+        // rotas para autentição e autorização (permissão)
+        login,
         turma,
-        questao
-    )
-}
+        questao,
+        users
 
+    );
 
-export default routes
+    // Se não é nenhuma rota válida, produz 404
+    app.use((req, res, next) => {
+        res.status(404).json({ message: "Rota não encontrada" });
+    });
+};
+
+export default routes;

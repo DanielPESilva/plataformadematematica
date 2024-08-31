@@ -6,5 +6,6 @@ const router = express.Router();
   
   /** 
   router.get("/turma/:id",TurmaController.listarPorID)
- */
+  router.post("/inserirTurma", TurmaController.createTurma)
+ 
   export default router;
