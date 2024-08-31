@@ -29,7 +29,7 @@ class questaoService {
 
      console.log(titulo + " pós validação")
 
-     let data = {data:{id:id,posicao:posicao,titulo:titulo,pdf:pdf,link_video:link_video}}
+     let data = {id:id,posicao:posicao,titulo:titulo,pdf:pdf,link_video:link_video}
 
      const questao = await questaoRepository.create(data)
      if(!questao){
