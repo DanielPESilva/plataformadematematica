@@ -17,7 +17,7 @@ model questao {
 }
 
 model turma {
-  id                Int                 @id
+  id                Int                 @id @default(autoincrement())
   titulo            String              @db.VarChar(45)
   usuario_id        Int?
   modulo_has_turma  modulo_has_turma[]

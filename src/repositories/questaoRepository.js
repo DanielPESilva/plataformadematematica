@@ -37,6 +37,10 @@ class questaoRepository {
         data: { posicao, titulo, pdf, link_video }
       });
     }
-  }
+    async create(data) {
+      return await prisma.questao.create({data})
+    }
+}
   
+
 export default new questaoRepository();
