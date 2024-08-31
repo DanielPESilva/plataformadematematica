@@ -1,6 +1,5 @@
-const messages = {
+export const messages = {
 
-    // Mensagens para respostas via rotas da api
     httpCodes: {
         200: "Requisição bem sucedida.",
         201: "Requisição bem sucedida, recurso foi criado",
@@ -15,7 +14,7 @@ const messages = {
         301: "O recurso solicitado foi movido permanentemente para um novo endereço",
         302: "O recurso solicitado foi encontrado, mas foi movido temporariamente para um novo endereço.",
         303: "Recurso encontrado, mas atenção a referência mais adequada a seguir.",
-        304: "A requisição foi bem sucedida, cliente possui a versãomais atualizada.",
+        304: "A requisição foi bem sucedida, cliente possui a versão mais atualizada.",
         305: "Recurso solicitado só está disponível por meio do proxy",
         307: "O recurso solicitado foi temporariamente movido para um novo endereço.",
         308: "O recurso solicitado foi permanentemente movido para um novo endereço.",
@@ -35,7 +34,6 @@ const messages = {
         431: "Cabeçalhos da requisição são muito grandes.",
         451: "Acesso negado por motivos legais.",
         498: "Acesso negado devido o token ser inválido.",
-
         500: "Servidor encontrou um erro interno.",
         501: "Funcionalidade não suportada.",
         502: "O servidor atuando como gateway ou proxy recebeu uma resposta inválida.",
@@ -110,23 +108,9 @@ const messages = {
 
     // Mensagens de validação personalizadas
     customValidation: {
-        invalidCPF: { message: "CPF inválido. Verifique o formato e tente novamente." },
-        invalidCNPJ: { message: "CNPJ inválido. Verifique o formato e tente novamente." },
-        invalidCEP: { message: "CEP inválido. Verifique o formato e tente novamente." },
-        invalidPhoneNumber: { message: "Número de telefone inválido. Verifique o formato e tente novamente." },
-        invalidMail: { message: "Email no formato inválido." },
-        invalidYear: { message: "Ano inválido. Verifique o formato e tente novamente." },
-        invalidDate: "Data inválida. Verifique o formato e tente novamente.",
-        invalidKilometerInitial: "Quilometragem inicial inválida.",
-        invalidKilometer: "Quilometragem inválida.",
-        invalidDatePast: { message: "Data do inicio deve ser uma data atual ou futura." },
-        invalidDateFuture: { message: "A data de conclusão deve ser maior do que a data de inicio!" },
-        invalidDateCurrent: { message: "Data do inicio deve ser uma data atual ou passada." },
-        invalidDateMonths: { message: "A data final da vigência não pode ser um período maior que 12 meses após a data de início da vigência." },
-        invalidDataNascimento: { message: "Data de nascimento deve ser uma data passada e maior que 18." },
-        invalidDataAdmissao: { message: "Data de admissão deve ser uma data atual ou passada." },
-        invalidYearSemester: { message: "Ano/semestre. Verifique o formato e tente novamente." },
-        invalidYearStartSemester: { message: "Data do inicio do semestre deve ser menor que data fim de semestre" },
+        invalidTitulo: { message: "Título inválido. Verifique o formato e tente novamente." },
+        invalidNome: { message: "Nome inválido. Verifique o formato e tente novamente." },
+        invalidMatricula: { message: "Matrícula inválido. Verifique o formato e tente novamente." },
 
         lengthTooBig: (fieldName, length) => `O campo ${fieldName} deve ter no máximo ${length} de tamanho.`,
         lengthTooShort: (fieldName, length) => `O campo ${fieldName} deve ter no mínimo ${length} de tamanho.`,
@@ -169,20 +153,21 @@ const messages = {
  * sendError(res, 400, [{message:"msg A"}, {message:"msg B"}])
  * sendError(res, 400, {message:"Campo Obrigatório", field:"senha"})
  */
-export const sendError = (res, code, errors = []) => {
+export const sendError = (res,code, errors = []) => {
     // Detecta diferentes formas de usar:
     let _errors = undefined;
-    if (Array.isArray(errors)) {
+    if(Array.isArray(errors)) { 
         // Se for um array de erros --> sendError(res, 400, [{message:"A"},{message:"B"}])
         _errors = errors;
-    } else if (typeof errors === "object" && errors.message !== undefined) {
+    } else if(typeof errors === "object" && errors.message !== undefined) {
         // Se for um objeto com a propriedade message --> sendError(res, 400, {message:"A"})
         _errors = [errors];
     } else {
         // Se for uma string ou qualquer outro tipo --> sendError(res, 400, "A")
-        _errors = [{ message: "" + errors }];
+        _errors = [{message: ""+errors}];
     }
-    //console.log(errors);
+
+    //console.log(_errors);
     return res.status(code).json({
         data: [],
         error: true,
@@ -201,32 +186,18 @@ export const sendError = (res, code, errors = []) => {
  *    data: usuario
  * });
  */
-export const sendResponse = (res, code, resp = {}) => {
+export const sendResponse = (res,code, resp = {}) => {
     return res.status(code).json({
         ...{
-            data: [],
             error: false,
             code: code,
             message: messages.httpCodes[code],
-            errors: []
+            errors: [],
+            data: []
         }, ...resp
     });
 };
 
-// Padronizar o tratamento de validações do mongoose na API
-export const catchMongooseValidationError = (err) => {
-    if (err.name === "ValidationError") {
-        let errors = [{ message: "Erros no model do Mongoose" }];
 
-        Object.keys(err.errors).forEach((key) => {
-            errors.push({
-                message: err.errors[key].message,
-                path: key
-            });
-        });
-
-        return errors;
-    } else throw err;
-};
 
 export default messages;

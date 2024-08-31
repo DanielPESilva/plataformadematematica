@@ -1,8 +1,8 @@
 import env from "dotenv";
-import { prisma } from "../configs/prismaClient.js";
 import turmaService from "../services/turmaService.js"
 import CommonResponse from '../utils/commonResponse.js';
-import messages from '../utils/messages.js';
+import {sendError,sendResponse, messages} from '../utils/messages.js';
+import { z } from 'zod';
 
 env.config();
 
@@ -10,7 +10,7 @@ env.config();
 class TurmaController{
 
   /**
-   * @listar Listará todas as turmas, caso não exista turma dará erro
+   * @listar Listará todas as turmas, caso não exista turmaCreated dará erro
    * @page O primeiro é quantidade de tabelas que aparecerão e o segundo é a quantidade de colunas que cada tabela terá...
    * @error200 Deu certo :)
    * @error400 sintaxe de requisição mal formada ou enquadramento de mensagem de requisição inválida
@@ -23,7 +23,6 @@ class TurmaController{
     try {
       const { titulo, usuario_id, page = 1, perPage = 10 } = req.query;
       const { turmas, total } = await turmaService.listar(titulo, usuario_id, parseInt(page), parseInt(perPage));
-      console.log(turmas);
       
       // continua deopis que voltar do service
       if (turmas.length === 0) {
@@ -48,7 +47,7 @@ class TurmaController{
   }
 
   /**
-   * @listarPorId Listará as turma cujo o id foi especificado
+   * @listarPorId Listará as turmaCreated cujo o id foi especificado
    * @page O primeiro é quantidade de tabelas que aparecerão e o segundo é a quantidade de colunas que cada tabela terá...
    * @error200 Deu certo :)
    * @error400 sintaxe de requisição mal formada ou enquadramento de mensagem de requisição inválida
@@ -72,6 +71,35 @@ class TurmaController{
       return res.status(500).json(CommonResponse.serverError());
     }
   }
-  }
 
+  static createTurma = async (req, res) => {
+    try {
+        const parametros = {
+          id:req.body.id,
+          titulo: req.body.titulo,
+          //usuario_id: parseInt(req.body.usuario_id),
+        };
+        const turmaCreate = await turmaService.create(parametros)
+        
+        console.log("resposta")
+        return sendResponse(res,201,{data: turmaCreate})
+
+    }catch(err){
+      console.log(err)
+        if (err.message === "Turma informada não existe.") {
+            return sendError(res, 404, ["Turma informada não existe."])
+
+        }else if (err instanceof z.ZodError) {
+            const errorMessages = err.issues.map((issue) => issue.message);
+            return sendError(res, 400, errorMessages)
+
+        }else{
+            return sendError(res, 500, ["OCORREU UM ERRO INTERNO"])
+        }
+    } 
+}
+
+
+
+}
 export default TurmaController;

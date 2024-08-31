@@ -17,7 +17,7 @@ model questao {
 }
 
 model turma {
-  id                Int                 @id
+  id                Int                 @id @default(autoincrement())
   titulo            String              @db.VarChar(45)
   modulo_has_turma  modulo_has_turma[]
   turma_has_modulo  turma_has_modulo[]
@@ -29,9 +29,10 @@ model usuario {
   id                Int                 @id
   nome              String              @db.VarChar(45)
   telefone          String?             @db.VarChar(45)
-  email             String              @db.VarChar(45)
-  matricula         Int
+  email             String              @unique(map: "email") @db.VarChar(45)
+  matricula         String              @unique(map: "matricula") @default("00000000000") @db.VarChar(11)
   cpf               String              @db.VarChar(45)
+  senha             String              @db.VarChar(255)
   usuario_has_turma usuario_has_turma[]
 }
 
