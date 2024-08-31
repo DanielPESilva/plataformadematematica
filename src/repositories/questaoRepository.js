@@ -13,11 +13,10 @@ class questaoRepository {
     return questao;
   }
 
-  constructFilters(posicao, titulo,pdf,link_video) {
+  constructFilters(titulo,pdf,link_video) {
     let filtros = { 
       select: {
         id: true,
-        posicao: true,
         titulo: true,
         pdf: true,
         link_video:true,
@@ -26,7 +25,6 @@ class questaoRepository {
     if (titulo) filtros.where.titulo = { contains: titulo };
     if (pdf) filtros.where.pdf = { contains: pdf };
     if (link_video) filtros.where.link_video = { contains:link_video };
-    if (posicao) filtros.where.posicao = {contains:posicao}
    
    return filtros;
   }

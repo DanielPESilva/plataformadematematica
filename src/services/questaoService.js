@@ -9,7 +9,7 @@ class questaoService {
         // Regra de negócio e validações
         
 
-        return await questaoRepository.findMany(filtro);
+        return await questaoRepositoryRepository.findMany(filtro);
     }
     async listarPorID(id) {
         // teste se o id é um número

@@ -19,7 +19,6 @@ model questao {
 model turma {
   id                Int                 @id @default(autoincrement())
   titulo            String              @db.VarChar(45)
-  usuario_id        Int?
   modulo_has_turma  modulo_has_turma[]
   turma_has_modulo  turma_has_modulo[]
   usuario_has_turma usuario_has_turma[]
