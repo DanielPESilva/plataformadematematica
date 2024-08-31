@@ -3,6 +3,8 @@ import { prisma } from "../configs/prismaClient.js";
 import questaoService from "../services/questaoService.js";
 import CommonResponse from "../utils/commonResponse.js";
 import questaoRepository from "../repositories/questaoRepository.js";
+import {sendError,sendResponse} from '../utils/messages.js';
+import { z, ZodError } from 'zod';
 
 env.config();
 
@@ -75,40 +77,36 @@ class questaoController {
     }
   }
 
-  static async inserir(req, res) {
-    console.log('Chamando questaoService.inserir...');
-    try {
-        const {  posicao, titulo, pdf, link_video } = req.body;
-        const data = {
-            posicao: posicao,
-            titulo: titulo,
-            pdf: pdf,
-            link_video: link_video
-        };
+  static createQuestao = async(req, res) => {
+    try{
+        const parametros = {
+          id: req.body.id,
+          posicao: req.body.posicao,
+          titulo: req.body.titulo,
+          pdf: req.body.pdf,
+          link_video: req.body.link_video
+        }
 
-        console.log('questaoService:', questaoService);
-        
-        // Chamada ao serviço para inserir os dados no banco
-        const response = await questaoService.inserir(data);
+        const questaoCreate = await questaoService.create(parametros)
 
-        //Volta do service depois que fizer as regras de negócios
-        return res.status(201).json({
-            data: response,
-            error: false,
-            code: 201,
-            message: 'Questões inseridos com sucesso.',
-        });
-        
-        
-    } catch (error) {
-        return res.status(error.code || 500).json({
-            error: true,
-            message: error.message || 'Erro interno do servidor.',
-        });
+        console.log("resposta")
+        return sendResponse(res,201,{data: questaoCreate})
+
+    }catch(err){
+        console.log(err)
+      if (err.message === "Questão informada não existe."){
+        return sendError(res, 404, ["Questão informda não existe"])
+      }else if (err instanceof z.ZodError){
+        const errorMessages = err.issues.map((issue) => issue.message)
+        return sendError(res, 400, errorMessages) 
+      }else{
+        return sendError( res, 500, ["OCORREU UM ERRO INTERNO"])
+      }
     }
-}
+  }
 
 
-    
+
 }
+
 export default questaoController;
