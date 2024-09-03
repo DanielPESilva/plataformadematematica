@@ -21,8 +21,8 @@ class TurmaController{
 
   static listar = async (req, res) => {
     try {
-      const { titulo, usuario_id, page = 1, perPage = 10 } = req.query;
-      const { turmas, total } = await turmaService.listar(titulo, usuario_id, parseInt(page), parseInt(perPage));
+      const { titulo, usuario_id, } = req.query;
+      const { turmas, total } = await turmaService.listar(titulo, usuario_id);
       
       // continua deopis que voltar do service
       if (turmas.length === 0) {
@@ -32,9 +32,6 @@ class TurmaController{
           ...CommonResponse.success(turmas, messages.validationGeneric.resourceFound('Turmas')),
           pagination: {
             total,
-            page: parseInt(page),
-            perPage: parseInt(perPage),
-            totalPages: Math.ceil(total / parseInt(perPage))
           }
         });
       }

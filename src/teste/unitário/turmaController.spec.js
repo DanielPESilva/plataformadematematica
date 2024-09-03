@@ -1,49 +1,46 @@
-import {turmaController} from '../../controllers/turmaController.js';
-import { describe, expect, it} from '@jest/globals';
+import {describe, expect, test} from '@jest/globals';
+import turmaService from '../../services/turmaService.js';
+import turmaRepository from '../../repositories/turmaRepository.js';
 
-jest.mock('../../repositories/turmaRepository', () => ({
+
+jest.mock('../../repositories/turmaRepository.js', () => ({
     findAll: jest.fn(),
-    findById: jest.fn(),
-    create: jest.fn(),
-    findByTitulo: jest.fn(),
-    turmaExist: jest.fn(),
-    userExist: jest.fn(),
-    constructFilters: jest.fn()
+    //findById: jest.fn(),
+    //create: jest.fn(),
+    //update: jest.fn(),
+    //delete: jest.fn(),
+    constructFilters: jest.fn(),
 }));
 
-jest.mock('../../services/TurmaService.js', () => ({
-    listar: jest.fn().mockRejectedValue(new Error('Erro interno do serviço')),
-    listarPorID: jest.fn().mockRejectedValue(new Error('Erro interno do serviço')),
-    create: jest.fn().mockRejectedValue(new Error('Erro interno do serviço')),
-    //adicionarUsuario: jest.fn().mockRejectedValue(new Error('Erro interno do serviço')),
-    //updateTurma: jest.fn().mockRejectedValue(new Error('Erro interno do serviço'))
-}));
-
-beforeEach(() => {
-    jest.clearAllMocks();
-});
-
-describe('Controller listarTurmas', () => {
-    
-    it('1-deve retornar status 500 quando turmaService lançar um erro.', async () => {
-        const sendErrorMock = jest.fn();
-        const res = { status: jest.fn(() => ({ json: sendErrorMock })) };
-
-        const req = { body: { id: 1 } };
-
-        await turmaController.listarturmas(req, res);
-
-        expect(res.status).toHaveBeenCalledWith(500);
-        expect(sendErrorMock).toHaveBeenCalledWith(
-            expect.objectContaining({
-                code: 500,
-                data:[],
-                error: true,
-                errors: ["OCORREU UM ERRO INTERNO"],
-                message: "Servidor encontrou um erro interno."
-            })
-        );
+describe('turmaService', () => {
+    beforeEach(() => {
+        jest.clearAllMocks();
     });
+
+    test('should return all turmas', async () => {
+        // Arrange
+        const mockTurmas = [
+        {  
+            titulo:'1ª Série A',
+            total:[1,2,3]
+        },
+    ];
+
+        const mockResult = {
+            turmas: mockTurmas,
+        };
+
+        turmaRepository.constructFilters.mockReturnValue({}); 
+        turmaRepository.findAll.mockResolvedValue(mockResult);
+
+      // Act
+        const turmas = await turmaService.listar('', '', '', 1, 10);
+
+        // Assert
+        expect(turmas).toEqual(mockResult);
+        expect(turmaRepository.findAll).toHaveBeenCalledWith({}, 1, 10);
+    });
+
     
    /*
 it('2-deve retornar status 500 quando o turmaService lançar um erro.', async () => {

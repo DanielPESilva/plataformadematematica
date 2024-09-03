@@ -2,13 +2,11 @@ import TurmaRepository from "../repositories/turmaRepository.js";
 import TurmaSchema from "../schemas/turmaSchemas.js";
 
 class turmaService {
-  async listar(titulo, usuario_id, page = 1, perPage = 10) {
+  async listar(titulo, usuario_id) {
     try {
       const filtros = TurmaRepository.constructFilters(usuario_id, titulo);
-      const { turmas, total } = await TurmaRepository.findAll(
-        filtros,
-        page,
-        perPage
+      const { turmas,  } = await TurmaRepository.findAll(
+        filtros
       );
 
       // Regra de negócio: Filtrar turmas com pelo menos um aluno
@@ -25,8 +23,6 @@ class turmaService {
       return {
         turmas: turmasComAlunos,
         total: totalFiltrado,
-        page,
-        perPage,
       };
     } catch (error) {
       console.error("Erro ao listar turmas:", error.message);
@@ -82,4 +78,4 @@ class turmaService {
     return turma;
   }
 }
-export default new TurmaService();
+export default new turmaService();

@@ -27,19 +27,15 @@ class turmaRepository {
     return filtros;
   }
 
-  async findAll(filtros, page, perPage) {
-    const skip = (page - 1) * perPage;
-    const take = perPage;
+  async findAll(filtros) {
 
     const [turmas, total] = await Promise.all([
       prisma.turma.findMany({
-        ...filtros,
-        skip,
-        take,
+        ...filtros
       }),
       prisma.turma.count({ where: filtros.where }),
     ]);
-    return { turmas, total, page, perPage };
+    return { turmas, total };
   }
 
   async findById(id) {
