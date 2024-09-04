@@ -19,6 +19,7 @@
 - `npm install swagger-jsdoc`
 - `npm install swagger-ui-express`
 - `npm install zod`
+- `npm install --save-dev jest`
 
 # Comandos do Git
 
