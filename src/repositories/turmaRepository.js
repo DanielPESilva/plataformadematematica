@@ -1,7 +1,7 @@
 import { prisma } from "../configs/prismaClient.js";
 
 class turmaRepository {
-  constructFilters(usuario_id, titulo) {
+  constructFilters(titulo) {
     let filtros = {
       select: {
         id: true,
@@ -19,10 +19,6 @@ class turmaRepository {
     };
 
     if (titulo) filtros.where.titulo = { contains: titulo };
-    if (usuario_id)
-      filtros.where.usuario_has_turma = {
-        some: { usuario_id: { usuario_id: usuario_id } },
-      };
 
     return filtros;
   }
@@ -35,7 +31,8 @@ class turmaRepository {
       }),
       prisma.turma.count({ where: filtros.where }),
     ]);
-    return { turmas, total };
+
+    return {turmas, total};
   }
 
   async findById(id) {

@@ -2,28 +2,19 @@ import TurmaRepository from "../repositories/turmaRepository.js";
 import TurmaSchema from "../schemas/turmaSchemas.js";
 
 class turmaService {
-  async listar(titulo, usuario_id) {
+  async listar(titulo) {
     try {
-      const filtros = TurmaRepository.constructFilters(usuario_id, titulo);
-      const { turmas,  } = await TurmaRepository.findAll(
-        filtros
-      );
+      const filtros = TurmaRepository.constructFilters(titulo);
+      const { turmas, total } = await TurmaRepository.findAll( filtros );
 
       // Regra de negócio: Filtrar turmas com pelo menos um aluno
       const turmasComAlunos = turmas.filter(
         (turma) => turma.usuario_has_turma.length > 1
       );
-      const totalFiltrado = turmasComAlunos.length;
-
-      if (totalFiltrado === 0) {
-        throw new Error("Nenhuma turma com alunos encontrada");
-      }
 
       // Retornando turmas filtradas e ajustando a paginação
-      return {
-        turmas: turmasComAlunos,
-        total: totalFiltrado,
-      };
+      return ({ turmas: turmasComAlunos, total: total});
+
     } catch (error) {
       console.error("Erro ao listar turmas:", error.message);
       throw new Error("Erro ao listar turmas com alunos");
