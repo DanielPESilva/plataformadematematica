@@ -1,3 +1,4 @@
+import turmaRepository from "../repositories/turmaRepository.js";
 import TurmaRepository from "../repositories/turmaRepository.js";
 import TurmaSchema from "../schemas/turmaSchemas.js";
 
@@ -32,35 +33,15 @@ class turmaService {
     const {id,titulo} = TurmaSchema.createTurmasSchema.parse(dados);
 
     console.log(titulo + "pós validação");
-
-    // const turmaExists = await TurmaRepository.turmaExist(parametros.titulo)
-    // console.log(turmaExists + "Turma")
-
-    // const usuarioExists = await TurmaRepository.userExist(parametros.usuario_id)
-    // console.log(usuarioExists + "usuario")
-
-    // if(turmaExists && usuarioExists){
-    //     throw new Error("A turma já existe.");
-    // }
-
-    // const { titulo, usuario_id, ...camposInsert } = parametros;
-    // const insertTurma = {
-    //     turma: { connect: { titulo: titulo } },
-    //     usuario_has_turma: { connect: { usuario_id: usuario_id } },
-    //     ...camposInsert
-    // };
     console.log("após validações");
 
     let data ={data:{id:id,titulo:titulo,}}
-
-  // Pass 'user' object into query
-
 
     const turma = await TurmaRepository.create(data);
     if(!turma){
       throw{
         code: 404,
-        mensage: `Não foi possivel criar turma com o nome: ${titulo}`
+        message: `Não foi possivel criar turma com o nome: ${titulo}`
         
       }
     }
@@ -68,5 +49,32 @@ class turmaService {
 
     return turma;
   }
+
+  static async atualizarUsuario(parametro){
+
+    parametro = TurmaSchema.atualizarTurmaSchema.parse(parametro);
+
+
+    //voltar aqui após passar pelo schema.
+    const {id, titulo} = parametro;
+
+    const usuarioExiste = await UsuarioRepository.usuarioCadastrado(id);
+
+    if(usuarioExiste == null){
+        throw new Error ("Usuário não existe.")
+    }
+
+    let update = {
+        where:{ id: id },
+        data:{ titulo:titulo },
+        select:{
+            id:true,
+            titulo:true
+        }
+    }
+
+    return await turmaRepository.atualizarTurma(update);
+}
+
 }
 export default new turmaService();

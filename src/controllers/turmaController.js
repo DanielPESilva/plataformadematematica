@@ -74,7 +74,6 @@ class TurmaController{
         const parametros = {
           id:req.body.id,
           titulo: req.body.titulo,
-          //usuario_id: parseInt(req.body.usuario_id),
         };
         const turmaCreate = await turmaService.create(parametros)
         
@@ -96,7 +95,30 @@ class TurmaController{
     } 
 }
 
+    static atualizarTurma = async (req, res) => {
+    try{
+      let updatedTurma = {
+        titulo:titulo
+      }
+      console.log("1- Controller, coletou o body"+req.body.titulo);
+      
+      const turma = await turmaService.atualizarTurma(updatedTurma)
 
+      //voltar aqui após resposta do server
+      return sendResponse(res,201, {data: turma});
 
+    }catch(err){
+
+      if(err instanceof z.ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(messages.error == "Turma não existe." ){
+        return sendError(res,404,["Turma não existe."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+    }
+  }
 }
 export default TurmaController;
