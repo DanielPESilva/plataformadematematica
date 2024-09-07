@@ -20,9 +20,7 @@ class TurmaSchema{
             return z.object({
                 id: z.preprocess((val) => Number(val), z.number({
                     invalid_type_error: "ID informado não é do tipo number",
-                }).int({
-                    message: "ID informado não é um número inteiro"
-                }).positive({
+                }).int({ message: "ID informado não é um número inteiro" }).positive({
                     message: "ID informado não é positivo"
                 }))
             })

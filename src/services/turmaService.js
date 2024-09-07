@@ -50,15 +50,14 @@ class turmaService {
     return turma;
   }
 
-  static async atualizarUsuario(parametro){
+  async atualizarTurma(parametro){
 
     parametro = TurmaSchema.atualizarTurmaSchema.parse(parametro);
-
 
     //voltar aqui após passar pelo schema.
     const {id, titulo} = parametro;
 
-    const usuarioExiste = await UsuarioRepository.usuarioCadastrado(id);
+    const usuarioExiste = await UsuarioRepository.atualizar(id);
 
     if(usuarioExiste == null){
         throw new Error ("Usuário não existe.")
@@ -73,7 +72,7 @@ class turmaService {
         }
     }
 
-    return await turmaRepository.atualizarTurma(update);
+    return await turmaRepository.atualizar(update);
 }
 
 }

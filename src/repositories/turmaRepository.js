@@ -48,6 +48,12 @@ class turmaRepository {
     return await prisma.turma.create(data);
   }
 
+  static async atualizar(updatedTurma){
+    return await prisma.turma.update(updatedTurma);
+  }
+
+
+
   async findByTitulo(titulo) {
     return await prisma.turma.findFirst({ where: { titulo } });
   }
