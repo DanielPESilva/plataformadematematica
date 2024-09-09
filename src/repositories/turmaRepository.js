@@ -48,16 +48,24 @@ class turmaRepository {
     return await prisma.turma.create(data);
   }
 
-  static async atualizar(updatedTurma){
-    return await prisma.turma.update(updatedTurma);
+   async atualizar(id, data){
+    return await prisma.turma.update({ where: { id }, data});
   }
-
-
 
   async findByTitulo(titulo) {
     return await prisma.turma.findFirst({ where: { titulo } });
   }
 
+  async findByTituloExceptId(titulo, id) {
+    return await prisma.turma.findFirst({
+      where: {
+        titulo:titulo,
+        id: {
+          not: id, 
+        },
+      },
+    });
+  }
   async turmaExist(titulo) {
     return await prisma.turma.findFirst({
       where: {

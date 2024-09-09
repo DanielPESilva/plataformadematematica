@@ -24,6 +24,8 @@ class TurmaController{
       const { titulo } = req.query;
       const { turmasComAlunos, total } = await turmaService.listar(titulo);
       
+      console.log(turmasComAlunos);
+      
       // continua deopis que voltar do service
       if (!turmasComAlunos) {
         return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('Turmas')));
@@ -96,29 +98,29 @@ class TurmaController{
 }
 
     static atualizarTurma = async (req, res) => {
-    try{
-      let updatedTurma = {
-        titulo:titulo
-      }
-      console.log("1- Controller, coletou o body"+req.body.titulo);
-      
-      const turma = await turmaService.atualizarTurma(updatedTurma)
+      try {
+        console.log("1 - (Controller)Recebe a requisição do body: "+JSON.stringify(req.body));
+        
+        if (!req.params.id) {
+          return res.status(400).json(CommonResponse.badRequest(messages.validationGeneric.resourceNotFound('turma')));
+        }
+        const id = req.params.id;
+        const  titulo  = req.body;
+        
+        if (titulo) {
+          const turmaUpdated = await turmaService.atualizarTurma(parseInt(id), titulo );
 
-      //voltar aqui após resposta do server
-      return sendResponse(res,201, {data: turma});
-
-    }catch(err){
-
-      if(err instanceof z.ZodError){
-        return sendError(res,400,err.errors[0].message);
-
-      }else if(messages.error == "Turma não existe." ){
-        return sendError(res,404,["Turma não existe."]);
-
-      }else{
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+          console.log("5 - (Controller)Recebe o valor de Service de volta: "+JSON.stringify(turmaUpdated))
+          
+          return res.status(200).json(CommonResponse.success(turmaUpdated, messages.validationGeneric.resourceUpdated('Turma')));
+        } else {
+          return res.status(400).json(CommonResponse.badRequest(messages.validationGeneric.resourceNotFound('Turma')));
+        }
+      } catch (err) {
+          // console.error(err);
+          return res.status(500).json(CommonResponse.serverError(Error, ...err.message));
       }
     }
-  }
+    
 }
 export default TurmaController;
