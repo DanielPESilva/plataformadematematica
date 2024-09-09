@@ -95,7 +95,11 @@ export const messages = {
         },
         mustBeOneOf: (fieldName, values) => {
             return { message: `O campo ${fieldName} deve ser um dos seguintes valores: ${values.join(", ")}` };
+        },
+        resourceUpdated: (fieldName) => {
+            return { message: `${fieldName} atualizado(a) com sucesso.` };
         }
+    
     },
 
     // categorias de erros para referencias e integridades

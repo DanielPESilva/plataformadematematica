@@ -1,19 +1,22 @@
-import TurmaRepository from "../repositories/turmaRepository.js";
-import TurmaSchema from "../schemas/turmaSchemas.js";
+import turmaRepository from "../repositories/turmaRepository.js";
+import {updateTurmaSchema} from "../schemas/turmaSchemas.js";
 
 class turmaService {
   async listar(titulo) {
     try {
-      const filtros = TurmaRepository.constructFilters(titulo);
-      const { turmas, total } = await TurmaRepository.findAll( filtros );
+      const filtros = turmaRepository.constructFilters(titulo);
+      const { turmas, total } = await turmaRepository.findAll( filtros );
 
+      console.log(turmas);
+      
       // Regra de negócio: Filtrar turmas com pelo menos um aluno
       const turmasComAlunos = turmas.filter(
         (turma) => turma.usuario_has_turma.length > 1
       );
-
+      console.log(turmasComAlunos);
+      
       // Retornando turmas filtradas e ajustando a paginação
-      return ({ turmas: turmasComAlunos, total: total});
+      return ({ turmasComAlunos,total});
 
     } catch (error) {
       console.error("Erro ao listar turmas:", error.message);
@@ -25,42 +28,22 @@ class turmaService {
     if (isNaN(id)) {
       throw new Error("ID deve ser um número inteiro");
     }
-    return TurmaRepository.findById(id);
+    return turmaRepository.findById(id);
   }
 
   async create(dados) {
     const {id,titulo} = TurmaSchema.createTurmasSchema.parse(dados);
 
     console.log(titulo + "pós validação");
-
-    // const turmaExists = await TurmaRepository.turmaExist(parametros.titulo)
-    // console.log(turmaExists + "Turma")
-
-    // const usuarioExists = await TurmaRepository.userExist(parametros.usuario_id)
-    // console.log(usuarioExists + "usuario")
-
-    // if(turmaExists && usuarioExists){
-    //     throw new Error("A turma já existe.");
-    // }
-
-    // const { titulo, usuario_id, ...camposInsert } = parametros;
-    // const insertTurma = {
-    //     turma: { connect: { titulo: titulo } },
-    //     usuario_has_turma: { connect: { usuario_id: usuario_id } },
-    //     ...camposInsert
-    // };
     console.log("após validações");
 
     let data ={data:{id:id,titulo:titulo,}}
 
-  // Pass 'user' object into query
-
-
-    const turma = await TurmaRepository.create(data);
+    const turma = await turmaRepository.create(data);
     if(!turma){
       throw{
         code: 404,
-        mensage: `Não foi possivel criar turma com o nome: ${titulo}`
+        message: `Não foi possivel criar turma com o nome: ${titulo}`
         
       }
     }
@@ -68,5 +51,29 @@ class turmaService {
 
     return turma;
   }
+
+  async atualizarTurma(id, data) {
+    // Validação com Zod para atualização
+    const validatedData = updateTurmaSchema.parse(data);
+    console.log("2 - (SERVICE) Recebe as informações do controller: "+ JSON.stringify(validatedData))
+
+    const tituloExists = await turmaRepository.findById(id);
+    console.log("3 -(SERVICE) Verifica se o titulo as informações do filtro achar por ID: "+ JSON.stringify(tituloExists))
+
+    if (validatedData.titulo && tituloExists.titulo !== validatedData.titulo) {
+      const tituloExistsOutherTurma = await turmaRepository.findByTituloExceptId(validatedData.titulo, id);
+
+      console.log("4 -(SERVICE) Verifica se o Tútlo já existe esse título em outra tabela: "+ JSON.stringify(tituloExistsOutherTurma))
+
+      if (tituloExistsOutherTurma) {
+        throw new Error('Titulo já cadastrado');
+      }if (!tituloExistsOutherTurma) {
+       const turmaCriada = await turmaRepository.atualizar(id, validatedData);
+
+       return turmaCriada;
+      }
+    }
+  }
+
 }
 export default new turmaService();
