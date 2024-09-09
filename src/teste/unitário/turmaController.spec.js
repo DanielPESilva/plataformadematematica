@@ -5,7 +5,7 @@ import turmaRepository from '../../repositories/turmaRepository.js';
 
 jest.mock('../../repositories/turmaRepository.js', () => ({
     findAll: jest.fn(),
-    //findById: jest.fn(),
+    findById: jest.fn(),
     //create: jest.fn(),
     //update: jest.fn(),
     //delete: jest.fn(),
@@ -17,20 +17,23 @@ describe('turmaService', () => {
         jest.clearAllMocks();
     });
 
-    test('should return all turmas', async () => {
+    test('1 - Deve retorna todas as turmas', async () => {
         // Arrange
         const mockTurmas = [
-        {  
-            titulo:'1ª Série A',
-            usuario_has_turma:['João','Maria','José'],
+        {
+            turmas: [ 
+            { titulo: '1ª Série A', usuario_has_turma: ['João','Maria','José'] },
+            { titulo: '1ª Série B', usuario_has_turma: ['João','Daira','Pedro'] } 
+        ],
+            total: 2
         },
     ];
-
         const mockResult = {
             turmas: mockTurmas,
-            total: 1,
+            total: 2,
         };
-
+        console.log("1-"+mockResult);
+        
         // passando os parametros para filtrar
         turmaRepository.constructFilters.mockReturnValue({}); 
 
@@ -41,10 +44,26 @@ describe('turmaService', () => {
         const turmas = await turmaService.listar();
         // Assert
         expect(turmas).toEqual(mockResult);
-        // expect(turmaRepository.findAll).toHaveBeenCalledWith({});
+        expect(turmaRepository.findAll).toHaveBeenCalledWith({});
     });
 
-    
+    test('2 - Deve retornar uma certa turma através do ID dela', async () => {
+        // Arrange
+        const mockTurma = { 
+        id: 1, 
+        titulo: '2º Série A',
+        usuario_has_turma:['João','Maria','Rosilda'], 
+    };
+        turmaRepository.findById.mockResolvedValue(mockTurma);
+
+        // Act
+        const turma = await turmaService.listarPorID(1);
+
+        // Assert
+        expect(turma).toEqual(mockTurma);
+        expect(turmaRepository.findById).toHaveBeenCalledWith(1);
+    });
+
    /*
 it('2-deve retornar status 500 quando o turmaService lançar um erro.', async () => {
     // Mock para a função de enviar erro

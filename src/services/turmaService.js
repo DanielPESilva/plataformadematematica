@@ -13,7 +13,6 @@ class turmaService {
       const turmasComAlunos = turmas.filter(
         (turma) => turma.usuario_has_turma.length > 1
       );
-      console.log(turmasComAlunos);
       
       // Retornando turmas filtradas e ajustando a paginação
       return ({ turmasComAlunos,total});

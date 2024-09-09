@@ -24,8 +24,6 @@ class TurmaController{
       const { titulo } = req.query;
       const { turmasComAlunos, total } = await turmaService.listar(titulo);
       
-      console.log(turmasComAlunos);
-      
       // continua deopis que voltar do service
       if (!turmasComAlunos) {
         return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('Turmas')));
@@ -39,7 +37,6 @@ class TurmaController{
       }
     } catch (err) {
       if (process.env.DEBUGLOG === 'true') {
-        console.log(err);
       }
       return res.status(500).json(CommonResponse.serverError());
     }
