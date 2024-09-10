@@ -81,8 +81,8 @@ class TurmaController{
 
     }catch(err){
       console.log(err)
-        if (err.message === "Turma informada não existe.") {
-            return sendError(res, 404, ["Turma informada não existe."])
+        if (err.message === "Turma informada já existe.") {
+            return sendError(res, 404, ["Turma informada já existe."])
 
         }else if (err instanceof z.ZodError) {
             const errorMessages = err.issues.map((issue) => issue.message);

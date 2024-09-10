@@ -10,7 +10,7 @@ class turmaService {
       
       // Regra de negócio: Filtrar turmas com pelo menos um aluno
       const turmasComAlunos = turmas.filter(
-        (turma) => turma.usuario_has_turma.length > 1
+        (turma) => turma.usuario_has_turma.length > 0
       );
       if (turmasComAlunos) {
         // Retornando turmas filtradas e ajustando a paginação
