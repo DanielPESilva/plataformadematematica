@@ -17,43 +17,42 @@ describe('turmaService', () => {
         jest.clearAllMocks();
     });
 
-    test('1 - Deve retorna todas as turmas', async () => {
-        // Arrange
-        const mockTurmas = [
-        {
-            turmas: [ 
-            { titulo: '1ª Série A', usuario_has_turma: ['João','Maria','José'] },
-            { titulo: '1ª Série B', usuario_has_turma: ['João','Daira','Pedro'] } 
-        ],
-            total: 2
-        },
-    ];
-        const mockResult = {
-            turmas: mockTurmas,
-            total: 2,
-        };
-        console.log("1-"+mockResult);
-        
-        // passando os parametros para filtrar
-        turmaRepository.constructFilters.mockReturnValue({}); 
+    test('1 - Deve retornar todas as turmas com pelo menos um aluno', async () => {
+        const mockTurma = [
+            { titulo: '1ª Série A', usuario_has_turma: ['João', 'Maria', 'José'] },
+            { titulo: '1ª Série B', usuario_has_turma: ['João', 'Daira', 'Pedro'] },
+        ];
+        // Mockando o retorno do método findAll no turmaRepository
+        turmaRepository.findAll.mockResolvedValue({turmas: mockTurma});
 
-        // passando os dados que servirão de resultado do findAll
-        turmaRepository.findAll.mockResolvedValue(mockResult);
-
-      // Act
-        const turmas = await turmaService.listar();
-        // Assert
-        expect(turmas).toEqual(mockResult);
-        expect(turmaRepository.findAll).toHaveBeenCalledWith({});
+        // Executa o método listar do turmaService
+        const mockResult = await turmaService.listar();
+    
+        expect(mockResult).toEqual({turmasComAlunos: mockTurma});
     });
 
-    test('2 - Deve retornar uma certa turma através do ID dela', async () => {
+    test('2 - Deve retornar array vazio se nenhuma turma tiver mais de um aluno', async () => {
+        const mockTurma = [
+            { titulo: '1ª Série A', usuario_has_turma: ['João'] },  
+            { titulo: '1ª Série B', usuario_has_turma: [] }        
+        ];
+    
+        turmaRepository.findAll.mockResolvedValue({
+            turmas: mockTurma
+        });
+    
+        const result = await turmaService.listar();
+    
+        expect(result).toEqual({turmasComAlunos: []});
+    });
+    
+    test('3 - Deve retornar uma certa turma através do ID dela', async () => {
         // Arrange
         const mockTurma = { 
-        id: 1, 
-        titulo: '2º Série A',
-        usuario_has_turma:['João','Maria','Rosilda'], 
-    };
+            id: 1, 
+            titulo: '2º Série A',
+            usuario_has_turma: ['João', 'Maria', 'Rosilda'], 
+        };
         turmaRepository.findById.mockResolvedValue(mockTurma);
 
         // Act
@@ -64,36 +63,38 @@ describe('turmaService', () => {
         expect(turmaRepository.findById).toHaveBeenCalledWith(1);
     });
 
+    test('4 - Deve lançar um erro se o ID não for um número', async () => {
+        // Arrange
+        const mockIDinvalido = 'abc'; // Valor inválido para ID
+    
+        // Act & Assert
+        try {
+            await turmaService.listarPorID(mockIDinvalido);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error); // Verifica se é um erro
+            expect(error.message).toBe('ID deve ser um número inteiro'); // Verifica a mensagem do erro
+            expect(turmaRepository.findById).not.toHaveBeenCalled(); // Verifica se findById não foi chamado
+            return;
+        }
+        // Falhou se não entrou no catch
+        throw new Error('Ocorreu um erro externo');
+    });
+    
+    
+
+    test('5 - Deve retornar null se a turma não for encontrada', async () => {
+        turmaRepository.findById.mockResolvedValue(null);
+    
+        const turma = await turmaService.listarPorID(999); // ID de uma turma inexistente
+    
+        expect(turma).toBeNull(); // Verifica se retorna null
+        expect(turmaRepository.findById).toHaveBeenCalledWith(999);
+    });
+    
+    
+
    /*
-it('2-deve retornar status 500 quando o turmaService lançar um erro.', async () => {
-    // Mock para a função de enviar erro
-    const sendErrorMock = jest.fn();
-    
-    // Mock da resposta com o método status que retorna um objeto com o método json
-    const res = { 
-        status: jest.fn(() => ({ json: sendErrorMock })) 
-    };
 
-    // Mock da requisição com o corpo e parâmetros
-    const req = { body: { sala_id: 1 }, params: { id: 1 } };
-
-    // Chamada do método listarPorID do controller, que deve lançar um erro
-    await turmaController.listarPorID(req, res);
-
-    // Verifica se o método status foi chamado com o código 500
-    expect(res.status).toHaveBeenCalledWith(500);
-    
-    // Verifica se sendErrorMock foi chamado com o objeto de erro esperado
-    expect(sendErrorMock).toHaveBeenCalledWith(
-        expect.objectContaining({
-            code: 500,
-            data: [],
-            error: true,
-            errors: ["OCORREU UM ERRO INTERNO"],
-            message: "Servidor encontrou um erro interno."
-        })
-    );
-});
 
 it('3-deve retornar status 500 quando o turmaService lançar um erro.', async () => {
     // Mock para a função de enviar erro

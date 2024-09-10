@@ -1,21 +1,21 @@
 import turmaRepository from "../repositories/turmaRepository.js";
 import {updateTurmaSchema} from "../schemas/turmaSchemas.js";
+import {sendError,sendResponse, messages} from '../utils/messages.js';
 
 class turmaService {
   async listar(titulo) {
     try {
       const filtros = turmaRepository.constructFilters(titulo);
       const { turmas, total } = await turmaRepository.findAll( filtros );
-
-      console.log(turmas);
       
       // Regra de negócio: Filtrar turmas com pelo menos um aluno
       const turmasComAlunos = turmas.filter(
         (turma) => turma.usuario_has_turma.length > 1
       );
-      
-      // Retornando turmas filtradas e ajustando a paginação
-      return ({ turmasComAlunos,total});
+      if (turmasComAlunos) {
+        // Retornando turmas filtradas e ajustando a paginação
+        return ({ turmasComAlunos,total});
+      }
 
     } catch (error) {
       console.error("Erro ao listar turmas:", error.message);
@@ -25,7 +25,7 @@ class turmaService {
 
   async listarPorID(id) {
     if (isNaN(id)) {
-      throw new Error("ID deve ser um número inteiro");
+      throw new Error(messages.validationGeneric.resourceNotFound("ID deve ser um número inteiro"));
     }
     return turmaRepository.findById(id);
   }
