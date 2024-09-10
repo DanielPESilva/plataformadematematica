@@ -45,7 +45,7 @@ class turmaRepository {
   }
 
   async create(data) {
-    return await prisma.turma.create(data);
+    return await prisma.turma.create({data});
   }
 
    async atualizar(id, data){
@@ -53,7 +53,7 @@ class turmaRepository {
   }
 
   async findByTitulo(titulo) {
-    return await prisma.turma.findFirst({ where: { titulo } });
+    return await prisma.turma.findFirst({ where: { titulo:titulo } });
   }
 
   async findByTituloExceptId(titulo, id) {

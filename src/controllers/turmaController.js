@@ -71,13 +71,12 @@ class TurmaController{
   static createTurma = async (req, res) => {
     try {
         const parametros = {
-          id:req.body.id,
           titulo: req.body.titulo,
         };
-        const turmaCreate = await turmaService.create(parametros)
+        const turma = await turmaService.create(parametros)
         
         console.log("resposta")
-        return sendResponse(res,201,{data: turmaCreate})
+        return sendResponse(res,201,{data: turma})
 
     }catch(err){
       console.log(err)

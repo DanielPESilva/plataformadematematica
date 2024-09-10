@@ -1,5 +1,6 @@
+import { parseArgs } from "util";
 import turmaRepository from "../repositories/turmaRepository.js";
-import {updateTurmaSchema} from "../schemas/turmaSchemas.js";
+import {TurmaSchema, updateTurmaSchema} from "../schemas/turmaSchemas.js";
 import {sendError,sendResponse, messages} from '../utils/messages.js';
 
 class turmaService {
@@ -30,26 +31,26 @@ class turmaService {
     return turmaRepository.findById(id);
   }
 
-  async create(dados) {
-    const {id,titulo} = TurmaSchema.createTurmasSchema.parse(dados);
+  async create(parametros){
 
-    console.log(titulo + "pós validação");
-    console.log("após validações");
+    parametros = TurmaSchema.parse(parametros)
 
-    let data ={data:{id:id,titulo:titulo,}}
-
-    const turma = await turmaRepository.create(data);
-    if(!turma){
-      throw{
-        code: 404,
-        message: `Não foi possivel criar turma com o nome: ${titulo}`
-        
-      }
+    console.log("1- parametros"+parametros);
+    
+    const tituloExists = await turmaRepository.findByTitulo(parametros.titulo)
+    if(tituloExists){
+        messages.error.invalidRequest("Essa turma já existe");
     }
-    console.log(turma)
+    console.log("2-Titulo existe"+tituloExists);
 
-    return turma;
-  }
+    const titulo  = (parametros);
+
+    console.log("3-Titulo"+titulo);
+    const turma =  await turmaRepository.create({ data: titulo})
+
+    return turma
+}
+
 
   async atualizarTurma(id, data) {
     // Validação com Zod para atualização
