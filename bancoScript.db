@@ -1,0 +1,105 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema plataforma_matematica
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema plataforma_matematica
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `plataforma_matematica` DEFAULT CHARACTER SET utf8mb4 ;
+USE `plataforma_matematica` ;
+
+-- -----------------------------------------------------
+-- Table `plataforma_matematica`.`questao`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`questao` (
+  `id` INT(11) NOT NULL,
+  `posicao` VARCHAR(45) NULL DEFAULT NULL,
+  `titulo` VARCHAR(45) NOT NULL,
+  `pdf` VARCHAR(45) NOT NULL,
+  `link_video` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `plataforma_matematica`.`modulo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`modulo` (
+  `id` INT(11) NOT NULL,
+  `titulo` VARCHAR(45) NOT NULL,
+  `tema` VARCHAR(45) NOT NULL,
+  `descriao` VARCHAR(45) NULL DEFAULT NULL,
+  `questao_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`, `questao_id`),
+  INDEX `fk_modulo_questao2_idx` (`questao_id` ASC) VISIBLE,
+  CONSTRAINT `fk_modulo_questao2`
+    FOREIGN KEY (`questao_id`)
+    REFERENCES `plataforma_matematica`.`questao` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `plataforma_matematica`.`turma`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`turma` (
+  `id` INT(11) NOT NULL,
+  `titulo` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `plataforma_matematica`.`usuario`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`usuario` (
+  `id` INT(11) NOT NULL,
+  `nome` VARCHAR(45) NOT NULL,
+  `telefone` VARCHAR(45) NULL DEFAULT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  `matricula` INT(11) NOT NULL,
+  `cpf` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+-- -----------------------------------------------------
+-- Table `plataforma_matematica`.`usuario_has_turma`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`usuario_has_turma` (
+  `usuario_id` INT(11) NOT NULL,
+  `turma_id` INT(11) NOT NULL,
+  PRIMARY KEY (`usuario_id`, `turma_id`),
+  INDEX `fk_usuario_has_turma_turma1_idx` (`turma_id` ASC) VISIBLE,
+  INDEX `fk_usuario_has_turma_usuario_idx` (`usuario_id` ASC) VISIBLE,
+  CONSTRAINT `fk_usuario_has_turma_turma1`
+    FOREIGN KEY (`turma_id`)
+    REFERENCES `plataforma_matematica`.`turma` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_usuario_has_turma_usuario`
+    FOREIGN KEY (`usuario_id`)
+    REFERENCES `plataforma_matematica`.`usuario` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
