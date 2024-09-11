@@ -1,7 +1,7 @@
 import { prisma } from "../configs/prismaClient.js";
 
 class turmaRepository {
-  constructFilters(titulo) {
+  constructFilters(usuario_id, titulo) {
     let filtros = {
       select: {
         id: true,
@@ -11,83 +11,42 @@ class turmaRepository {
             usuario: {
               select: {
                 nome: true,
-              },
-            },
-          },
+              }
+            }
+          }
         },
-      },
+      }
     };
 
     if (titulo) filtros.where.titulo = { contains: titulo };
+    if (usuario_id) filtros.where.usuario_has_turma = { some: { usuario_id: { name: usuario_id } } };    
 
-    return filtros;
-  }
+    return filtros
+}
 
-  async findAll(filtros) {
+     async findAll(filtros, page, perPage){
+       const skip = (page - 1) * perPage;
+       const take = perPage;
 
-    const [turmas, total] = await Promise.all([
-      prisma.turma.findMany({
-        ...filtros
-      }),
-      prisma.turma.count({ where: filtros.where }),
-    ]);
+       const [turmas, total] = await Promise.all([
+        prisma.turma.findMany({
+          ...filtros,
+          skip,
+          take,
+        }),
+        prisma.turma.count({ where: filtros.where })
+      ]);
+        return { turmas, total, page, perPage };
+    }
 
-    return {turmas, total};
-  }
 
-  async findById(id) {
-    const filtros = this.constructFilters();
-    const turmas = await prisma.turma.findUnique({
-      where: { id },
-      select: filtros.select,
-    });
-    return turmas;
-  }
-
-  async create(data) {
-    return await prisma.turma.create(data);
-  }
-
-   async atualizar(id, data){
-    return await prisma.turma.update({ where: { id }, data});
-  }
-
-  async findByTitulo(titulo) {
-    return await prisma.turma.findFirst({ where: { titulo } });
-  }
-
-  async findByTituloExceptId(titulo, id) {
-    return await prisma.turma.findFirst({
-      where: {
-        titulo:titulo,
-        id: {
-          not: id, 
-        },
-      },
-    });
-  }
-  async turmaExist(titulo) {
-    return await prisma.turma.findFirst({
-      where: {
-        titulo: titulo,
-      },
-      select: {
-        titulo: true,
-      },
-    });
-  }
-
-  async userExist(usuario_id) {
-    return await prisma.usuario_has_turma.findFirst({
-      where: {
-        usuario_id: usuario_id,
-      },
-      select: {
-        usuario_has_turma: {
-          usuario_id: true,
-        },
-      },
-    });
-  }
+    async findById(id) {
+      const filtros = this.constructFilters();
+      const turmas = await prisma.turma.findUnique({
+        where: { id },
+        select: filtros.select,
+      });
+      return turmas;
+    }
 }
 export default new turmaRepository();
