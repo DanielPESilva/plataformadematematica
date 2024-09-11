@@ -25,14 +25,14 @@ class turmaRepository {
 
   async findAll(filtros) {
 
-    const [turmas, total] = await Promise.all([
+    const [turmas] = await Promise.all([
       prisma.turma.findMany({
         ...filtros
       }),
       prisma.turma.count({ where: filtros.where }),
     ]);
 
-    return {turmas, total};
+    return {turmas};
   }
 
   async findById(id) {

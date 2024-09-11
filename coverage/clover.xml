@@ -1,52 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1725931272982" clover="3.2.0">
-  <project timestamp="1725931272983" name="All files">
-    <metrics statements="35" coveredstatements="12" conditionals="14" coveredconditionals="3" methods="5" coveredmethods="3" elements="54" coveredelements="18" complexity="0" loc="35" ncloc="35" packages="2" files="2" classes="2"/>
+<coverage generated="1726017325075" clover="3.2.0">
+  <project timestamp="1726017325075" name="All files">
+    <metrics statements="72" coveredstatements="16" conditionals="24" coveredconditionals="2" methods="31" coveredmethods="3" elements="127" coveredelements="21" complexity="0" loc="72" ncloc="72" packages="3" files="3" classes="3"/>
     <package name="schemas">
       <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-      <file name="turmaSchemas.js" path="C:\Users\thaly\OneDrive\Desktop\Faculdade\Plataforma_matematica\plataforma-matematica\src\schemas\turmaSchemas.js">
+      <file name="turmaSchemas.js" path="/home/thalysson/plataformaMatematica/plataforma-matematica/src/schemas/turmaSchemas.js">
         <metrics statements="2" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="3" count="1" type="stmt"/>
-        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
       </file>
     </package>
     <package name="services">
-      <metrics statements="33" coveredstatements="10" conditionals="14" coveredconditionals="3" methods="5" coveredmethods="3"/>
-      <file name="turmaService.js" path="C:\Users\thaly\OneDrive\Desktop\Faculdade\Plataforma_matematica\plataforma-matematica\src\services\turmaService.js">
-        <metrics statements="33" coveredstatements="10" conditionals="14" coveredconditionals="3" methods="5" coveredmethods="3"/>
-        <line num="6" count="2" type="stmt"/>
+      <metrics statements="35" coveredstatements="11" conditionals="16" coveredconditionals="2" methods="5" coveredmethods="3"/>
+      <file name="turmaService.js" path="/home/thalysson/plataformaMatematica/plataforma-matematica/src/services/turmaService.js">
+        <metrics statements="35" coveredstatements="11" conditionals="16" coveredconditionals="2" methods="5" coveredmethods="3"/>
         <line num="7" count="2" type="stmt"/>
         <line num="8" count="2" type="stmt"/>
-        <line num="11" count="2" type="stmt"/>
-        <line num="12" count="4" type="stmt"/>
-        <line num="14" count="2" type="cond" truecount="1" falsecount="1"/>
-        <line num="16" count="2" type="stmt"/>
-        <line num="20" count="0" type="stmt"/>
-        <line num="21" count="0" type="stmt"/>
-        <line num="26" count="3" type="cond" truecount="2" falsecount="0"/>
-        <line num="27" count="1" type="stmt"/>
-        <line num="29" count="2" type="stmt"/>
-        <line num="33" count="0" type="stmt"/>
-        <line num="35" count="0" type="stmt"/>
+        <line num="9" count="2" type="stmt"/>
+        <line num="12" count="1" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="15" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="21" count="1" type="stmt"/>
+        <line num="22" count="1" type="stmt"/>
+        <line num="27" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="28" count="0" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="34" count="0" type="stmt"/>
         <line num="36" count="0" type="stmt"/>
         <line num="38" count="0" type="stmt"/>
         <line num="40" count="0" type="stmt"/>
-        <line num="41" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="42" count="0" type="stmt"/>
+        <line num="41" count="0" type="stmt"/>
+        <line num="42" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="43" count="0" type="stmt"/>
+        <line num="45" count="0" type="stmt"/>
+        <line num="47" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="48" count="0" type="stmt"/>
-        <line num="50" count="0" type="stmt"/>
-        <line num="55" count="0" type="stmt"/>
-        <line num="56" count="0" type="stmt"/>
+        <line num="51" count="0" type="stmt"/>
         <line num="58" count="0" type="stmt"/>
         <line num="59" count="0" type="stmt"/>
-        <line num="61" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="61" count="0" type="stmt"/>
         <line num="62" count="0" type="stmt"/>
-        <line num="64" count="0" type="stmt"/>
-        <line num="66" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="64" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="65" count="0" type="stmt"/>
         <line num="67" count="0" type="stmt"/>
-        <line num="68" count="0" type="cond" truecount="0" falsecount="2"/>
-        <line num="69" count="0" type="stmt"/>
-        <line num="71" count="0" type="stmt"/>
+        <line num="69" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="70" count="0" type="stmt"/>
+        <line num="71" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="74" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="utils">
+      <metrics statements="35" coveredstatements="3" conditionals="8" coveredconditionals="0" methods="26" coveredmethods="0"/>
+      <file name="messages.js" path="/home/thalysson/plataformaMatematica/plataforma-matematica/src/utils/messages.js">
+        <metrics statements="35" coveredstatements="3" conditionals="8" coveredconditionals="0" methods="26" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="46" count="0" type="stmt"/>
+        <line num="64" count="0" type="stmt"/>
+        <line num="65" count="0" type="stmt"/>
+        <line num="66" count="0" type="stmt"/>
+        <line num="73" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="82" count="0" type="stmt"/>
+        <line num="85" count="0" type="stmt"/>
+        <line num="88" count="0" type="stmt"/>
+        <line num="91" count="0" type="stmt"/>
+        <line num="94" count="0" type="stmt"/>
+        <line num="97" count="0" type="stmt"/>
+        <line num="100" count="0" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="113" count="0" type="stmt"/>
+        <line num="124" count="0" type="stmt"/>
+        <line num="125" count="0" type="stmt"/>
+        <line num="127" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="135" count="0" type="stmt"/>
+        <line num="139" count="0" type="stmt"/>
+        <line num="149" count="0" type="stmt"/>
+        <line num="165" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="167" count="0" type="stmt"/>
+        <line num="168" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="170" count="0" type="stmt"/>
+        <line num="171" count="0" type="cond" truecount="0" falsecount="4"/>
+        <line num="173" count="0" type="stmt"/>
+        <line num="176" count="0" type="stmt"/>
+        <line num="180" count="0" type="stmt"/>
+        <line num="198" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="199" count="0" type="stmt"/>
       </file>
     </package>
   </project>

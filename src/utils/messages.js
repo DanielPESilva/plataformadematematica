@@ -98,8 +98,13 @@ export const messages = {
         },
         resourceUpdated: (fieldName) => {
             return { message: `${fieldName} atualizado(a) com sucesso.` };
-        }
-    
+        },
+        resourceAlreadyExists: (fieldName) => {
+            return { message: `${fieldName} já existe.` };
+        },
+        resourceCreated: (fieldName) => {
+            return { message: `${fieldName} criado(a) com sucesso.` };
+        },
     },
 
     // categorias de erros para referencias e integridades
