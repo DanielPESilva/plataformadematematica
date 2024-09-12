@@ -97,7 +97,20 @@ const messages = {
         },
         mustBeOneOf: (fieldName, values) => {
             return { message: `O campo ${fieldName} deve ser um dos seguintes valores: ${values.join(", ")}` };
-        }
+        },
+        resourceCreated: (fieldName) => {
+            return { message: `${fieldName} criado(a) com sucesso.` };
+        },
+        resourceUpdated: (fieldName) => {
+            return { message: `${fieldName} atualizado(a) com sucesso.` };
+        },
+        resourceDeleted: (fieldName) => {
+            return { message: `${fieldName} excluído(a) com sucesso.` };
+        },
+        resourceAlreadyExists: (fieldName) => {
+            return { message: `${fieldName} já existe.` };
+        },
+        
     },
 
     // categorias de erros para referencias e integridades

@@ -1,6 +1,9 @@
 import bcrypt from "bcryptjs";
 import env from "dotenv";
 import { prisma } from ".../configs/prismaClient.js";
+import usuarioService from "../services/usuarioService";
+import CommonResponse from '../utils/commonResponse.js';
+import messages from "../utils/messages.js";
 
 env.config();
 
@@ -8,99 +11,41 @@ class usuarioController {
   // GET
   static listar = async (req, res) => {
     try {
-      const { nome, tel, email, matricula, cpf } = req.query;
+      const { nome, matricula, page = 1, perPage = 10 } = req.query;
+      const { usuarios, total } = await usuarioService.listar(nome, matricula, parseInt(page), parseInt(perPage))
 
-      let filtros = {
-        select: {
-          id: true,
-          nome: true,
-          tel: true,
-          email: true,
-          matricula: true,
-          cpf: true,
-          senha: false,
-        },
-      };
-
-      // filtra se houver valor
-      if (nome) {
-        filtros.where.nome = {
-          contains: nome,
-        };
-      }
-      if (tel) {
-        filtros.where.tel = {
-          contains: tel,
-        };
-      }
-      if (email) {
-        filtros.where.email = {
-          contains: email,
-        };
-      }
-      if (matricula) {
-        filtros.where.matricula = {
-          contains: matricula,
-        };
-      }
-      if (cpf) {
-        filtros.where.cpf = {
-          contains: cpf,
-        };
-      }
-
-      //chamada no prisma
-      const users = await prisma.usuario.findMany(filtros);
-
-      // tratamento da resposta
-      if (users.length === 0) {
-        return res.status(400).json([
-          {
-            error: true,
-            code: 400,
-            message: "Usuário não encontrado.",
-          },
-        ]);
+      if (usuarios.length === 0) {
+        return res.status(400).json(CommonResponse.badRequest(message.validationGeneric.resourceNotFound('Usuário')));
       } else {
         return res.status(200).json({
-          error: false,
-          code: 200,
-          data: users,
-        });
+          ...CommonResponse.success(usuarios, message.validationGeneric.resourceFound('Usuário')),
+          pagination: {
+            total,
+            page: parseInt(perPage),
+            perPage: parseInt(perPage),
+            totalPages: Math.ceil(total / parseInt(perPage))
+          }
+        })
       }
     } catch (error) {
       if (process.env.DEBUG === "true") {
         console.log(err);
       }
-      return res.status(500).json([
-        {
-          error: true,
-          code: 500,
-          message: "Erro interno.",
-          data: [],
-        },
-      ]);
+      return res.status(500).json(CommonResponse.serverError);
     }
   };
+
   // GET by ID
   static listarPorID = async (req, res) => {
     try {
-      const useExists = await prisma.usuarios.findFirst({
-        where: {
-          id: parseInt(req.params.id),
-        },
-        select: {
-          id: true,
-          nome: true,
-          tel: true,
-          email: true,
-          matricula: true,
-          cpf: true,
-          senha: false,
-        },
-      });
-      if (useExists) {
-        return res.status(200).json(useExists);
+      const idUsuario = parseInt(req.params.id);
+
+      const usuario = await usuarioService.listarPorID(idUsuario);
+
+      if(usuario) {
+        return res.status(200).json(CommonResponse.success(usuario))
+      } else {
+        return res.status(400).json(CommonResponse.badRequest(messages.validationGeneric.resourceFound('Usuário')))
       }
     } catch (error) {
       console.log(error);
@@ -113,150 +58,65 @@ class usuarioController {
   //POST
   static inserir = async (req, res) => {
     try {
-      const { nome, tel, email, matricula, cpf, senha } = req.body;
+      const usuario = await usuario.inserir(req.body);
+      let camposExcluidos = ['usu_id', 'usu_senha'];
 
-      const senhaCrypt = bcrypt.hashSync(senha, parseInt(process.env.SALT));
-
-      const userCreated = await prisma.usuarios.create({
-        data: {
-          id,
-          nome,
-          tel,
-          email,
-          matricula,
-          cpf,
-          senha
-        }
-      })
-
-      delete userCreated.senha;
-      return res.status(201).json({
-        error: false,
-        code: 201,
-        message: "Usuário cadastrado.",
-        data: userCreated
-      })
+      camposExcluidos.forEach(campo => {
+        delete usuario[campo];
+      });
+      
+      return res.status(201).json(CommonResponse.created(usuario, messages.validationGeneric.resourceCreated('Usuário')));
     } catch (error) {
-      console.error(error);
-      return res.status(500).json([{ error: true, code: 500, mesasge: "Erro interno."}])
+      if (err instanceof ZodError) {
+        const formattedErrors = err.errors.map(error => ({
+          path: error.path.join('.'),
+          message: error.message
+        }))
+        return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
+      }
+      return res.status(500).json(CommonResponse.unprocessableEntity(Error, err.message));
       }
   };
 
   // PUT
   static atualizar = async (req, res) => {
     try {
-      if (!req.params.id) {
-        return res.status(400).json([{ error: true, code: 400, message: "ID obrigatório."}])
+      const id = req.params.id;
+      if (!id) {
+        return res.status(400).json(CommonResponse.badRequest(messages.validationGeneric.resourceNotFound('Usuário')));
       }
+      const { nome, matricula } = req.body;
 
-      const id = req.params.id
-      const { nome, tel, email, matricula, cpf, senha } = req.body
-
-      if (!nome || !tel || !email || !matricula || !cpf || !senha && !id) {
-        return res.status(400).json([{error: true, code: 400, message: "Deve haver alguma alteração."}])
+      if (nome || matricula ) {
+        const usuario = await usuarioService.atualizar(parseInt(id), {nome, matricula})
+        delete usuario.senha;
+        return res.status(200).json(CommonResponse.success(usuario, messages.validationGeneric.resourceUpdated('Usuário')));
+      } else {
+        return res.status(400).json(CommonResponse.badRequest(messages.validationGeneric.resourceNotFound('Usuário')))
       }
-
-      const emailExist = await prisma.users.findFirst({
-        where: {
-          id: id
-        }
-      })
-
-      console.log(email)
-      console.log(typeof email)
-
-      if (email !== undefined) {
-        if (emailExist.email !== email) {
-          const emailExistOutherUser = await prisma.users.findFirst({
-            where: {
-              email: {
-                equals: email
-              },
-              id: {
-                not: {
-                  equals: id
-                }
-              }
-            }
-          })
-          if (emailExistOutherUser) {
-            return res.status(400).json([{error: true, code: 400, message: "Email já cadastrado."}])
-          }
-        }
-      }
-
-      if (senha) {
-        const senhaCrypt = bcrypt.hashSync(senha, parseInt(process.env.SALT));
-      }
-
-      const userUpdated = await prisma.users.update({
-        where: {
-          id: id
-        },
-        data: {
-          nome,
-          tel,
-          email,
-          matricula,
-          cpf,
-          senha
-        }
-      })
-
-      delete userUpdated.senha
-      return res.status(201).json(userUpdated)
 
     } catch (error) {
-      console.error(error)
-      return res.status(500).json([{ error: true, code: 500, message: "Erro interno."}])
+      if (err.message === messages.field.validationGeneric.fieldIsRepeated('Matricula')) {
+        return res.status(400).json(CommonResponse.conflict(err.message));
+      }
+        return res.status(500).json(CommonResponse.unprocessableEntity(Error, ...err.message));  
     }
   }
   // DELETE
   static excluir = async (req, res) => {
     try {
-      const errors = []
-
-      if(!req.params.id) {
-        return res.status(400).json([{error: true, code: 400, message: "ID obrigatorio."}])
+      if (!req.params.id) {
+        return req.status(400).json(CommonResponse.badRequest(messages.validationGeneric.resourceNotFound('Usuário')))
       }
-
       const id = req.params.id
-
-      const userExists = await prisma.users.findFirst({
-        where: {
-          id: id
-        }
-      })
-
-      if (!userExists) {
-        return res.status(400).json([{ error: true, code: 400, message: "Usuário não encontrado."}])
-      }
-
-      const userExistsRotas = await prisma.usuariosRotas.findMany({
-        where: {
-          id: id
-        }
-      })
-
-      if (userExistsRotas) {
-        errors.push({ error: true, code: 400, message: "Rotas vinculadas."})
-      }
-
-      if (errors.length > 0) {
-        return res.status(400).json(errors)
-      }
-
-      const userDeleted = await prisma.users.delete({
-        where: {
-          id: id
-        }
-      })
-
-      return res.status(200).json(userDeleted)
-
+      await usuarioService.excluir(parseInt(id))
+      return res.status(200).json(CommonResponse.success([], messages.validationGeneric.resourceDeleted('Usuário')))
     } catch (error) {
-      console.error(error)
-      return res.status(500).json([{ error: true, code: 500, message: "Erro interno."}])
+      if (error.message === messages.validationGeneric.resourceNotFound('Usuário')) {
+        return res.status(400).json(CommonResponse.badRequest(messages.validationGeneric.resourceNotFound('Usuário')))
+      }
+      console.error();
+      return res.status(500).json(CommonResponse.serverError());
     }
   }
 }
