@@ -59,9 +59,11 @@ export const messages = {
         unsupportedOperation: "Operação não suportada neste contexto.",
         dataParsingError: "Erro ao analisar os dados recebidos.",
         externalServiceError: "Erro ao se comunicar com um serviço externo.",
+        internalServerError: "Erro ao se comunicar com um serviço interno.",
         invalidApiKey: "Chave de API inválida.",
         operationCanceled: "Operação cancelada pelo usuário.",
         resourceNotFound: (id) => `O campo ${id} não foi encontrado.`,
+        resourceFound: (id) => `O campo ${id} já existe.`,
         pageIsNotAvailable: (page) => `A página ${page} não está disponível.`,
         pageNotContainsData: (page) => `A página ${page} não contém dados.`,
     },
@@ -96,15 +98,10 @@ export const messages = {
         mustBeOneOf: (fieldName, values) => {
             return { message: `O campo ${fieldName} deve ser um dos seguintes valores: ${values.join(", ")}` };
         },
-        resourceUpdated: (fieldName) => {
-            return { message: `${fieldName} atualizado(a) com sucesso.` };
-        },
-        resourceAlreadyExists: (fieldName) => {
-            return { message: `${fieldName} já existe.` };
-        },
         resourceCreated: (fieldName) => {
             return { message: `${fieldName} criado(a) com sucesso.` };
         },
+
     },
 
     // categorias de erros para referencias e integridades

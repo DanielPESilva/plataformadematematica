@@ -37,10 +37,11 @@ class turmaRepository {
 
   async findById(id) {
     const filtros = this.constructFilters();
-    const turmas = await prisma.turma.findUnique({
-      where: { id },
+    const turmas = await prisma.turma.findFirst({
+      where: { id:id },
       select: filtros.select,
     });
+    console.log("3 -(service) Verifica se o titulo está no repository: "+ JSON.stringify(id))
     return turmas;
   }
 

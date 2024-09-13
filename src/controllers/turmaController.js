@@ -3,6 +3,7 @@ import turmaService from "../services/turmaService.js"
 import CommonResponse from '../utils/commonResponse.js';
 import {sendError,sendResponse, messages} from '../utils/messages.js';
 import { z} from 'zod';
+import id from "faker-br/lib/locales/id_ID/index.js";
 
 env.config();
 
@@ -67,13 +68,15 @@ class TurmaController{
   }
 
   static createTurma = async (req, res) => {
-    console.log(req.body)
+
+    console.log("1 - Capturando a requisição"+JSON.stringify(req.body))
     try {
       const turmaCreated = await turmaService.create(req.body);
       
       console.log("Turma criada"+turmaCreated);
-      // Excluindo campos do retorno
-      return res.status(201).json(CommonResponse.created(turmaCreated, messages.validationGeneric.resourceCreated('Turma')));
+      if (turmaCreated) {
+        return res.status(201).json(CommonResponse.created(turmaCreated, messages.validationGeneric.resourceCreated('Turma')));
+      }
     } catch (err) {
       if (err instanceof z.ZodError) {
         // Formatar os erros para exibir apenas `path` e `message`
@@ -89,18 +92,22 @@ class TurmaController{
 
     static atualizarTurma = async (req, res) => {
     try{
+      let id=req.params.id;
       let updatedTurma = {
-        titulo:titulo
+        titulo:req.body.titulo
       }
-      console.log("1- Controller, coletou o body"+req.body.titulo);
-      
-      const turma = await turmaService.atualizarTurma(updatedTurma)
+      console.log("1- Controller, coletou o body "+JSON.stringify(updatedTurma));
+    
+
+      const turma = await turmaService.atualizarTurma(parseInt(id),updatedTurma)
 
       //voltar aqui após resposta do server
       return sendResponse(res,201, {data: turma});
 
     }catch(err){
 
+      console.log(err.message);
+      
       if(err instanceof z.ZodError){
         return sendError(res,400,err.errors[0].message);
 
@@ -112,6 +119,17 @@ class TurmaController{
       }
     }
   }
+
+
+/**
+ * 
+ * NÃO MEXE NA MINHA ROTAAAAAAA
+ *
+ */
+
+
+
+
 
   static inserirUsuario = async (req, res) => {
     try {

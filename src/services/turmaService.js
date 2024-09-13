@@ -34,18 +34,19 @@ class turmaService {
   }
 
   async create(data){
-    console.log(data);
-      // Validação com Zod
+    console.log("2 - Data chegou em service"+JSON.stringify(data))
+    // Validação com Zod
       const validatedData = TurmaSchema.parse(data);
 
-      console.log(validatedData);
+      console.log("3 - Foi feito a validação de data"+JSON.stringify(validatedData))
     
       const errors = [];
       const tituloExists = await turmaRepository.findByTitulo(validatedData.titulo);
+      console.log("4 - Foi feito a validação de titulo: "+JSON.stringify(tituloExists))
+
       if (tituloExists) {
-        errors.push(messages.validationGeneric.resourceAlreadyExists('Titulo').message);
+        errors.push(messages.error.resourceFound('Titulo'));
       }
-      console.log(tituloExists);
       
       if (errors.length > 0) {
         throw new Error(errors.join('\n'));
@@ -57,10 +58,16 @@ class turmaService {
   async atualizarTurma(id, data) {
     // Validação com Zod para atualização
     const validatedData = updateTurmaSchema.parse(data);
-    console.log("2 - (SERVICE) Recebe as informações do controller: "+ JSON.stringify(validatedData))
+    
+    console.log("2 - (SERVICE) Recebe as informações do controller: "+ JSON.stringify(validatedData));
 
     const tituloExists = await turmaRepository.findById(id);
-    console.log("3 -(SERVICE) Verifica se o titulo as informações do filtro achar por ID: "+ JSON.stringify(tituloExists))
+
+    console.log("3 -(SERVICE) Verifica se o titulo: "+ JSON.stringify(tituloExists))
+    if (tituloExists===null) {
+      throw new Error(messages.error.resourceNotFound("Título não existe."));
+    }
+
 
     if (validatedData.titulo && tituloExists.titulo !== validatedData.titulo) {
       const tituloExistsOutherTurma = await turmaRepository.findByTituloExceptId(validatedData.titulo, id);

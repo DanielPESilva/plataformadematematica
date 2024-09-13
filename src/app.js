@@ -1,5 +1,6 @@
 import express, { json } from "express";
 import routes from "./routes/index.js";
+import { prisma } from "./configs/prismaClient.js";
 import cors from "cors"; // permite o fornt-end usar essa api (resumindo)
 
 //instanciando o express
