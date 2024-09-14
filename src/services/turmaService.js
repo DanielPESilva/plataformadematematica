@@ -3,6 +3,7 @@ import turmaRepository from "../repositories/turmaRepository.js";
 import {TurmaSchema, updateTurmaSchema} from "../schemas/turmaSchemas.js";
 import {user_turma_Schema, inserirTurmaSchema} from "../schemas/user_turma_Schema.js";
 import { messages} from '../utils/messages.js';
+import { error } from "console";
 
 class turmaService {
   async listar(titulo) {
@@ -84,27 +85,27 @@ class turmaService {
     }
   }
 
-  async inserirUsuario(data) {
+  async inserirUsuario(req) {
     // Validação com Zod
-    console.log("Dados do body"+JSON.stringify  (data));
+
+
+    console.log("2- (SERVICE)Dados do body"+JSON.stringify  (req.body));
     
-    const validatedData = user_turma_Schema.parse(data);
+    const validatedData = inserirTurmaSchema.parse(req.body);
 
-    console.log("VALIDAÇÃODOSDADOS"+JSON.stringify(validatedData));
+    console.log("3 - (SERVICE)VALIDAÇÃODOSDADOS"+JSON.stringify(validatedData));
 
-    const usuExistsInTurma = await turmaRepository.userExist(validatedData.usuario_id); 
+    const usuExistsInTurma = await turmaRepository.userExist(validatedData); 
 
-    console.log("Usuário na turma"+usuExistsInTurma);
-    
+    console.log("4 - (SERVICE)Usuário na turma "+usuExistsInTurma); 
 
-    if (usuExistsInTurma) {
-      errors.push(messages.validationGeneric.resourceAlreadyExists('Usuário').message);
-    }
-    if (errors.length > 0) {
-      throw new Error(errors.join('\n'));
+    if (usuExistsInTurma) {   
+      throw new error(messages.validationGeneric.resourceAlreadyExists('Usuário'));
     }
 
-    return await turmaRepository.create(validatedData);
+    const userCadastrado = await turmaRepository.turmaMatricular(validatedData);
+
+    return userCadastrado
   }
 
 }

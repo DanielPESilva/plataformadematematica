@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const user_turma_Schema = z.object({
-    turma_id: z.number().int(), 
+    turma_id: z.number().int().min(1), 
     usuario_id: z.number().int(),
 });
 

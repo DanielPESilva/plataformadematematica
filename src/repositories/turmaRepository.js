@@ -49,12 +49,12 @@ class turmaRepository {
     return await prisma.turma.create({data});
   }
 
-   async atualizar(id, data){
-    return await prisma.turma.update({ where: { id }, data});
+  async turmaMatricular(data) {
+    return await prisma.usuario_has_turma.create({data});
   }
 
-  async findByTitulo(titulo) {
-    return await prisma.turma.findFirst({ where: { titulo:titulo } });
+   async atualizar(id, data){
+    return await prisma.turma.update({ where: { id }, data});
   }
 
   async findByTituloExceptId(titulo, id) {
@@ -78,17 +78,17 @@ class turmaRepository {
     });
   }
 
-  async userExist(usuario_id) {
+  async userExist(data) {
     return await prisma.usuario_has_turma.findFirst({
       where: {
-        usuario_id: usuario_id,
+        usuario_id: data.usuario_id,
+        turma_id: data.turma_id
       },
       select: {
-        usuario_has_turma: {
-          usuario_id: true,
-        },
+        usuario_id: true, 
       },
     });
   }
+  
 }
 export default new turmaRepository();

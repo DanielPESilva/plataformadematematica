@@ -121,24 +121,19 @@ class TurmaController{
   }
 
 
-/**
- * 
- * NÃO MEXE NA MINHA ROTAAAAAAA
- *
- */
-
-
-
-
-
   static inserirUsuario = async (req, res) => {
     try {
-      console.log(req.body);
-      const turmaCreated = await turmaService.inserirUsuario(req.body);
+      console.log("1 - (Controller) Recebendo a requisição"+JSON.stringify(req.body));
       
-      return res.status(201).json(CommonResponse.created(turmaCreated, messages.validationGeneric.resourceCreated('Turma')));
+      const usuarioInserido = await turmaService.inserirUsuario(req);
+      
+      console.log("5 - (Controller) Recebendo a requisição"+JSON.stringify(usuarioInserido));
+
+      return res.status(201).json(CommonResponse.created(usuarioInserido, messages.validationGeneric.resourceCreated('Aluno matriculado')));
 
     } catch (err) {
+      console.log("CHEGOU O ERRO");
+      
       if (err instanceof z.ZodError) {
         // Formatar os erros para exibir apenas `path` e `message`
         const formattedErrors = err.errors.map(error => ({
@@ -148,7 +143,8 @@ class TurmaController{
         return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
       }
       // console.error(err);
-      return res.status(500).json(CommonResponse.unprocessableEntity(Error, err.message));
+      return res.status(500).json(CommonResponse.serverError("usuário já matriculado"));
+      
     }
 }
 }
