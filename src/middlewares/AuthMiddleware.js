@@ -5,25 +5,19 @@ import { URL } from 'url';
 const AuthMiddleware = async (req, res, next) => {
   try {
     const auth = req.headers.authorization;
-    if (!auth) {
-      return res.status(498).json({ code: 498, message: "O token de autenticação não existe!" })
+    if (!auth || !auth.startsWith('Bearer')) {
+      res.status(400).json({ Error: 'Token not provided'})
+    } else {
+      const token = auth.split(' ')[1]
+      try {
+        jwt.verify(token, process.env.JWT_SECRET)
+        next()
+      } catch (error) {
+        return res.status(401).json({ Error: 'Incorrect Token' });
+      }
     }
-
-    const [, token] = auth.split(' '); // desestruturação
-    // promisify converte uma função de callback para uma função async/await
-    const decoded = await promisify(jwt.verify)(token, process.env.SECRET);
-
-    console.log("Decoded: ", decoded);
-    
-    if (!decoded) { // se não ocorrer a decodificação do token
-      return res.status(498).json({ error: true, code: 498, message: "O token está expirado!" })
-    } else { // se o token for válido
-      req.user_id = decoded.id;
-      next();
-    }
-
   } catch (err) {
-    return res.status(498).json({ error: true, code: 498, message: err.message });
+    return res.status(401).json({ Error: 'Incorrect Token' });
   }
 
 }

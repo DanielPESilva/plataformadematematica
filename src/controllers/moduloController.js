@@ -11,14 +11,14 @@ class ModuloController{
         try{
             const moduloExists = await prisma.modulo.findMany({
                 where: {
-                    tema:notnull
+                    mod_tema:notnull
                 },
                 select: {
-                    id: true,
-                    tema: true,
-                    descricao: true,
-                    pdf: true,
-                    link_video: true,
+                    mod_id: true,
+                    mod_tema: true,
+                    mod_descricao: true,
+                    mod_pdf: true,
+                    mod_linkVideo: true,
                     modulo: {
                         select:{
                             turma: {
@@ -64,11 +64,11 @@ class ModuloController{
                     que_id: parseInt(req.params.id),
                 },
                 select:{
-                    id: true,
-                    tema: true,
-                    descricao: true,
-                    pdf: true,
-                    link_video: true,
+                    mod_id: true,
+                    mod_tema: true,
+                    mod_descricao: true,
+                    mod_pdf: true,
+                    mod_linkVideo: true,
                     modulo: {
                         select:{
                             turma: {
@@ -94,15 +94,15 @@ class ModuloController{
   //POST
   static inserir = async (req, res) => {
     try {
-        const { id, tema, descricao, pdf, link_video } = req.body
+        const { mod_id, mod_tema, mod_descricao, mod_pdf, mod_linkVideo } = req.body
 
       const moduloCreated = await prisma.usuarios.create({
         data: {
-            id,
-            tema,
-            descricao,
-            pdf,
-            link_video
+            mod_id,
+            mod_tema,
+            mod_descricao,
+            mod_pdf,
+            mod_linkVideo
         }
       })
 
@@ -166,14 +166,14 @@ class ModuloController{
 
       const moduloUpdate = await prisma.users.update({
         where: {
-          id: id
+          mod_id: id
         },
         data: {
-            id: true,
-            tema: true,
-            descricao: true,
-            pdf: true,
-            link_video: true
+            mod_id: true,
+            mod_tema: true,
+            mod_descricao: true,
+            mod_pdf: true,
+            mod_linkVideo: true
         }
       })
 

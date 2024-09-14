@@ -19,18 +19,12 @@ class loginController {
         return res.status(401).json({ error: true, code: 401, message: "Usuário ou senha inválidos - loginController" });
       }
 
-      const token = jwt.sign(
-        {
-          ...userEncontrado,
-        },
-        process.env.SECRET,
-        { expiresIn: process.env.EXPIREIN }
-      );
+      const token = 
 
       console.log("8 - Retornando token e usuário encontrado no serviço para o controller - loginController");
       return res.status(200).json({
         data: {
-          token,
+          token: token,
           userEncontrado: {
             ...userEncontrado
           },

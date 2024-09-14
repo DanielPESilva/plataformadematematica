@@ -1,11 +1,7 @@
 import usuarioRepository from "../repositories/usuarioRepository.js";
-import bcrypt from 'bcryptjs';
-import messages from '../utils/messages.js';
-import { usuarioSchema } from '../schemas/usuarioSchema.js';
-
 
 class UsuarioService {
-    async listar(nome, matricula, page = 1, perPage = 10) {
+    async listar(nome,matricula, page = 1, perPage = 10) {
         const filtros = usuarioRepository.constructFilters(nome, matricula);
         return await usuarioRepository.findAll(filtros, page, perPage);
     }
