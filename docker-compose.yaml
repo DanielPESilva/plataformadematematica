@@ -1,5 +1,6 @@
 # Plataforma Matemática
 # http://edurondon.tplinkdns.com:8031/
+#teste
 version: '3.8'
 
 services:
