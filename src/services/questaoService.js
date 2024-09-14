@@ -1,9 +1,5 @@
 import questaoRepository from "../repositories/questaoRepository.js";
-import messages from "../utils/messages.js";
-import { z } from 'zod'
-import { prisma } from "../configs/prismaClient.js";
 import QuestaoSchema from "../schemas/questaoSchemas.js";
-
 class questaoService {
     async listar(filtro) {
         // Regra de negócio e validações

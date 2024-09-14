@@ -1,7 +1,7 @@
 import { prisma } from "../configs/prismaClient.js";
 
 class turmaRepository {
-  constructFilters(usuario_id, titulo) {
+  constructFilters(titulo) {
     let filtros = {
       select: {
         id: true,
@@ -19,40 +19,42 @@ class turmaRepository {
     };
 
     if (titulo) filtros.where.titulo = { contains: titulo };
-    if (usuario_id)
-      filtros.where.usuario_has_turma = {
-        some: { usuario_id: { usuario_id: usuario_id } },
-      };
 
     return filtros;
   }
 
-  async findAll(filtros, page, perPage) {
-    const skip = (page - 1) * perPage;
-    const take = perPage;
+  async findAll(filtros) {
 
-    const [turmas, total] = await Promise.all([
+    const [turmas] = await Promise.all([
       prisma.turma.findMany({
-        ...filtros,
-        skip,
-        take,
+        ...filtros
       }),
       prisma.turma.count({ where: filtros.where }),
     ]);
-    return { turmas, total, page, perPage };
+
+    return {turmas};
   }
 
   async findById(id) {
     const filtros = this.constructFilters();
-    const turmas = await prisma.turma.findUnique({
-      where: { id },
+    const turmas = await prisma.turma.findFirst({
+      where: { id:id },
       select: filtros.select,
     });
+    console.log("3 -(service) Verifica se o titulo está no repository: "+ JSON.stringify(id))
     return turmas;
   }
 
   async create(data) {
-    return await prisma.turma.create(data);
+    return await prisma.turma.create({data});
+  }
+
+  async turmaMatricular(data) {
+    return await prisma.usuario_has_turma.create({data});
+  }
+
+   async atualizar(id, data){
+    return await prisma.turma.update({ where: { id }, data});
   }
 
   async findByTitulo(titulo) {
@@ -69,16 +71,25 @@ class turmaRepository {
       },
     });
   }
-
-  async userExist(usuario_id) {
+  
+  async findByTituloExceptId(titulo, id) {
+    return await prisma.turma.findFirst({
+      where: {
+        titulo:titulo,
+        id: {
+          not: id,
+        },
+      },
+    });
+  }
+  async userExist(data) {
     return await prisma.usuario_has_turma.findFirst({
       where: {
-        usuario_id: usuario_id,
+        usuario_id: data.usuario_id,
+        turma_id: data.turma_id
       },
       select: {
-        usuario_has_turma: {
-          usuario_id: true,
-        },
+        usuario_id: true, 
       },
     });
   }

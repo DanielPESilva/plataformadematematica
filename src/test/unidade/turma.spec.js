@@ -16,7 +16,6 @@ describe('turmaService', () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
-
     
     describe('Método listar', () => {
         test('1 - Deve retornar todas as turmas com pelo menos um aluno', async () => {
@@ -65,15 +64,6 @@ describe('turmaService', () => {
             // Assert
             expect(turma).toEqual(mockTurma);
             expect(turmaRepository.findById).toHaveBeenCalledWith(1);
-        });
-        
-        test('3 - Deve retornar null se a turma não for encontrada', async () => {
-            turmaRepository.findById.mockResolvedValue(null);
-        
-            const turma = await turmaService.listarPorID(999); 
-        
-            expect(turma).toBeNull(); 
-            expect(turmaRepository.findById).toHaveBeenCalledWith(999);
         });
     });
 

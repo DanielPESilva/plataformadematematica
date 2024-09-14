@@ -22,7 +22,9 @@
 
 # Comandos do Git
 
-- `git add . && git commit -m "Insira uma mensagem" && git push origin 0-insira-sua-branch`
+- `git add . && git commit -m "Insira uma mensagem" && git push origin 0-insira-sua-branch` Adiciona, comita e envia alterações para a branch especificada;
+- `git pull --no-commit --no-ff origin branch` Faz pull sem criar um commit automático ou fast-forward;
+- `git config -e --config` COnfigurar o email e o usuário no vscode
 
 # Comandos Diversos
 

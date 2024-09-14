@@ -10,7 +10,7 @@ env.config();
 class TurmaController{
 
   /**
-   * @listar Listará todas as turmas, caso não exista turmaCreated dará erro
+   * @listar Listará todas as turmas, caso não exista uma turma dará erro
    * @page O primeiro é quantidade de tabelas que aparecerão e o segundo é a quantidade de colunas que cada tabela terá...
    * @error200 Deu certo :)
    * @error400 sintaxe de requisição mal formada ou enquadramento de mensagem de requisição inválida
@@ -21,21 +21,15 @@ class TurmaController{
 
   static listar = async (req, res) => {
     try {
-      const { titulo, usuario_id, page = 1, perPage = 10 } = req.query;
-      const { turmas, total } = await turmaService.listar(titulo, usuario_id, parseInt(page), parseInt(perPage));
+      const { titulo } = req.query;
+      const { turmasComAlunos } = await turmaService.listar(titulo);
       
       // continua deopis que voltar do service
-      if (turmas.length === 0) {
+      if (!turmasComAlunos) {
         return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('Turmas')));
       } else {
         return res.status(200).json({
-          ...CommonResponse.success(turmas, messages.validationGeneric.resourceFound('Turmas')),
-          pagination: {
-            total,
-            page: parseInt(page),
-            perPage: parseInt(perPage),
-            totalPages: Math.ceil(total / parseInt(perPage))
-          }
+          ...CommonResponse.success(turmasComAlunos, messages.validationGeneric.resourceFound('Turmas')),
         });
       }
     } catch (err) {
@@ -73,33 +67,84 @@ class TurmaController{
   }
 
   static createTurma = async (req, res) => {
+
+    console.log("1 - Capturando a requisição"+JSON.stringify(req.body))
     try {
-        const parametros = {
-          id:req.body.id,
-          titulo: req.body.titulo,
-          //usuario_id: parseInt(req.body.usuario_id),
-        };
-        const turmaCreate = await turmaService.create(parametros)
-        
-        console.log("resposta")
-        return sendResponse(res,201,{data: turmaCreate})
-
-    }catch(err){
-      console.log(err)
-        if (err.message === "Turma informada não existe.") {
-            return sendError(res, 404, ["Turma informada não existe."])
-
-        }else if (err instanceof z.ZodError) {
-            const errorMessages = err.issues.map((issue) => issue.message);
-            return sendError(res, 400, errorMessages)
-
-        }else{
-            return sendError(res, 500, ["OCORREU UM ERRO INTERNO"])
-        }
-    } 
+      const turmaCreated = await turmaService.create(req.body);
+      
+      console.log("Turma criada"+turmaCreated);
+      if (turmaCreated) {
+        return res.status(201).json(CommonResponse.created(turmaCreated, messages.validationGeneric.resourceCreated('Turma')));
+      }
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        // Formatar os erros para exibir apenas `path` e `message`
+        const formattedErrors = err.errors.map(error => ({
+          path: error.path.join('.'), // Converte o path para uma string (ex: "email")
+          message: error.message // A mensagem de erro do Zod
+        }));
+        return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
+      }
+      return res.status(500).json(CommonResponse.unprocessableEntity(Error, err.message));
+    }
 }
 
+    static atualizarTurma = async (req, res) => {
+    try{
+      let id=req.params.id;
+      let updatedTurma = {
+        titulo:req.body.titulo
+      }
+      console.log("1- Controller, coletou o body "+JSON.stringify(updatedTurma));
+    
+
+      const turma = await turmaService.atualizarTurma(parseInt(id),updatedTurma)
+
+      //voltar aqui após resposta do server
+      return sendResponse(res,201, {data: turma});
+
+    }catch(err){
+
+      console.log(err.message);
+      
+      if(err instanceof z.ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(messages.error == "Turma não existe." ){
+        return sendError(res,404,["Turma não existe."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+    }
+  }
 
 
+  static inserirUsuario = async (req, res) => {
+    try {
+      console.log("1 - (Controller) Recebendo a requisição"+JSON.stringify(req.body));
+      
+      const usuarioInserido = await turmaService.inserirUsuario(req);
+      
+      console.log("5 - (Controller) Recebendo a requisição"+JSON.stringify(usuarioInserido));
+
+      return res.status(201).json(CommonResponse.created(usuarioInserido, messages.validationGeneric.resourceCreated('Aluno matriculado')));
+
+    } catch (err) {
+      console.log("CHEGOU O ERRO");
+      
+      if (err instanceof z.ZodError) {
+        // Formatar os erros para exibir apenas `path` e `message`
+        const formattedErrors = err.errors.map(error => ({
+          path: error.path.join('.'), // Converte o path para uma string (ex: "email")
+          message: error.message // A mensagem de erro do Zod
+        }));
+        return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
+      }
+      // console.error(err);
+      return res.status(500).json(CommonResponse.serverError("usuário já matriculado"));
+      
+    }
+}
 }
 export default TurmaController;
