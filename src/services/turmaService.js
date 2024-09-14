@@ -1,7 +1,6 @@
-import { json } from "stream/consumers";
 import turmaRepository from "../repositories/turmaRepository.js";
 import {TurmaSchema, updateTurmaSchema} from "../schemas/turmaSchemas.js";
-import {user_turma_Schema, inserirTurmaSchema} from "../schemas/user_turma_Schema.js";
+import {inserirTurmaSchema} from "../schemas/user_turma_Schema.js";
 import { messages} from '../utils/messages.js';
 import { error } from "console";
 
@@ -64,7 +63,7 @@ class turmaService {
 
     const tituloExists = await turmaRepository.findById(id);
 
-    console.log("3 -(SERVICE) Verifica se o titulo: "+ JSON.stringify(tituloExists))
+    console.log("4 -(SERVICE) Verifica se o titulo: "+ JSON.stringify(tituloExists))
     if (tituloExists===null) {
       throw new Error(messages.error.resourceNotFound("Título não existe."));
     }
@@ -87,7 +86,6 @@ class turmaService {
 
   async inserirUsuario(req) {
     // Validação com Zod
-
 
     console.log("2- (SERVICE)Dados do body"+JSON.stringify  (req.body));
     

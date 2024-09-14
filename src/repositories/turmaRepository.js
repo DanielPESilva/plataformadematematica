@@ -57,16 +57,10 @@ class turmaRepository {
     return await prisma.turma.update({ where: { id }, data});
   }
 
-  async findByTituloExceptId(titulo, id) {
-    return await prisma.turma.findFirst({
-      where: {
-        titulo:titulo,
-        id: {
-          not: id, 
-        },
-      },
-    });
+  async findByTitulo(titulo) {
+    return await prisma.turma.findFirst({ where: { titulo } });
   }
+
   async turmaExist(titulo) {
     return await prisma.turma.findFirst({
       where: {
@@ -74,6 +68,17 @@ class turmaRepository {
       },
       select: {
         titulo: true,
+      },
+    });
+  }
+  
+  async findByTituloExceptId(titulo, id) {
+    return await prisma.turma.findFirst({
+      where: {
+        titulo:titulo,
+        id: {
+          not: id, 
+        },
       },
     });
   }
