@@ -6,7 +6,8 @@ import turmaRepository from '../../repositories/turmaRepository.js';
 jest.mock('../../repositories/turmaRepository.js', () => ({
     findAll: jest.fn(),
     findById: jest.fn(),
-    //create: jest.fn(),
+    create: jest.fn(),
+    findByTitulo: jest.fn(),
     //update: jest.fn(),
     //delete: jest.fn(),
     constructFilters: jest.fn(),
@@ -18,33 +19,34 @@ describe('turmaService', () => {
     });
     
     describe('Método listar', () => {
-        test('1 - Deve retornar todas as turmas com pelo menos um aluno', async () => {
-            const mockTurma = [
-                { titulo: '1ª Série A', usuario_has_turma: ['João', 'Maria', 'José'] },
-                { titulo: '1ª Série B', usuario_has_turma: ['João'] },
-            ];
-            // Mockando o retorno do método findAll no turmaRepository
-            turmaRepository.findAll.mockResolvedValue({ turmas: mockTurma });
 
-            // Executa o método listar do turmaService
+        const mockTurma = [
+            { titulo: '1ª Série A', usuario_has_turma: ['João', 'Maria', 'José'] },
+            { titulo: '1ª Série B', usuario_has_turma: ['João'] },
+        ];
+
+        beforeEach(() => {
+            jest.clearAllMocks();
+        });
+    
+        test('1 - Deve retornar todas as turmas com pelo menos um aluno', async () => {
+
+            turmaRepository.findAll.mockResolvedValue({ turmas: mockTurma })
+
             const mockResult = await turmaService.listar();
         
-            expect(mockResult).toEqual({ turmasComAlunos: mockTurma });
+            expect(mockResult).toEqual({ turmas: mockTurma });
         });
 
-        test('2 - Deve lançar um erro quando ocorrer uma exceção no repositório', async () => {
-            // Simular a exceção ao chamar findAll
-            turmaRepository.findAll.mockRejectedValue(new Error('Erro ao listar as turmas'));
+        test('2 - Deve lançar um erro quando ocorrer turma(s) sem aluno(s)', async () => {
 
-            try {
-                await turmaService.listar();
-            } catch (error) {
-                // Verificar se o erro lançado é o esperado
-                expect(error.message).toBe('Erro ao listar turmas com alunos');
-            }
-
-            // Verificar se o método findAll foi chamado
-            expect(turmaRepository.findAll).toHaveBeenCalled();
+            const mockTurmasVazias = []; 
+    
+            turmaRepository.findAll.mockResolvedValue(mockTurmasVazias);
+    
+            await expect(turmaService.listar()).rejects.toThrow(
+                new Error("Turmas não encontradas.")
+            );
         });
     });
 
@@ -65,12 +67,63 @@ describe('turmaService', () => {
             expect(turma).toEqual(mockTurma);
             expect(turmaRepository.findById).toHaveBeenCalledWith(1);
         });
+        test('2 - Deve retornar um erro quando o ID não for um número', async () => {
+
+                // Arrange
+                const invalidID = 'abc'; // Simulando um ID inválido (string)
+            
+                // Act & Assert
+                await expect(turmaService.listarPorID(invalidID)).rejects.toThrow(
+                    new Error("ID deve ser um número inteiro")
+                );
+            
+                expect(turmaRepository.findById).not.toHaveBeenCalled();
+            
+        });        
     });
 
     describe('Método createTurma', () => {
-        
-        
+        test('1 - Deve criar uma turma', async () => {
+            // Arrange
+            const mockData = { 
+                titulo: '2º Série A',
+                usuario_has_turma: 3
+            };
 
+            const mockTurmaCriada = { 
+                id: 1, 
+                titulo: '2º Série A',
+                usuario_has_turma: 3 
+            };
+
+            turmaRepository.findByTitulo.mockResolvedValue(null);
+            turmaRepository.create.mockResolvedValue(mockTurmaCriada);
+
+            // Act
+            const turmaCriada = await turmaService.create(mockData);
+
+            // Assert
+            expect(turmaCriada).toEqual(mockTurmaCriada);
+            expect(turmaRepository.findByTitulo).toHaveBeenCalledWith(mockData.titulo);
+            expect(turmaRepository.create).toHaveBeenCalledWith(mockData);
+        });
+
+        test('2 - Deve lançar um erro quando o título já existir', async () => {
+            // Arrange
+            const mockData = { 
+                titulo: '2º Série A',
+                usuario_has_turma: 3
+            };
+            turmaRepository.findByTitulo.mockResolvedValue(true);
+        
+            // Act 
+            await expect(turmaService.create(mockData)).rejects.toThrow(
+                new Error('O campo Titulo já existe.') 
+            );
+            
+            //Assert
+            expect(turmaRepository.findByTitulo).toHaveBeenCalledWith(mockData.titulo);
+        });
+        
     });
-
 });
