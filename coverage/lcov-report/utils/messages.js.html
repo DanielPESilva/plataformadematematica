@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">8.57% </span>
+                <span class="strong">11.42% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/35</span>
+                <span class='fraction'>4/35</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">3.84% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/26</span>
+                <span class='fraction'>1/26</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">8.57% </span>
+                <span class="strong">11.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/35</span>
+                <span class='fraction'>4/35</span>
             </div>
         
             
@@ -338,19 +338,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -381,6 +377,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -548,9 +548,11 @@
         unsupportedOperation: "Operação não suportada neste contexto.",
         dataParsingError: "Erro ao analisar os dados recebidos.",
         externalServiceError: "Erro ao se comunicar com um serviço externo.",
+        internalServerError: "Erro ao se comunicar com um serviço interno.",
         invalidApiKey: "Chave de API inválida.",
         operationCanceled: "Operação cancelada pelo usuário.",
         resourceNotFound: <span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >`O campo ${id} não foi encontrado.`,</span>
+        resourceFound: (id) =&gt; `O campo ${id} já existe.`,
         pageIsNotAvailable: <span class="fstat-no" title="function not covered" >(p</span>age) =&gt; <span class="cstat-no" title="statement not covered" >`A página ${page} não está disponível.`,</span>
         pageNotContainsData: <span class="fstat-no" title="function not covered" >(p</span>age) =&gt; <span class="cstat-no" title="statement not covered" >`A página ${page} não contém dados.`,</span>
     },
@@ -585,15 +587,13 @@
         mustBeOneOf: <span class="fstat-no" title="function not covered" >(f</span>ieldName, values) =&gt; {
 <span class="cstat-no" title="statement not covered" >            return { message: `O campo ${fieldName} deve ser um dos seguintes valores: ${values.join(", ")}` };</span>
         },
-        resourceUpdated: <span class="fstat-no" title="function not covered" >(f</span>ieldName) =&gt; {
-<span class="cstat-no" title="statement not covered" >            return { message: `${fieldName} atualizado(a) com sucesso.` };</span>
-        },
-        resourceAlreadyExists: <span class="fstat-no" title="function not covered" >(f</span>ieldName) =&gt; {
-<span class="cstat-no" title="statement not covered" >            return { message: `${fieldName} já existe.` };</span>
-        },
         resourceCreated: <span class="fstat-no" title="function not covered" >(f</span>ieldName) =&gt; {
 <span class="cstat-no" title="statement not covered" >            return { message: `${fieldName} criado(a) com sucesso.` };</span>
         },
+        resourceAlreadyExists: <span class="fstat-no" title="function not covered" >(f</span>ieldName) =&gt; {
+<span class="cstat-no" title="statement not covered" >            return { message: `${fieldName} Já existe.` };</span>
+        },
+&nbsp;
     },
 &nbsp;
     // categorias de erros para referencias e integridades
@@ -706,7 +706,7 @@ export default messages;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-09-11T01:15:25.044Z
+                at 2024-09-14T19:45:37.022Z
             </div>
         <script src="../prettify.js"></script>
         <script>

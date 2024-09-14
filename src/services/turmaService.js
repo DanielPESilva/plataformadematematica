@@ -5,29 +5,21 @@ import { messages} from '../utils/messages.js';
 import { error } from "console";
 
 class turmaService {
-  async listar(titulo) {
-    try {
-      const filtros = turmaRepository.constructFilters(titulo);
-      const { turmas } = await turmaRepository.findAll( filtros );
-      
-      // Regra de negócio: Filtrar turmas com pelo menos um aluno
-      const turmasComAlunos = turmas.filter(
-        (turma) => turma.usuario_has_turma.length > 0
-      );
+  async listar(data) {
 
-      if (turmasComAlunos) {
-        // Retornando turmas filtradas 
-        return ({ turmasComAlunos});
-      }
-    } catch (error) {
-      console.error("Erro ao listar turmas:", error.message);
-      throw new Error("Erro ao listar turmas com alunos");
+      const filtros = turmaRepository.constructFilters(data);
+
+      const turmas  = await turmaRepository.findAll( filtros );
+      
+      if (turmas.length == 0){
+        throw new Error("Turmas não encontradas.");
     }
+      return turmas
   }
 
   async listarPorID(id) {
     if (isNaN(id)) {
-      throw new Error(messages.validationGeneric.resourceNotFound("ID deve ser um número inteiro"));
+      throw new Error("ID deve ser um número inteiro");
     }
     return turmaRepository.findById(id);
   }
