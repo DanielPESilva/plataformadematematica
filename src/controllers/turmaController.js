@@ -130,7 +130,7 @@ class TurmaController{
       
       console.log("5 - (Controller) Recebendo a requisição"+JSON.stringify(usuarioInserido));
 
-      return res.status(201).json(CommonResponse.created(usuarioInserido, messages.validationGeneric.resourceCreated('Aluno matriculado')));
+      return res.status(201).json(CommonResponse.created(usuarioInserido, messages.validationGeneric.alunomatriculado('Aluno')));
 
     } catch (err) {
       console.log("CHEGOU O ERRO");
