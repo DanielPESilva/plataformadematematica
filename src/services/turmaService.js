@@ -14,6 +14,7 @@ class turmaService {
       if (turmas.length == 0){
         throw new Error("Turmas não encontradas.");
     }
+    console.log(turmas);
       return turmas
   }
 

@@ -21,9 +21,9 @@ class TurmaController{
 
   static listar = async (req, res) => {
     try {
+      
       const { titulo } = req.params;
 
-      
       const  turmas  = await turmaService.listar(titulo);
       
       // continua deopis que voltar do service
