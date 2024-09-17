@@ -107,6 +107,9 @@ export const messages = {
         resourceAlreadyExists: (fieldName) => {
             return { message: `${fieldName} Já existe.` };
         },
+        resourceDeleted: (fieldName) => {
+            return { message: `${fieldName} foi deletado.` };
+        }
 
     },
 

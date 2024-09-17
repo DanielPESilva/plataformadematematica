@@ -124,16 +124,11 @@ class TurmaController{
 
   static inserirUsuario = async (req, res) => {
     try {
-      console.log("1 - (Controller) Recebendo a requisição"+JSON.stringify(req.body));
       
       const usuarioInserido = await turmaService.inserirUsuario(req);
-      
-      console.log("5 - (Controller) Recebendo a requisição"+JSON.stringify(usuarioInserido));
-
       return res.status(201).json(CommonResponse.created(usuarioInserido, messages.validationGeneric.alunomatriculado('Aluno')));
 
     } catch (err) {
-      console.log("CHEGOU O ERRO");
       
       if (err instanceof z.ZodError) {
         // Formatar os erros para exibir apenas `path` e `message`
@@ -144,9 +139,44 @@ class TurmaController{
         return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
       }
       // console.error(err);
-      return res.status(500).json(CommonResponse.serverError("usuário já matriculado"));
-      
+      return res.status(500).json(CommonResponse.serverError("Erro interno"));
     }
-}
+  }
+
+  static removerUsuario = async (req, res) => {
+    try {
+
+      console.log(req.body);
+      
+      const usuarioRemovido = await turmaService.removerUsuario(req);
+      return res.status(200).json(CommonResponse.success(usuarioRemovido, messages.validationGeneric.resourceDeleted('Aluno')));
+  
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const formattedErrors = err.errors.map(error => ({
+          path: error.path.join('.'),
+          message: error.message
+        }));
+        return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
+      }
+      return res.status(500).json(CommonResponse.serverError("Erro interno"));
+    }
+  }
+  static excluirTurma = async (req, res) => {
+    try {
+      if (!req.params.id) {
+        return res.status(400).json(CommonResponse.badRequest(messages.validationGeneric.resourceNotFound('turma')));
+      }
+      const id = req.params.id;
+      await turmaService.excluirTurma(parseInt(id));
+      return res.status(200).json(CommonResponse.success([], messages.validationGeneric.resourceDeleted('turma')));
+    } catch (err) {
+      if (err.message === messages.validationGeneric.resourceNotFound('turma')) {
+        return res.status(400).json(CommonResponse.badRequest(messages.validationGeneric.resourceNotFound('turma')));
+      }
+      console.error(err);
+      return res.status(500).json(CommonResponse.serverError());
+    }
+  }
 }
 export default TurmaController;

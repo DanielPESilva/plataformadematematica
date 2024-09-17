@@ -7,5 +7,6 @@ const router = express.Router();
   router.post("/turma", TurmaController.createTurma)
   router.patch("/turma/:id",TurmaController.atualizarTurma)  
   router.post("/turma/matricular",TurmaController.inserirUsuario)
-
+  router.delete("/turma", TurmaController.removerUsuario)
+  router.delete('/turma/:id',TurmaController.excluirTurma);
   export default router;

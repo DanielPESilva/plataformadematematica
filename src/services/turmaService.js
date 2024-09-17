@@ -50,12 +50,8 @@ class turmaService {
   async atualizarTurma(id, data) {
     // Validação com Zod para atualização
     const validatedData = updateTurmaSchema.parse(data);
-    
-    console.log("2 - (SERVICE) Recebe as informações do controller: "+ JSON.stringify(validatedData));
-
     const tituloExists = await turmaRepository.findById(id);
 
-    console.log("4 -(SERVICE) Verifica se o titulo: "+ JSON.stringify(tituloExists))
     if (tituloExists===null) {
       throw new Error(messages.error.resourceNotFound("Título não existe."));
     }
@@ -63,8 +59,6 @@ class turmaService {
 
     if (validatedData.titulo && tituloExists.titulo !== validatedData.titulo) {
       const tituloExistsOutherTurma = await turmaRepository.findByTituloExceptId(validatedData.titulo, id);
-
-      console.log("4 -(SERVICE) Verifica se o Tútlo já existe esse título em outra tabela: "+ JSON.stringify(tituloExistsOutherTurma))
 
       if (tituloExistsOutherTurma) {
         throw new Error('Titulo já cadastrado');
@@ -78,16 +72,15 @@ class turmaService {
 
   async inserirUsuario(req) {
     // Validação com Zod
-
-    console.log("2- (SERVICE)Dados do body"+JSON.stringify  (req.body));
     
     const validatedData = inserirTurmaSchema.parse(req.body);
 
-    console.log("3 - (SERVICE)VALIDAÇÃODOSDADOS"+JSON.stringify(validatedData));
+    console.log(validatedData);
+  
 
     const usuExistsInTurma = await turmaRepository.userExist(validatedData); 
 
-    console.log("4 - (SERVICE)Usuário na turma "+usuExistsInTurma); 
+    console.log(usuExistsInTurma); 
 
     if (usuExistsInTurma) {   
       throw new error(messages.validationGeneric.resourceAlreadyExists('Usuário'));
@@ -96,6 +89,32 @@ class turmaService {
     const userCadastrado = await turmaRepository.turmaMatricular(validatedData);
 
     return userCadastrado
+  }
+
+  async removerUsuario(req) {
+  const validatedData = inserirTurmaSchema.parse(req.body);
+
+  console.log(validatedData);
+  
+  const usuExistsInTurma = await turmaRepository.userExist(validatedData);
+
+  console.log(usuExistsInTurma);
+  
+
+  if (!usuExistsInTurma) {
+    throw new Error(messages.validationGeneric.resourceNotFound('Usuário'));
+  }
+  const userRemovido = await turmaRepository.removerUsuarioDaTurma(validatedData);
+
+  return userRemovido;
+  }
+
+  async excluirTurma(id) {
+    const turmaExists = await turmaRepository.findById(id);
+    if (!turmaExists) {
+      throw new Error('Turma não encontrada');
+    }
+    return await turmaRepository.delete(id);
   }
 
 }

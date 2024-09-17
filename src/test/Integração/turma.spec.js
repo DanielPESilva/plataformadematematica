@@ -42,7 +42,7 @@ describe('get turma por id', () => {
     it("1 deve retornar uma turma", async () =>{
         const req = await request(app)
         .get('/turma/1')
-         .set("Authorization", `Bearer ${token}`)
+        .set("Authorization", `Bearer ${token}`)
         .set("Accept", "aplication/json")
         expect(req.body.error).toEqual(false)
         expect(req.status).toBe(200)
