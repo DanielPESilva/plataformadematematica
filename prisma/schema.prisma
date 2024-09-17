@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model questao {
+  id         Int      @id @default(autoincrement())
+  posicao    String?  @db.VarChar(45)
+  titulo     String   @db.VarChar(45)
+  pdf        String   @db.VarChar(45)
+  link_video String   @db.VarChar(45)
+  modulo     modulo[]
+}
+
+model turma {
+  id                Int                 @id @default(autoincrement())
+  titulo            String              @db.VarChar(45)
+  modulo_has_turma  modulo_has_turma[]
+  turma_has_modulo  turma_has_modulo[]
+  usuario_has_turma usuario_has_turma[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model usuario {
+  id                Int                 @id
+  nome              String              @db.VarChar(45)
+  telefone          String?             @db.VarChar(45)
+  email             String              @unique(map: "email") @db.VarChar(45)
+  matricula         String              @unique(map: "matricula") @default("00000000000") @db.VarChar(11)
+  cpf               String              @db.VarChar(45)
+  senha             String              @db.VarChar(255)
+  usuario_has_turma usuario_has_turma[]
+}
+
+model modulo {
+  id               Int
+  titulo           String             @db.VarChar(45)
+  tema             String             @db.VarChar(45)
+  descriao         String?            @db.VarChar(45)
+  questao_id       Int
+  questao          questao            @relation(fields: [questao_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_modulo_questao2")
+  modulo_has_turma modulo_has_turma[]
+  turma_has_modulo turma_has_modulo[]
+
+  @@id([id, questao_id])
+  @@index([questao_id], map: "fk_modulo_questao2_idx")
+}
+
+model usuario_has_turma {
+  usuario_id Int
+  turma_id   Int
+  turma      turma   @relation(fields: [turma_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario_has_turma_turma1")
+  usuario    usuario @relation(fields: [usuario_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_usuario_has_turma_usuario")
+
+  @@id([usuario_id, turma_id])
+  @@index([turma_id], map: "fk_usuario_has_turma_turma1_idx")
+  @@index([usuario_id], map: "fk_usuario_has_turma_usuario_idx")
+}
+
+model modulo_has_turma {
+  modulo_id         Int
+  modulo_questao_id Int
+  turma_id          Int
+  modulo            modulo @relation(fields: [modulo_id, modulo_questao_id], references: [id, questao_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_modulo_has_turma_modulo1")
+  turma             turma  @relation(fields: [turma_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_modulo_has_turma_turma1")
+
+  @@id([modulo_id, modulo_questao_id, turma_id])
+  @@index([modulo_id, modulo_questao_id], map: "fk_modulo_has_turma_modulo1_idx")
+  @@index([turma_id], map: "fk_modulo_has_turma_turma1_idx")
+}
+
+model turma_has_modulo {
+  turma_id          Int
+  modulo_id         Int
+  modulo_questao_id Int
+  modulo            modulo @relation(fields: [modulo_id, modulo_questao_id], references: [id, questao_id], onDelete: NoAction, onUpdate: NoAction, map: "fk_turma_has_modulo_modulo1")
+  turma             turma  @relation(fields: [turma_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_turma_has_modulo_turma1")
+
+  @@id([turma_id, modulo_id, modulo_questao_id])
+  @@index([modulo_id, modulo_questao_id], map: "fk_turma_has_modulo_modulo1_idx")
+  @@index([turma_id], map: "fk_turma_has_modulo_turma1_idx")
+}
