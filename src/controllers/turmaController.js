@@ -149,7 +149,7 @@ class TurmaController{
       console.log(req.body);
       
       const usuarioRemovido = await turmaService.removerUsuario(req);
-      return res.status(200).json(CommonResponse.success(usuarioRemovido, messages.validationGeneric.resourceDeleted('Aluno')));
+      return res.status(200).json(CommonResponse.success(usuarioRemovido, messages.validationGeneric.resourceRemove('Aluno')));
   
     } catch (err) {
       if (err instanceof z.ZodError) {
