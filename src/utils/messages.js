@@ -101,6 +101,9 @@ export const messages = {
         resourceCreated: (fieldName) => {
             return { message: `${fieldName} criado(a) com sucesso.` };
         },
+        alunomatriculado: (fieldName) => {
+            return { message: `${fieldName} matriculado com sucesso.` };
+        },
         resourceAlreadyExists: (fieldName) => {
             return { message: `${fieldName} Já existe.` };
         },
