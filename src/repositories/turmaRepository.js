@@ -93,5 +93,20 @@ class turmaRepository {
       },
     });
   }
+
+  async removerUsuarioDaTurma(data) {
+  const usuarioRemovido = await prisma.usuario_has_turma.deleteMany({
+    where: {
+      usuario_id: data.usuario_id,
+      turma_id: data.turma_id
+    }
+  });
+  return usuarioRemovido;
+  }
+  
+  async delete(id) {
+  return await prisma.turma.delete({ where: { id } });
+}
+
 }
 export default new turmaRepository();
