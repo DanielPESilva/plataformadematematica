@@ -109,7 +109,10 @@ export const messages = {
         },
         resourceDeleted: (fieldName) => {
             return { message: `${fieldName} foi deletado.` };
-        }
+        },
+        resourceRemove: (fieldName) => {
+            return { message: `${fieldName} foi removido.` };
+        },
 
     },
 

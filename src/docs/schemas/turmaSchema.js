@@ -6,10 +6,6 @@ const turmaSchema = {
                 type: "string",
                 description: "Titulo da Turma"
             },
-            usuario_id: {
-                type: "string",
-                description: "Id do usuário para que, quando solicitado, possa aparecer o nome do mesmo"
-            },
         }
     },
     TurmaListagem: {
@@ -20,43 +16,84 @@ const turmaSchema = {
         },
         example: {
             id: 1,
-            titulo: "1º série C",
+            titulo: "1º série A",
         }
     },
+
+     //Detalhes da turma
     TurmaDetalhes: {
         type: "object",
         properties: {
-            id: { type: "integer", description: "ID da turma" },
-            name: { type: "string", description: "Titulo da Turma" },
+            titulo: { type: "string", description: "Titulo da Turma" },
+        },
+        example: {
+            titulo: "1º série C",
+        }
+    },
+
+    InserirAlunoDetalhes: {
+        type: "object",
+        properties: {
+            turma_id: { type: "integer", description: "id da turma" },
+            usuario_id: { type: "integer", description: "id do aluno" },
+        },
+        example: {
+            turma_id: 1,
+            usuario_id: 1,
+        }
+    },
+
+    //Criação de turma
+    TurmaPost: {
+        type: "object",
+        required: ["id","titulo"],  
+        properties: {
+            id: { type: "int", description: "ID da turma" },
+            titulo: { type: "string", description: "Titulo de turma"},
         },
         example: {
             id: 1,
-            name: "1º série C",
-        }
-    },
-    TurmaPost: {
-        type: "object",
-        required: ["titulo", "usuario_id"],  // Lista dos campos obrigatórios
-        properties: {
-            titulo: { type: "string", description: "Titulo de turma"},
-            usuario_id: { type: "int", description: "ID do usuário" },
-        },
-        example: {
             titulo: "Turma_Teste",
-            usuario_id: 1,
         }
     },
     TurmaPostResposta: {
         type: "object",
         properties: {
+            id: { type: "int", description: "id da turma" },
             titulo: { type: "string", description: "Titulo de turma"},
-            usuario_id: { type: "string", description: "Endereço do usuário" },
         },
         example: {
-            titulo: { type: "string", description: "Titulo de turma"},
+            id: 1,
+            titulo: "Turma_Teste",
+        }
+    },
+
+    //Inserir aluno
+    InserirAluno: {
+        type: "object",
+        required: ["turma_id","usuario_id"],  
+        properties: {
+            turma_id: { type: "int", description: "id da turma" },
+            usuario_id: { type: "int", description: "id do aluno"},
+        },
+        example: {
+            turma_id: 1,
+            usuario_id: 1,
+        }
+    },
+
+    InserirAlunoResposta: {
+        type: "object",
+        properties: {
+            turma_id: { type: "int", description: "id da turma" },
+            usuario_id: { type: "int", description: "id do aluno"},
+        },
+        example: {
+            turma_id: 2,
             usuario_id: 2,
         }
     }
+    
 };
 
 export default turmaSchema;
