@@ -8,6 +8,8 @@ jest.mock('../../repositories/turmaRepository.js', () => ({
     findById: jest.fn(),
     create: jest.fn(),
     findByTitulo: jest.fn(),
+    atualizar:jest.fn(),
+    findByTituloExceptId:jest.fn(),
     //update: jest.fn(),
     //delete: jest.fn(),
     constructFilters: jest.fn(),
@@ -126,4 +128,82 @@ describe('turmaService', () => {
         });
         
     });
+
+    describe('Método atualizarTurma', () => {
+        beforeEach(() => {
+            jest.clearAllMocks(); // Limpa os mocks antes de cada teste
+        });
+    
+        test('1 - Deve atualizar uma turma', async () => {
+            // Arrange
+            const id = 1; // ID da turma que está sendo atualizada
+            const mockData = { 
+                titulo: '2º Série A',
+            };
+            const existingTurma = { 
+                id: id,
+                titulo: '1ª Série B',
+            };
+            const mockTurmaAtualizada = { 
+                id: id,
+                titulo: '2º Série A',
+            };
+    
+            // Mock dos métodos do repositório
+            turmaRepository.findById.mockResolvedValue(existingTurma);
+            turmaRepository.findByTituloExceptId.mockResolvedValue(null);
+            turmaRepository.atualizar.mockResolvedValue(mockTurmaAtualizada);
+    
+            // Act
+            const turmaAtualizada = await turmaService.atualizarTurma(id, mockData);
+    
+            // Assert
+            expect(turmaAtualizada).toEqual(mockTurmaAtualizada);
+            expect(turmaRepository.findById).toHaveBeenCalledWith(id);
+            expect(turmaRepository.findByTituloExceptId).toHaveBeenCalledWith(mockData.titulo, id);
+            expect(turmaRepository.atualizar).toHaveBeenCalledWith(id, mockData);
+        });
+    
+        test('2 - Deve lançar um erro se a turma não for encontrada', async () => {
+            // Arrange
+            const id = 1; 
+            const mockData = { 
+                titulo: '2º Série A',
+            };
+    
+            turmaRepository.findById.mockResolvedValue(null);
+    
+            // Act & Assert
+            await expect(turmaService.atualizarTurma(id, mockData)).rejects.toThrow('Título não existe.');
+            expect(turmaRepository.findById).toHaveBeenCalledWith(id);
+            expect(turmaRepository.findByTituloExceptId).not.toHaveBeenCalled();
+            expect(turmaRepository.atualizar).not.toHaveBeenCalled();
+        });
+    
+        test('3 - Deve lançar um erro se o título já estiver cadastrado', async () => {
+            // Arrange
+            const id = 1; 
+            const mockData = { 
+                titulo: '2º Série A',
+            };
+            const existingTurma = { 
+                id: id,
+                titulo: '1ª Série B',
+            };
+            const tituloExistente = { 
+                id: 2,
+                titulo: '2º Série A',
+            };
+    
+            turmaRepository.findById.mockResolvedValue(existingTurma);
+            turmaRepository.findByTituloExceptId.mockResolvedValue(tituloExistente);
+    
+            // Act & Assert
+            await expect(turmaService.atualizarTurma(id, mockData)).rejects.toThrow('Titulo já cadastrado');
+            expect(turmaRepository.findById).toHaveBeenCalledWith(id);
+            expect(turmaRepository.findByTituloExceptId).toHaveBeenCalledWith(mockData.titulo, id);
+            expect(turmaRepository.atualizar).not.toHaveBeenCalled();
+        });
+    });
+    
 });

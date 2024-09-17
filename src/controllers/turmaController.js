@@ -11,11 +11,9 @@ class TurmaController{
 
   /**
    * @listar Listará todas as turmas, caso não exista uma turma dará erro
-   * @page O primeiro é quantidade de tabelas que aparecerão e o segundo é a quantidade de colunas que cada tabela terá...
    * @error200 Deu certo :)
    * @error400 sintaxe de requisição mal formada ou enquadramento de mensagem de requisição inválida
    * @error500 problema generalizado no servidor interno da api
-   * @pagination Como o page irá operar
    *
    */
 
