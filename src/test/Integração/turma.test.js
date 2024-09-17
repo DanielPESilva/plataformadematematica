@@ -1,9 +1,6 @@
 import request from "supertest";
 import { describe, expect, it } from '@jest/globals';
-import app from '../../app.js'; // Importa a instância do aplicativo Express
-import faker from 'faker-br';
-
-let token = 'seu_token_de_autenticacao'; 
+import app from '../../app.js';
 
 describe('GET /turma', () => {
     

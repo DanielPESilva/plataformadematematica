@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">11.42% </span>
+                <span class="strong">13.15% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>4/35</span>
+                <span class='fraction'>5/38</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">3.84% </span>
+                <span class="strong">6.89% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/26</span>
+                <span class='fraction'>2/29</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">11.42% </span>
+                <span class="strong">13.15% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>4/35</span>
+                <span class='fraction'>5/38</span>
             </div>
         
             
@@ -275,7 +275,16 @@
 <a name='L210'></a><a href='#L210'>210</a>
 <a name='L211'></a><a href='#L211'>211</a>
 <a name='L212'></a><a href='#L212'>212</a>
-<a name='L213'></a><a href='#L213'>213</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L213'></a><a href='#L213'>213</a>
+<a name='L214'></a><a href='#L214'>214</a>
+<a name='L215'></a><a href='#L215'>215</a>
+<a name='L216'></a><a href='#L216'>216</a>
+<a name='L217'></a><a href='#L217'>217</a>
+<a name='L218'></a><a href='#L218'>218</a>
+<a name='L219'></a><a href='#L219'>219</a>
+<a name='L220'></a><a href='#L220'>220</a>
+<a name='L221'></a><a href='#L221'>221</a>
+<a name='L222'></a><a href='#L222'>222</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -339,7 +348,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -347,6 +356,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -551,7 +569,7 @@
         internalServerError: "Erro ao se comunicar com um serviço interno.",
         invalidApiKey: "Chave de API inválida.",
         operationCanceled: "Operação cancelada pelo usuário.",
-        resourceNotFound: <span class="fstat-no" title="function not covered" >(i</span>d) =&gt; <span class="cstat-no" title="statement not covered" >`O campo ${id} não foi encontrado.`,</span>
+        resourceNotFound: (id) =&gt; `O campo ${id} não foi encontrado.`,
         resourceFound: (id) =&gt; `O campo ${id} já existe.`,
         pageIsNotAvailable: <span class="fstat-no" title="function not covered" >(p</span>age) =&gt; <span class="cstat-no" title="statement not covered" >`A página ${page} não está disponível.`,</span>
         pageNotContainsData: <span class="fstat-no" title="function not covered" >(p</span>age) =&gt; <span class="cstat-no" title="statement not covered" >`A página ${page} não contém dados.`,</span>
@@ -590,8 +608,17 @@
         resourceCreated: <span class="fstat-no" title="function not covered" >(f</span>ieldName) =&gt; {
 <span class="cstat-no" title="statement not covered" >            return { message: `${fieldName} criado(a) com sucesso.` };</span>
         },
+        alunomatriculado: <span class="fstat-no" title="function not covered" >(f</span>ieldName) =&gt; {
+<span class="cstat-no" title="statement not covered" >            return { message: `${fieldName} matriculado com sucesso.` };</span>
+        },
         resourceAlreadyExists: <span class="fstat-no" title="function not covered" >(f</span>ieldName) =&gt; {
 <span class="cstat-no" title="statement not covered" >            return { message: `${fieldName} Já existe.` };</span>
+        },
+        resourceDeleted: <span class="fstat-no" title="function not covered" >(f</span>ieldName) =&gt; {
+<span class="cstat-no" title="statement not covered" >            return { message: `${fieldName} foi deletado.` };</span>
+        },
+        resourceRemove: <span class="fstat-no" title="function not covered" >(f</span>ieldName) =&gt; {
+<span class="cstat-no" title="statement not covered" >            return { message: `${fieldName} foi removido.` };</span>
         },
 &nbsp;
     },
@@ -706,7 +733,7 @@ export default messages;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-09-14T19:45:37.022Z
+                at 2024-09-17T18:21:10.849Z
             </div>
         <script src="../prettify.js"></script>
         <script>

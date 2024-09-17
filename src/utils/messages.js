@@ -105,7 +105,7 @@ export const messages = {
             return { message: `${fieldName} matriculado com sucesso.` };
         },
         resourceAlreadyExists: (fieldName) => {
-            return { message: `${fieldName} Já existe.` };
+            return { message: `${fieldName} já existe.` };
         },
         resourceDeleted: (fieldName) => {
             return { message: `${fieldName} foi deletado.` };
