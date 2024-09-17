@@ -83,7 +83,7 @@ class turmaService {
     console.log(usuExistsInTurma); 
 
     if (usuExistsInTurma) {   
-      throw new error(messages.validationGeneric.resourceAlreadyExists('Usuário'));
+      throw new Error('Usuário já existe.');
     }
 
     const userCadastrado = await turmaRepository.turmaMatricular(validatedData);
@@ -102,7 +102,7 @@ class turmaService {
   
 
   if (!usuExistsInTurma) {
-    throw new Error(messages.validationGeneric.resourceNotFound('Usuário'));
+    throw new Error("Usuário não encontrado(a).");
   }
   const userRemovido = await turmaRepository.removerUsuarioDaTurma(validatedData);
 

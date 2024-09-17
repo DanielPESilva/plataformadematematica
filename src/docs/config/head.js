@@ -3,7 +3,6 @@ import usersPaths from "../routes/users.js";
 import turmaPaths from "../routes/turma.js"
 import authSchemas from "../schemas/authSchema.js";
 import turmaSchema from "../schemas/turmaSchema.js";
-import Git from "faker-br/lib/git.js";
 
 // Função para definir as URLs do servidor dependendo do ambiente
 const getServersInCorrectOrder = () => {

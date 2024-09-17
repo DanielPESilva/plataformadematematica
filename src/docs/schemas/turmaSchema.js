@@ -8,6 +8,7 @@ const turmaSchema = {
             },
         }
     },
+    
     TurmaListagem: {
         type: "object",
         properties: {
@@ -20,14 +21,14 @@ const turmaSchema = {
         }
     },
 
-     //Detalhes da turma
+     //Para o update da turma
     TurmaDetalhes: {
         type: "object",
         properties: {
             titulo: { type: "string", description: "Titulo da Turma" },
         },
         example: {
-            titulo: "1º série C",
+            titulo: "1º série D",
         }
     },
 
