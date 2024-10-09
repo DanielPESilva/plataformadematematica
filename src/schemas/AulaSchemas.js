@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-class QuestaoSchema{
+class AulaSchema{
     static createQestaoSchema =
     z.object({
         id: z.number().min(1, 'Obrigatorio').positive(),
@@ -11,4 +11,4 @@ class QuestaoSchema{
     })
 }
 
-export default  QuestaoSchema
+export default  AulaSchema

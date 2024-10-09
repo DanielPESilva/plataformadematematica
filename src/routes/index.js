@@ -2,7 +2,7 @@ import express from "express";
 import users from "./UsuarioRoutes.js";
 import login from "./loginRoute.js";
 import turma from "./TurmaRoutes.js";
-import questao from "./QuestaoRoute.js";
+import aula from "./AulaRoute.js";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import getSwaggerOptions from "../docs/config/head.js";
@@ -26,7 +26,7 @@ const routes = (app) => {
         // rotas para autentição e autorização (permissão)
         login,
         turma,
-        questao,
+        aula,
         users
 
     );

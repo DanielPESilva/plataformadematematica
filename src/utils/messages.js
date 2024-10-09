@@ -216,6 +216,4 @@ export const sendResponse = (res,code, resp = {}) => {
     });
 };
 
-
-
 export default messages;

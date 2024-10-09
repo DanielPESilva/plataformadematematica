@@ -1,8 +1,6 @@
-import turmaRepository from "../repositories/turmaRepository.js";
-import {TurmaSchema, updateTurmaSchema} from "../schemas/turmaSchemas.js";
+import turmaRepository from "../repositories/TurmaRepository.js";
+import {TurmaSchema, updateTurmaSchema} from "../schemas/TurmaSchemas.js";
 import {inserirTurmaSchema} from "../schemas/user_turma_Schema.js";
-import { messages} from '../utils/messages.js';
-import { error } from "console";
 
 class turmaService {
   async listar(data) {
@@ -37,7 +35,7 @@ class turmaService {
       console.log("4 - Foi feito a validação de titulo: "+JSON.stringify(tituloExists))
 
       if (tituloExists) {
-        errors.push(messages.error.resourceFound('Titulo'));
+        throw new Error("Título não existe.");
       }
       
       if (errors.length > 0) {
@@ -53,7 +51,7 @@ class turmaService {
     const tituloExists = await turmaRepository.findById(id);
 
     if (tituloExists===null) {
-      throw new Error(messages.error.resourceNotFound("Título não existe."));
+      throw new Error("Título não existe.");
     }
 
 

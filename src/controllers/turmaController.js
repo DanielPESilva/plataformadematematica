@@ -1,7 +1,7 @@
 import env from "dotenv";
 import turmaService from "../services/turmaService.js"
 import CommonResponse from '../utils/commonResponse.js';
-import {sendError,sendResponse, messages} from '../utils/messages.js';
+import { sendError, sendResponse } from "../utils/messages.js";
 import { z } from 'zod';
 
 env.config();
@@ -32,12 +32,22 @@ class TurmaController{
           ...CommonResponse.success(turmas, messages.validationGeneric.resourceFound('Turmas')),
         });
       }
+
+    // você retornar utilizando esse metodo
+    return sendResponse(res,201, {data:"seu retorno"});
+
     } catch (err) {
-      if (process.env.DEBUGLOG === 'true') {
-        console.log(err);
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
-      return res.status(500).json(CommonResponse.serverError());
-    }
+     }
   }
 
   /**
@@ -60,10 +70,22 @@ class TurmaController{
       } else {
         return res.status(400).json(CommonResponse.notFound(messages.validationGeneric.resourceNotFound('Turma')));
       }
+
+    // você retornar utilizando esse metodo
+    return sendResponse(res,201, {data:"seu retorno"});
+
     } catch (err) {
-      console.error(err);
-      return res.status(500).json(CommonResponse.serverError());
-    }
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+     }
   }
 
   static createTurma = async (req, res) => {
@@ -76,20 +98,25 @@ class TurmaController{
       if (turmaCreated) {
         return res.status(201).json(CommonResponse.created(turmaCreated, messages.validationGeneric.resourceCreated('Turma')));
       }
+
+    // você retornar utilizando esse metodo
+    return sendResponse(res,201, {data:"seu retorno"});
+
     } catch (err) {
-      if (err instanceof z.ZodError) {
-        // Formatar os erros para exibir apenas `path` e `message`
-        const formattedErrors = err.errors.map(error => ({
-          path: error.path.join('.'), // Converte o path para uma string (ex: "email")
-          message: error.message // A mensagem de erro do Zod
-        }));
-        return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
-      return res.status(500).json(CommonResponse.unprocessableEntity(Error, err.message));
-    }
+     }
 }
 
-    static atualizarTurma = async (req, res) => {
+    static atualizar = async (req, res) => {
     try{
       let id=req.params.id;
       let updatedTurma = {
@@ -103,20 +130,21 @@ class TurmaController{
       //voltar aqui após resposta do server
       return sendResponse(res,201, {data: turma});
 
-    }catch(err){
+      // você retornar utilizando esse metodo
+      return sendResponse(res,201, {data:"seu retorno"});
 
-      console.log(err.message);
-      
-      if(err instanceof z.ZodError){
+    } catch (err) {
+
+      if(err instanceof ZodError){
         return sendError(res,400,err.errors[0].message);
 
-      }else if(messages.error == "Turma não existe." ){
-        return sendError(res,404,["Turma não existe."]);
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
 
       }else{
         return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
-    }
+     }
   }
 
 
@@ -126,19 +154,21 @@ class TurmaController{
       const usuarioInserido = await turmaService.inserirUsuario(req);
       return res.status(201).json(CommonResponse.created(usuarioInserido, messages.validationGeneric.alunomatriculado('Aluno')));
 
+      // você retornar utilizando esse metodo
+      return sendResponse(res,201, {data:"seu retorno"});
+
     } catch (err) {
-      
-      if (err instanceof z.ZodError) {
-        // Formatar os erros para exibir apenas `path` e `message`
-        const formattedErrors = err.errors.map(error => ({
-          path: error.path.join('.'), // Converte o path para uma string (ex: "email")
-          message: error.message // A mensagem de erro do Zod
-        }));
-        return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
-      // console.error(err);
-      return res.status(500).json(CommonResponse.serverError("Erro interno"));
-    }
+     }
   }
 
   static removerUsuario = async (req, res) => {
@@ -148,17 +178,22 @@ class TurmaController{
       
       const usuarioRemovido = await turmaService.removerUsuario(req);
       return res.status(200).json(CommonResponse.success(usuarioRemovido, messages.validationGeneric.resourceRemove('Aluno')));
-  
+
+      // você retornar utilizando esse metodo
+      return sendResponse(res,201, {data:"seu retorno"});
+
     } catch (err) {
-      if (err instanceof z.ZodError) {
-        const formattedErrors = err.errors.map(error => ({
-          path: error.path.join('.'),
-          message: error.message
-        }));
-        return res.status(422).json(CommonResponse.unprocessableEntity(formattedErrors));
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
-      return res.status(500).json(CommonResponse.serverError("Erro interno"));
-    }
+     }
   }
   static excluirTurma = async (req, res) => {
     try {
@@ -168,13 +203,22 @@ class TurmaController{
       const id = req.params.id;
       await turmaService.excluirTurma(parseInt(id));
       return res.status(200).json(CommonResponse.success([], messages.validationGeneric.resourceDeleted('turma')));
+
+      // você retornar utilizando esse metodo
+      return sendResponse(res,201, {data:"seu retorno"});
+
     } catch (err) {
-      if (err.message === messages.validationGeneric.resourceNotFound('turma')) {
-        return res.status(400).json(CommonResponse.badRequest(messages.validationGeneric.resourceNotFound('turma')));
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
-      console.error(err);
-      return res.status(500).json(CommonResponse.serverError());
-    }
+     }
   }
 }
 export default TurmaController;

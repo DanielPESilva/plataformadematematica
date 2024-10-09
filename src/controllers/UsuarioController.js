@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js";
+import { sendError, sendResponse } from "../utils/messages.js";
 
 
 env.config(); // inicializar as variáveis de ambiente
@@ -53,15 +54,17 @@ class systemUsuarioController {
       }
 
     } catch (err) {
-      if (process.env.DEBUG === 'true'){
-        console.log(err);
-      };
-      return res.status(500).json([{ 
-        error: true, 
-        code: 500, 
-        message: "Erro interno do Servidor",
-        data: [] }])
-    }
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+     }
   }
 
   // GET por ID - listar Usuario por ID 
@@ -101,9 +104,17 @@ class systemUsuarioController {
         return res.status(200).json(userExists);
       }
     } catch (err) {
-      console.error(err);
-      return res.status(500).json([{ error: true, code: 500, message: "Erro interno do Servidor" }])
-    }
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+     }
   }
 
   // POST - cadastrar Usuario
@@ -165,10 +176,38 @@ class systemUsuarioController {
       return res.status(201).json(userCreated);
 
     } catch (err) {
-      console.error(err);
-      return res.status(500).json([{ error: true, code: 500, message: "Erro interno do Servidor" }])
-    }
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+     }
   }
+
+  static inserir_csv = async (req, res) => {
+    try {
+
+      // você retornar utilizando esse metodo
+      return sendResponse(res,201, {data:"seu retorno"});
+
+    } catch (err) {
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+     }
+  };
 
   // atualizar Usuario
   static atualizar = async (req, res) => {
@@ -242,13 +281,21 @@ class systemUsuarioController {
       return res.status(201).json(userUpdated);
 
     } catch (err) {
-      console.error(err);
-      return res.status(500).json([{ error: true, code: 500, message: "Erro interno do Servidor" }])
-    }
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+     }
   }
 
   // DELETE - EXCLUIR Usuario
-  static excluir = async (req, res) => {
+  static deletar = async (req, res) => {
     try {
       const erros = [];
 
@@ -307,9 +354,17 @@ class systemUsuarioController {
       return res.status(200).json(userDeleted);
 
     } catch (err) {
-      console.error(err);
-      return res.status(500).json([{ error: true, code: 500, message: "Erro interno do Servidor" }])
-    }
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+     }
   }
 }
 
