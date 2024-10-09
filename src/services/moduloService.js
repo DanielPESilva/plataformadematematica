@@ -7,11 +7,7 @@ class ModuloService {
     }
 
     async listarPorID(id) {
-        try {
-            return moduloRepository.findById(id);  
-        } catch (error) {
-            throw new Error(error);   
-        }
+        return moduloRepository.findById(id);  
     }
 
     async inserir(data) {

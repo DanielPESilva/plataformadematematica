@@ -1,6 +1,6 @@
-import questaoRepository from "../repositories/questaoRepository.js";
-import QuestaoSchema from "../schemas/questaoSchemas.js";
-class questaoService {
+import questaoRepository from "../repositories/AulaRepository.js";
+import QuestaoSchema from "../schemas/AulaSchemas.js";
+class AulaService {
     async listar(filtro) {
         // Regra de negócio e validações
         
@@ -35,8 +35,11 @@ class questaoService {
         }
      }
      console.log(questao)
-  }  
+  }
+  async deletar(dados) {
+    //service de deletar aula
+  } 
   }
 
 
-export default new questaoService();
+export default new AulaService();

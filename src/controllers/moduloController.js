@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js"
+import { sendError, sendResponse } from "../utils/messages.js";
 
 env.config()
 
@@ -45,17 +46,20 @@ class ModuloController{
                 });
             }
         
+        // você retornar utilizando esse metodo
+        return sendResponse(res,201, {data:novoUsuario});
+    } catch (err) {
 
-        } catch (err) {
-            if (process.env.DEBUG === 'true'){
-                console.log(err);
-            };
-            return res.status(500).json([{
-                error: true,
-                code: 500,
-                message: "Erro interno do Servidor",
-                data: [] }])
+        if(err instanceof ZodError){
+            return sendError(res,400,err.errors[0].message);
+    
+        }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+            return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+    
+        }else{
+            return sendError(res,500,"Ocorreu um erro interno no servidor!");
         }
+    }
     }
     static listarPorID = async (req, res) => {
         try{
@@ -83,12 +87,22 @@ class ModuloController{
         if(moduloExists){
             return res.status(200).json (moduloExists);
         }
-    } catch (err){
-        console.error(err);
-        return res.status(500).json ([{
-            error: true, code: 500, message: "Erro interno do Servidor"
-        }])
-    }
+
+    // você retornar utilizando esse metodo
+    return sendResponse(res,201, {data:"seu retorno"});
+
+    } catch (err) {
+
+        if(err instanceof ZodError){
+          return sendError(res,400,err.errors[0].message);
+  
+        }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+          return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+  
+        }else{
+          return sendError(res,500,"Ocorreu um erro interno no servidor!");
+        }
+       }
     }
 
   //POST
@@ -112,10 +126,22 @@ class ModuloController{
         message: "Modulo criado.",
         data: moduloCreated
       })
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json([{ error: true, code: 500, mesasge: "Erro interno."}])
-      }
+
+    // você retornar utilizando esse metodo
+    return sendResponse(res,201, {data:"seu retorno"});
+
+    } catch (err) {
+
+        if(err instanceof ZodError){
+          return sendError(res,400,err.errors[0].message);
+  
+        }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+          return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+  
+        }else{
+          return sendError(res,500,"Ocorreu um erro interno no servidor!");
+        }
+    }
   };    
 
     static deletar = async (req, res) => {
@@ -139,16 +165,22 @@ class ModuloController{
                     data: ModuloDeletada
                 });
             }
-        } catch (err) {
-            if (process.env.DEBUG === 'true'){
-                console.log(err);
-            };
-            return res.status(500).json([{
-                error: true,
-                code: 500,
-                message: "Erro interno do Servidor",
-                data: [] }])
+
+        // você retornar utilizando esse metodo
+        return sendResponse(res,201, {data:"seu retorno"});
+
+    } catch (err) {
+
+        if(err instanceof ZodError){
+            return sendError(res,400,err.errors[0].message);
+    
+        }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+            return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+    
+        }else{
+            return sendError(res,500,"Ocorreu um erro interno no servidor!");
         }
+    }
     }
     // PUT
   static atualizar = async (req, res) => {
@@ -179,9 +211,20 @@ class ModuloController{
 
       return res.status(201).json(moduloUpdate)
 
-    } catch (error) {
-      console.error(error)
-      return res.status(500).json([{ error: true, code: 500, message: "Erro interno."}])
+    // você retornar utilizando esse metodo
+    return sendResponse(res,201, {data:"seu retorno"});
+
+    } catch (err) {
+
+        if(err instanceof ZodError){
+          return sendError(res,400,err.errors[0].message);
+  
+        }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+          return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+  
+        }else{
+          return sendError(res,500,"Ocorreu um erro interno no servidor!");
+        }
     }
   }
 }

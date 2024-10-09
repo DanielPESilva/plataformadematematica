@@ -1,4 +1,4 @@
-import usuarioRepository from "../repositories/usuarioRepository.js";
+import usuarioRepository from "../repositories/UsuarioRepository.js";
 
 class UsuarioService {
     async listar(nome,matricula, page = 1, perPage = 10) {
@@ -7,19 +7,12 @@ class UsuarioService {
     }
 
     async listarPorID(id) {
-        try {
-            return usuarioRepository.findById(id);  
-        } catch (error) {
-            throw new Error(error);   
-        }
+        return usuarioRepository.findById(id);  
+
     }
 
     async listarPorMatricula(matricula) {
-        try {
-            return usuarioRepository.findByMatricula(matricula);
-        } catch (error) {
-            throw new Error(error);
-        }
+        return usuarioRepository.findByMatricula(matricula);
     }
 
     async inserir(data) {

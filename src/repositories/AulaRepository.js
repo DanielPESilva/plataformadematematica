@@ -1,6 +1,6 @@
 import { prisma } from "../configs/prismaClient.js";
 
-class questaoRepository {
+class AulaRepository {
   async findAll(filtros) {
     return await prisma.questao.findMany(filtros);
   }
@@ -38,7 +38,10 @@ class questaoRepository {
     async create(data) {
       return await prisma.questao.create({data})
     }
+    async deletar(dados) {
+      //repository de deletar aula
+    } 
 }
   
 
-export default new questaoRepository();
+export default new AulaRepository();
