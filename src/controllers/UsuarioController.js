@@ -118,7 +118,7 @@ class systemUsuarioController {
   }
 
   // POST - cadastrar Usuario
-  static inserir_csv = async (req, res) => {
+  static inserir = async (req, res) => {
     try {
 
       const { name, email, senha, ativo } = req.body;
@@ -188,6 +188,26 @@ class systemUsuarioController {
       }
      }
   }
+
+  static inserir_csv = async (req, res) => {
+    try {
+
+      // você retornar utilizando esse metodo
+      return sendResponse(res,201, {data:"seu retorno"});
+
+    } catch (err) {
+
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+     }
+  };
 
   // atualizar Usuario
   static atualizar = async (req, res) => {

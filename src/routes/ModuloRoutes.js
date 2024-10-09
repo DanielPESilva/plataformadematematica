@@ -2,6 +2,11 @@ import express from "express";
 import ModuloController from "../controllers/moduloController.js";
 const router = express.Router();
 
+/**
+ * o modulo é padrão igual qualquer outra rota, so lembre de no get normal
+ * ter a possibilidade de filtrar pelo titulo.
+*/
+
 router
   .get("/modulo", ModuloController.listar)
   .get("/modulo/:id", ModuloController.listarPorID)
