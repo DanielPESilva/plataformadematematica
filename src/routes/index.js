@@ -6,14 +6,10 @@ import aula from "./AulaRoute.js";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import getSwaggerOptions from "../docs/config/head.js";
-import logRoutes from "../middlewares/LogRoutesMiddleware.js";
 
 
 const routes = (app) => {
 
-    if (process.env.DEBUGLOG === "true") {
-        app.use(logRoutes);
-    }
 
     // Configurando a documentação da Swagger UI para ser servida diretamente em '/'
     const swaggerDocs = swaggerJsDoc(getSwaggerOptions());

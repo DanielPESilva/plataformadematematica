@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js";
-import { sendError, sendResponse } from "../utils/messages.js";
+import { sendError, sendResponse } from '../utils/messages.js';
 
 
 env.config(); // inicializar as variáveis de ambiente
