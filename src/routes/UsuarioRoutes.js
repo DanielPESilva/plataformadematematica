@@ -1,5 +1,7 @@
 import express from "express";
 import systemUsuarioController from "../controllers/UsuarioController.js";
+import AuthMiddleware from "../middlewares/AuthMiddleware.js";
+import PermissaoMiddleware from "../middlewares/permissaoMiddleware.js";
 
 /**
  * usuario é padrão não tem nada de especial, so lembre de ser possivel filtar no get por
@@ -12,7 +14,7 @@ router
   .get("/usuario", systemUsuarioController.listar)
   .get("/usuario/:id", systemUsuarioController.listarPorID)
   .post("/usuario", systemUsuarioController.inserir)
-  .post("/usuario", systemUsuarioController.inserir_csv)
+  .post("/usuario/csv", AuthMiddleware, PermissaoMiddleware, systemUsuarioController.inserir_csv)
   .patch("/usuario/:id", systemUsuarioController.atualizar)
   .delete("/usuario/:id", systemUsuarioController.deletar)
  

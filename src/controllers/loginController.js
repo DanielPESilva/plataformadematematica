@@ -1,42 +1,24 @@
 //*import jwt from 'jsonwebtoken';
 import loginService from '../services/loginService.js';
+import { z, ZodError } from "zod";
+import { sendError, sendResponse } from '../utils/messages.js';
 
 class loginController {
   static logar = async (req, res) => {
-    try {
-      const { email, senha } = req.body;
+    try{
+      const usuario =  await loginService.login(req.body);
 
-      console.log("1 - Recebendo requisição de email no controller - loginController");
-
-      const userEncontrado = await loginService.buscarUser(email, senha);   
-
-      // remover a senha do usuário antes de retornar
-      if (userEncontrado) {
-        delete userEncontrado.senha;
-      }
-
-      if (!userEncontrado) {
-        return res.status(401).json({ error: true, code: 401, message: "Usuário ou senha inválidos - loginController" });
-      }
-
-      const token = 
-
-      console.log("8 - Retornando token e usuário encontrado no serviço para o controller - loginController");
-      return res.status(200).json({
-        data: {
-          token: token,
-          userEncontrado: {
-            ...userEncontrado
-          },
-          status: 200,
-          message: "Usuário logado com sucesso",
-          error: false,
-        },
-      });
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: true, code: 500, message: err.message });
-    }
+      return sendResponse(res,200, {...usuario});
+  }catch(err){
+      if(err instanceof ZodError) {
+        const customError = err.issues.find(issue => issue.code === z.ZodIssueCode.custom);
+        if (customError) {
+          let errors = err.errors[0];
+          return sendError(res,parseInt(errors.params?.status),errors.message);
+        }              
+      }      
+      return sendError(res,500,"Ocorreu um erro interno no servidor!");
+  }  
   }
 }
 

@@ -41,7 +41,10 @@ async function seedDatabase() {
           { rota: 'modulo', get: true, post: false, patch: false, put: false, delete: false },
           { rota: 'turma', get: true, post: false, patch: false, put: false, delete: false },
           { rota: 'usuario', get: true, post: false, patch: false, put: false, delete: false },
+
           { rota: 'aula/status', get: false, post: true, patch: false, put: false, delete: false },
+
+          { rota: 'usuario/csv', get: false, post: true, patch: false, put: false, delete: false },
           { rota: 'aula', get: true, post: true, patch: true, put: true, delete: true },
           { rota: 'modulo', get: true, post: true, patch: true, put: true, delete: true },
           { rota: 'turma', get: true, post: true, patch: true, put: true, delete: true },
@@ -58,11 +61,12 @@ async function seedDatabase() {
           { rota_id: 4, grupo_id: 1 }, // alunos - usuario
           { rota_id: 5, grupo_id: 1 }, // alunos - aula/status
           
-          { rota_id: 4, grupo_id: 2 }, // alunos - aula/status
+          { rota_id: 5, grupo_id: 2 }, // alunos - aula/status
           { rota_id: 6, grupo_id: 2 }, // professores - aula
           { rota_id: 7, grupo_id: 2 }, // professores - modulo
           { rota_id: 8, grupo_id: 2 }, // professores - turma
           { rota_id: 9, grupo_id: 2 }, // professores - usuario
+          { rota_id: 10, grupo_id: 2 }, // professores - usuario
         ],
       });
 

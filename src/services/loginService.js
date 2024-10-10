@@ -49,11 +49,25 @@ class loginService {
     const jwtConfig = {  expiresIn: '4d',    algorithm: 'HS256', };
 
     const token = jwt.sign({ data: {'_id': usuario.id} }, JWT, jwtConfig);
+
+    // Buscar as permissões do usuario
+    const filtro_permissoes = {
+        where: {
+          permissoes: {
+            some: {
+              grupo_id: usuario.grupo_id,
+            },
+          },
+        },
+      }
+    let permissoes = await loginRepository.permissoes(filtro_permissoes)
+
     delete usuario.senha
     return { 
         data:{
             token: token,
             usuario: usuario, 
+            permissoes
         }
     }
   }
