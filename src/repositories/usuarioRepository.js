@@ -13,6 +13,35 @@ class usuarioRepository {
     return await prisma.usuario.delete({ where: { id } });
   }
 
+  static async listar_csv() {
+    return await prisma.usuario.findMany({
+      select: {
+        nome:true,
+        matricula:true
+      }
+    });
+  }
+
+  static async grupo_alunos(){
+    return await prisma.grupo.findFirst({
+      where:{
+        nome: { contains: "alunos" }
+      }
+    })
+  }
+
+  static async inserir_alunos(insert){
+    console.log(insert)
+    return await prisma.usuario.create({
+      data:{
+        ...insert
+      },
+      select:{
+        id:true
+      }
+    })
+  }
+
   async findByMatricula(matricula) {
     const filtros = this.constructFilters();
     const user = await prisma.usuario.findUnique({
@@ -78,4 +107,4 @@ class usuarioRepository {
   }
 }
 
-export default new usuarioRepository();
+export default usuarioRepository;

@@ -2,6 +2,9 @@ import bcrypt from "bcryptjs";
 import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js";
 import { sendError, sendResponse } from '../utils/messages.js';
+import UsuarioService from '../services/usuarioService.js';
+
+import { ZodError } from "zod";
 
 
 env.config(); // inicializar as variáveis de ambiente
@@ -192,10 +195,16 @@ class systemUsuarioController {
   static inserir_csv = async (req, res) => {
     try {
 
-      // você retornar utilizando esse metodo
-      return sendResponse(res,201, {data:"seu retorno"});
+      if (!req.file) {
+        return sendError(res, 400, ['Nenhum arquivo enviado.'])
+      }
+
+      const retorno = await UsuarioService.inserir_csv(req.file)
+        
+      return sendResponse(res,201, {data: retorno});  
 
     } catch (err) {
+      console.error(err)
 
       if(err instanceof ZodError){
         return sendError(res,400,err.errors[0].message);
