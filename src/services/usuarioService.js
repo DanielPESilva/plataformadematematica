@@ -54,7 +54,7 @@ class UsuarioService {
     
         let usuario_existentes = await usuarioRepository.listar_csv();
         const grupo = await usuarioRepository.grupo_alunos()
-        console.log(grupo);
+        const turmas_ids = await usuarioRepository.buscar_turmas()
     
         let usuario_csv = [];
         const header = ['nome', 'matricula', 'senha'];
@@ -93,13 +93,21 @@ class UsuarioService {
         let ids = []
         await Promise.all(
             usuariosParaInserir.map(async (usuario) => {
-                const usuario_criado = await usuarioRepository.inserir_alunos(usuario);
+                const usuario_criado = await usuarioRepository.inserir_usuarios(usuario);
                 ids.push(usuario_criado.id)
             })
         );
 
+        await Promise.all(
+            ids.map(async (usuario) => {
+                let insert = []
+                for (const turma of turmas_ids) {
+                    insert.push({usuario_id:usuario, turma_id:turma.id})
+                }
+                await usuarioRepository.inserir_alunos(insert); 
+            })
+        );
         
-        console.log(ids)
         return usuariosParaInserir;
     }
     

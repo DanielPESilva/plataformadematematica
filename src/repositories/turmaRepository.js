@@ -23,7 +23,7 @@ class turmaRepository {
     return filtros;
   }
 
-  async findAll(filtros) {
+  static async findAll(filtros) {
 
     const [turmas] = await Promise.all([
       prisma.turma.findMany({
@@ -35,7 +35,7 @@ class turmaRepository {
     return {turmas};
   }
 
-  async findById(id) {
+  static async findById(id) {
     const filtros = this.constructFilters();
     const turmas = await prisma.turma.findFirst({
       where: { id:id },
@@ -45,23 +45,23 @@ class turmaRepository {
     return turmas;
   }
 
-  async create(data) {
+  static async create(data) {
     return await prisma.turma.create({data});
   }
 
-  async turmaMatricular(data) {
+  static async turmaMatricular(data) {
     return await prisma.usuario_has_turma.create({data});
   }
 
-   async atualizar(id, data){
+   static async atualizar(id, data){
     return await prisma.turma.update({ where: { id }, data});
   }
 
-  async findByTitulo(titulo) {
+  static async findByTitulo(titulo) {
     return await prisma.turma.findFirst({ where: { titulo } });
   }
 
-  async turmaExist(titulo) {
+  static async turmaExist(titulo) {
     return await prisma.turma.findFirst({
       where: {
         titulo: titulo,
@@ -72,7 +72,7 @@ class turmaRepository {
     });
   }
   
-  async findByTituloExceptId(titulo, id) {
+  static async findByTituloExceptId(titulo, id) {
     return await prisma.turma.findFirst({
       where: {
         titulo:titulo,
@@ -82,7 +82,7 @@ class turmaRepository {
       },
     });
   }
-  async userExist(data) {
+  static async userExist(data) {
     return await prisma.usuario_has_turma.findFirst({
       where: {
         usuario_id: data.usuario_id,
@@ -94,7 +94,7 @@ class turmaRepository {
     });
   }
 
-  async removerUsuarioDaTurma(data) {
+  static async removerUsuarioDaTurma(data) {
   const usuarioRemovido = await prisma.usuario_has_turma.deleteMany({
     where: {
       usuario_id: data.usuario_id,
@@ -104,9 +104,9 @@ class turmaRepository {
   return usuarioRemovido;
   }
   
-  async delete(id) {
+  static async delete(id) {
   return await prisma.turma.delete({ where: { id } });
 }
 
 }
-export default new turmaRepository();
+export default turmaRepository;

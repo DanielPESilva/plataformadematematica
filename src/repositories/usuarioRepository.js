@@ -22,6 +22,16 @@ class usuarioRepository {
     });
   }
 
+  static async buscar_turmas(){
+    return await prisma.grupo.findMany()
+  }
+
+  static async inserir_alunos(insert){
+    return await prisma.aluno.createMany({
+      data: insert
+    })
+  }
+
   static async grupo_alunos(){
     return await prisma.grupo.findFirst({
       where:{
@@ -30,7 +40,7 @@ class usuarioRepository {
     })
   }
 
-  static async inserir_alunos(insert){
+  static async inserir_usuarios(insert){
     console.log(insert)
     return await prisma.usuario.create({
       data:{
