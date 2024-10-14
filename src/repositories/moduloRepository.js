@@ -1,21 +1,22 @@
 import prisma from "../configs/prismaClient.js";
 
-class moduloRepository {
-  async create(data) {
-    return await prisma.modulo.create({ data });
+class ModuloRepository {
+  async findAll(filtros = {}) {
+    return await prisma.modulo.findMany({
+      where: filtros,
+      include: { turma: true, aula: true },
+    });
   }
 
   async findById(id) {
-    const filtros = this.constructFilters();
-    const modulo = await prisma.modulo.findUnique({
+    return await prisma.modulo.findUnique({
       where: { id },
-      select: filtros.select,
+      include: { turma: true, aula: true },
     });
-    return modulo;
   }
 
-  async findAll(filtros) {
-    return await prisma.modulo.findMany(filtros);
+  async create(data) {
+    return await prisma.modulo.create({ data });
   }
 
   async update(id, data) {
@@ -27,7 +28,7 @@ class moduloRepository {
   }
 
   constructFilters(tema) {
-    let filtros = {
+    let filtro = {
       where: {
         active: "Y",
       },
@@ -40,11 +41,11 @@ class moduloRepository {
       }, 
     };
 
-    if (tema) filtros.where.mod_tema = { contains: tema };
+    if (tema) filtro.where.mod_tema = { contains: tema };
 
-    return filtros;
+    return filtro;
 
   }
 }
 
-export default new moduloRepository();
+export default new ModuloRepository();

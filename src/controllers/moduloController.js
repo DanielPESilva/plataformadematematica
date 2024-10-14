@@ -36,7 +36,7 @@ class ModuloController{
             return res.status(400).json([{
                 error: true,
                 code: 400,
-                massage: "Nenhuma modulo encontrado"}])
+                massage: "Nenhum modulo encontrado"}])
             } else{
             return res.status(200).json({
                 error: false,
@@ -46,15 +46,14 @@ class ModuloController{
                 });
             }
         
-        // você retornar utilizando esse metodo
         return sendResponse(res,201, {data:novoUsuario});
     } catch (err) {
 
         if(err instanceof ZodError){
             return sendError(res,400,err.errors[0].message);
     
-        }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-            return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+        }else if(err.message == "Nenhum modulo encontrado." ){
+            return sendError(res,404,["Nenhum modulo encontrado."]);
     
         }else{
             return sendError(res,500,"Ocorreu um erro interno no servidor!");
@@ -96,8 +95,8 @@ class ModuloController{
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
   
-        }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-          return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+        }else if(err.message == "Nenhum modulo encontrado." ){
+          return sendError(res,404,["Nenhum modulo encontrado."]);
   
         }else{
           return sendError(res,500,"Ocorreu um erro interno no servidor!");
