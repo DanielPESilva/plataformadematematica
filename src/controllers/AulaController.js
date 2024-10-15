@@ -2,9 +2,13 @@ import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js";
 import questaoService from "../services/AulaService.js";
 import CommonResponse from "../utils/commonResponse.js";
+import path from "path";
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import questaoRepository from "../repositories/AulaRepository.js";
 import { sendError, sendResponse } from "../utils/messages.js";
-import { z, ZodError } from 'zod';
+import { ZodError } from 'zod';
 
 env.config();
 
@@ -65,6 +69,23 @@ class questaoController {
      }
   };
 
+  static buscar_pdf = async (req, res) => {
+    try {
+      const fileName = req.params.fileName;
+      const filePath = path.join(__dirname, '../../uploads/pdf', fileName);
+
+      res.sendFile(filePath, (err) => {
+          if (err) {
+              return sendError(res,404,['Arquivo não foi encontrado']);
+          }
+      });
+
+    } catch (err) {
+      console.error(err)
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+     }
+  };
+
   static atualizar = async (req, res) => {
     try {
       console.log(req.body);
@@ -113,14 +134,16 @@ class questaoController {
   static inserir = async(req, res) => {
     try{
         const parametros = {
-          id: req.body.id,
           posicao: req.body.posicao,
           titulo: req.body.titulo,
           pdf: req.body.pdf,
           link_video: req.body.link_video
         }
 
-        const questaoCreate = await questaoService.create(parametros)
+        const perguntas = req.file.perguntas
+        const gabarito = req.file.gabarito
+
+        const questaoCreate = await questaoService.create(perguntas, gabarito, parametros)
 
         console.log("resposta")
         return sendResponse(res,201,{data: questaoCreate})
