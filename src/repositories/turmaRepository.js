@@ -1,27 +1,6 @@
 import { prisma } from "../configs/prismaClient.js";
 
 class turmaRepository {
-  constructFilters(titulo) {
-    let filtros = {
-      select: {
-        id: true,
-        titulo: true,
-        usuario_has_turma: {
-          select: {
-            usuario: {
-              select: {
-                nome: true,
-              },
-            },
-          },
-        },
-      },
-    };
-
-    if (titulo) filtros.where.titulo = { contains: titulo };
-
-    return filtros;
-  }
 
   async findAll(filtros) {
 
@@ -45,67 +24,29 @@ class turmaRepository {
     return turmas;
   }
 
-  async create(data) {
-    return await prisma.turma.create({data});
-  }
-
-  async turmaMatricular(data) {
-    return await prisma.usuario_has_turma.create({data});
-  }
-
    async atualizar(id, data){
     return await prisma.turma.update({ where: { id }, data});
   }
 
-  async findByTitulo(titulo) {
-    return await prisma.turma.findFirst({ where: { titulo } });
-  }
-
-  async turmaExist(titulo) {
-    return await prisma.turma.findFirst({
+static constructFilters(parametros) {
+  let filtro = {
       where: {
-        titulo: titulo,
+          ...(parametros.nome && { nome: { contains: parametros.nome } }), // Filtro para o nome da turma
+          ...(parametros.aluno_id != undefined && { aluno: { some: { id: parametros.aluno_id } } }), // Filtro para aluno relacionado
+          ...(parametros.professor_id != undefined && { professor: { some: { id: parametros.professor_id } } }) // Filtro para professor relacionado
       },
       select: {
-        titulo: true,
-      },
-    });
-  }
-  
-  async findByTituloExceptId(titulo, id) {
-    return await prisma.turma.findFirst({
-      where: {
-        titulo:titulo,
-        id: {
-          not: id,
-        },
-      },
-    });
-  }
-  async userExist(data) {
-    return await prisma.usuario_has_turma.findFirst({
-      where: {
-        usuario_id: data.usuario_id,
-        turma_id: data.turma_id
-      },
-      select: {
-        usuario_id: true, 
-      },
-    });
-  }
-
-  async removerUsuarioDaTurma(data) {
-  const usuarioRemovido = await prisma.usuario_has_turma.deleteMany({
-    where: {
-      usuario_id: data.usuario_id,
-      turma_id: data.turma_id
-    }
-  });
-  return usuarioRemovido;
-  }
-  
-  async delete(id) {
-  return await prisma.turma.delete({ where: { id } });
+          id: true,          // Incluir o ID da turma na consulta
+          nome: true,        // Incluir o nome da turma na consulta
+          modulo: {
+              select: {
+                  id: true,    // Incluir o ID do módulo na consulta
+                  nome: true   // Incluir o nome do módulo na consulta
+              }
+          }
+      }
+  };
+  return filtro;
 }
 
 }

@@ -5,6 +5,7 @@ const router = express.Router();
 /**
  * o modulo é padrão igual qualquer outra rota, so lembre de no get normal
  * ter a possibilidade de filtrar pelo titulo.
+ * Importante, tem que ser possivel filtrar os modulos de apenas um turma.
 */
 
 router
