@@ -91,10 +91,12 @@ class UsuarioService {
             })
         );
         let ids = []
+        let usuario_criados = []
         await Promise.all(
             usuariosParaInserir.map(async (usuario) => {
                 const usuario_criado = await usuarioRepository.inserir_usuarios(usuario);
                 ids.push(usuario_criado.id)
+                usuario_criados.push(usuario_criado)
             })
         );
 
@@ -108,7 +110,7 @@ class UsuarioService {
             })
         );
         
-        return usuariosParaInserir;
+        return usuario_criados;
     }
     
 

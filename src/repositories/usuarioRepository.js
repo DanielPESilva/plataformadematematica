@@ -41,13 +41,16 @@ class usuarioRepository {
   }
 
   static async inserir_usuarios(insert){
-    console.log(insert)
     return await prisma.usuario.create({
       data:{
         ...insert
       },
       select:{
-        id:true
+        id:true,
+        nome: true,
+        matricula:true,
+        grupo_id:true,
+        active:true
       }
     })
   }
