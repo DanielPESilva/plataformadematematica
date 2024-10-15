@@ -1,6 +1,60 @@
-import express from "express"
+import { sendError } from "../utils/messages.js";
+import path from "path";
+import fs from 'fs'
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import AulaController from "../controllers/AulaController.js"
+import express from "express"
 const router = express.Router();
+
+import multer from "multer";
+
+const fileFilter = (req, file, cb) => {
+    const allowedTypes = [
+        'application/pdf', // PDF
+        'application/msword', // DOC
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
+        'image/jpeg', // JPEG
+        'image/png' // PNG
+    ];
+
+    if (allowedTypes.includes(file.mimetype)) {
+        cb(null, true);
+    } else {
+        cb(new Error('Tipo de arquivo enviado não é suportado. Envie no formato: .PDF, .DOC, .DOCX, .JPEG, .PNG'));
+    }
+};
+
+const generateRandomNumber = () => Math.floor(Math.random() * 1000) + 1;
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        let uploadPath;
+
+        if (file.mimetype.startsWith('application')) {
+            uploadPath = path.join(__dirname, '../../uploads/pdf');
+        } else if (file.mimetype.startsWith('image')) {
+            uploadPath = path.join(__dirname, '../../uploads/imagens');
+        }
+
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        const uniqueFilename = `${generateRandomNumber()}_${file.originalname}`; 
+        cb(null, uniqueFilename);
+    }
+});
+
+const upload = multer({ 
+    storage, 
+    fileFilter,
+    limits: { fileSize: 20 * 1024 * 1024 } // Limite de 20MB por arquivo
+});
 
 /**
  * post, patch e delete é padrão, normal igual já fizeram.
@@ -21,9 +75,20 @@ const router = express.Router();
 router
     router.get("/aula", AulaController.listar)
     router.get("/aula/:id",AulaController.listarPorID)
-    router.post('/aula', AulaController.inserir);
+    router.post(
+        '/aula',
+        upload.fields([{ name: 'perguntas' }, { name: 'gabarito' }, { name: 'image' }]),
+        (err, req, res, next) => {
+            if (err.message == "Tipo de arquivo enviado não é suportado. Envie no formato: .PDF, .DOC, .DOCX") {
+                return sendError(res,400,[err.message]);
+            }
+            next();
+        },
+        AulaController.inserir
+    );
     router.post('/aula/status', AulaController.aula_status)
     router.patch('/aula/:id',AulaController.atualizar);
     router.delete('/aula', AulaController.deletar)
+    router.get('/aula/arquivo/:fileName', AulaController.buscar_arquivo);
 
     export default router;
