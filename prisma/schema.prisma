@@ -24,7 +24,8 @@ model aula {
   id            Int     @unique(map: "id") @default(autoincrement())
   modulo_id     Int
   titulo        String? @db.VarChar(100)
-  video         String? @db.VarChar(240)
+  video         String  @db.VarChar(240)
+  image         String? @db.VarChar(200)
   pdf_questoes  String? @db.VarChar(200)
   pdf_resolucao String? @db.VarChar(200)
   descricao     String? @db.Text
@@ -59,6 +60,7 @@ model modulo {
   id        Int     @unique(map: "id") @default(autoincrement())
   turma_id  Int
   titulo    String  @db.VarChar(100)
+  image     String? @db.VarChar(200)
   descricao String? @db.Text
   aula      aula[]
   turma     turma   @relation(fields: [turma_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_modulo_turma")
@@ -114,7 +116,7 @@ model usuario {
   nome      String      @db.VarChar(100)
   grupo_id  Int
   senha     String      @db.VarChar(240)
-  matricula Int         @unique(map: "unique_matricula")
+  matricula Int         @unique(map: "matricula")
   active    Boolean
   aluno     aluno[]
   professor professor[]

@@ -10,7 +10,7 @@ class ModuloController{
 
           // lista_modulos = await ModuloService.listar(filtro)
         
-        return sendResponse(res,201, {data:"seu retorno"});
+        return sendResponse(res,201, {data:"Modulo encontrado"});
     } catch (err) {
         console.log(err)
 
@@ -31,7 +31,7 @@ class ModuloController{
         // lista_id = await ModuloService.listarPorID(filtro)
 
         // você retornar utilizando esse metodo
-        return sendResponse(res,201, {data:"seu retorno"});
+        return sendResponse(res,201, {data:"Modulo encontrado"});
 
       }catch (err) {
       console.log(err)

@@ -1,12 +1,18 @@
 import { prisma } from "../configs/prismaClient.js";
 
 class ModuloRepository {
-  static async findAll(filtro) {
-    return await prisma.modulo.findMany(filtro);
+  async findAll(filtros = {}) {
+    return await prisma.modulo.findMany({
+      where: filtros,
+      include: { turma: true, aula: true },
+    });
   }
 
-  static async findById(id_buscar) {
-    return await prisma.modulo.findUnique({ where: { id: id_buscar } });
+  async findById(id) {
+    return await prisma.modulo.findUnique({
+      where: { id },
+      include: { turma: true, aula: true },
+    });
   }
 
   static async create(data_criar) {
