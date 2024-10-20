@@ -1,52 +1,46 @@
-import ModuloService from "../services/moduloService.js";
 import env from "dotenv";
 import { sendError, sendResponse } from "../utils/messages.js";
+import moduloService from "../services/moduloService.js";
 
 env.config()
 
 class ModuloController{
-    static listar = async (req, res) => {
-        try{
+  static listar = async (req, res) => {
+    try {
+      const { mod_id, mod_tema, mod_descricao,mod_pdf, mod_linkVideo } = req.query;
+      const filtro = {
+        mod_id: mod_id,
+        mod_tema: mod_tema,
+        mod_descricao: mod_descricao,
+        mod_pdf:mod_pdf,
+        mod_linkVideo:mod_linkVideo
+      };
+      const response = await moduloService.listar(filtro);
+      return res.status(201).json({
+        data: response,
+        error: false,
+        code: 201,
+        message: response.length > 1 ? "Modulo encontrado" : "Modulo encontrado",
+      });
+    } catch (error) {
+      return res.status(error.code || 500).json(error);
+    };
+  };
 
-          // lista_modulos = await ModuloService.listar(filtro)
-        
-        return sendResponse(res,201, {data:"Modulo encontrado"});
-    } catch (err) {
-        console.log(err)
-
-        if(err instanceof ZodError){
-            return sendError(res,400,err.errors[0].message);
-    
-        }else if(err.message == "Nenhum modulo encontrado." ){
-            return sendError(res,404,["Nenhum modulo encontrado."]);
-    
-        }else{
-            return sendError(res,500,"Ocorreu um erro interno no servidor!");
-        }
-    }
-    }
     static listarPorID = async (req, res) => {
-      try{
-
-        // lista_id = await ModuloService.listarPorID(filtro)
-
-        // você retornar utilizando esse metodo
-        return sendResponse(res,201, {data:"Modulo encontrado"});
-
-      }catch (err) {
-      console.log(err)
-
-        if(err instanceof ZodError){
-          return sendError(res,400,err.errors[0].message);
-  
-        }else if(err.message == "Nenhum modulo encontrado." ){
-          return sendError(res,404,["Nenhum modulo encontrado."]);
-  
-        }else{
-          return sendError(res,500,"Ocorreu um erro interno no servidor!");
-        }
-       }
-    }
+      try {
+        const id = { mod_id: req.params.mod_id };
+        const response = await moduloService.listarPorID(id);
+        res.status(200).json({
+          data: response,
+          error: false,
+          code: 200,
+          message: "modulo encontrado ",
+        });
+      } catch (error) {
+        return res.status(error.code || 500).json(error);
+      };
+    };
 
   //POST
   static inserir = async (req, res) => {
