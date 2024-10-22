@@ -20,21 +20,9 @@ class AulaService {
       return await questaoRepository.update(id, titulo, posicao, pdf, link_video);
     }
 
-    async create(dados) {
-     const {id, posicao, titulo, pdf, link_video} = QuestaoSchema.createQestaoSchema.parse(dados)
+    async create(perguntas, gabarito, parametros) {
+    
 
-     console.log(titulo + " pós validação")
-
-     let data = {id:id,posicao:posicao,titulo:titulo,pdf:pdf,link_video:link_video}
-
-     const questao = await questaoRepository.create(data)
-     if(!questao){
-        throw{
-            code:404,
-            menssage: `Não foi possivel criar questão com o nome: ${titulo}`
-        }
-     }
-     console.log(questao)
   }
   async deletar(dados) {
     //service de deletar aula

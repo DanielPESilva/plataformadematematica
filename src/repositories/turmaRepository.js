@@ -2,7 +2,7 @@ import { prisma } from "../configs/prismaClient.js";
 
 class turmaRepository {
 
-  async findAll(filtros) {
+  static async findAll(filtros) {
 
     const [turmas] = await Promise.all([
       prisma.turma.findMany({
@@ -14,7 +14,7 @@ class turmaRepository {
     return {turmas};
   }
 
-  async findById(id) {
+  static async findById(id) {
     const filtros = this.constructFilters();
     const turmas = await prisma.turma.findFirst({
       where: { id:id },
@@ -50,4 +50,4 @@ static constructFilters(parametros) {
 }
 
 }
-export default new turmaRepository();
+export default turmaRepository;

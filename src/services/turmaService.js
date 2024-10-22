@@ -1,49 +1,31 @@
-import turmaRepository from "../repositories/TurmaRepository.js";
+import turmaRepository from "../repositories/turmaRepository.js";
 import {TurmaSchema, updateTurmaSchema} from "../schemas/TurmaSchemas.js";
 
 class turmaService {
-  async listar(data) {
+  static async listar(data) {
 
-      const filtros = turmaRepository.constructFilters(data);
-
-      const turmas  = await turmaRepository.findAll( filtros );
-      
-      if (turmas.length == 0){
-        throw new Error("Turmas não encontradas.");
-    }
-    console.log(turmas);
-      return turmas
+    return null;
   }
 
-  async listarPorID(id) {
-    if (isNaN(id)) {
-      throw new Error("ID deve ser um número inteiro");
-    }
-    return turmaRepository.findById(id);
+  static async create(data){
+    return null;
+  
+}
+static async atualizarTurma(id, data) {
+  return null;
   }
 
-  async atualizarTurma(id, data) {
-    // Validação com Zod para atualização
-    const validatedData = updateTurmaSchema.parse(data);
-    const tituloExists = await turmaRepository.findById(id);
+  static async inserirUsuario(req) {
+    return null;
+  }
 
-    if (tituloExists===null) {
-      throw new Error("Título não existe.");
-    }
+  async removerUsuario(req) {
+    return null;
+  }
 
-
-    if (validatedData.titulo && tituloExists.titulo !== validatedData.titulo) {
-      const tituloExistsOutherTurma = await turmaRepository.findByTituloExceptId(validatedData.titulo, id);
-
-      if (tituloExistsOutherTurma) {
-        throw new Error('Titulo já cadastrado');
-      }if (!tituloExistsOutherTurma) {
-       const turmaCriada = await turmaRepository.atualizar(id, validatedData);
-
-       return turmaCriada;
-      }
-    }
+  async excluirTurma(id) {
+    return null;
   }
 
 }
-export default new turmaService();
+export default turmaService;

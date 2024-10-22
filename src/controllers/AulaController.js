@@ -2,9 +2,13 @@ import env from "dotenv";
 import { prisma } from "../configs/prismaClient.js";
 import questaoService from "../services/AulaService.js";
 import CommonResponse from "../utils/commonResponse.js";
+import path from "path";
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import questaoRepository from "../repositories/AulaRepository.js";
 import { sendError, sendResponse } from "../utils/messages.js";
-import { z, ZodError } from 'zod';
+import { ZodError } from 'zod';
 
 env.config();
 
@@ -65,6 +69,31 @@ class questaoController {
      }
   };
 
+  static buscar_arquivo = async (req, res) => {
+    try {
+      const fileName = req.params.fileName;
+      const tipoArquivo = req.params.tipoArquivo
+
+      let diretorio = '../../uploads/imagens'
+
+      if(tipoArquivo == "documento"){
+        diretorio = '../../uploads/pdf'
+      }
+      const filePath = path.join(__dirname, '../../uploads/pdf', fileName);
+
+      res.sendFile(filePath, (err) => {
+          if (err) {
+              return sendError(res,404,['Arquivo não foi encontrado']);
+          }
+      });
+
+    } catch (err) {
+      console.error(err)
+      return sendError(res,500,"Ocorreu um erro interno no servidor!");
+
+     }
+  };
+
   static atualizar = async (req, res) => {
     try {
       console.log(req.body);
@@ -112,24 +141,26 @@ class questaoController {
 
   static inserir = async(req, res) => {
     try{
+        const files = req.files;
+
         const parametros = {
-          id: req.body.id,
-          posicao: req.body.posicao,
+          modulo_id: req.body.modulo_id,
           titulo: req.body.titulo,
-          pdf: req.body.pdf,
-          link_video: req.body.link_video
-        }
+          video: req.body.video,
+          descricao: req.body.descricao,
+          pdf_questoes: files.perguntas ? files.perguntas[0].filename : null,
+          pdf_resolucao: files.gabarito ? files.gabarito[0].filename : null,
+          imagem: files.image ? files.image[0].filename : null
+      };
+      
+        console.log(parametros)
+        // const questaoCreate = await questaoService.create(perguntas, gabarito, parametros)
 
-        const questaoCreate = await questaoService.create(parametros)
-
-        console.log("resposta")
-        return sendResponse(res,201,{data: questaoCreate})
-
-      // você retornar utilizando esse metodo
-      return sendResponse(res,201, {data:"seu retorno"});
+        // você retornar utilizando esse metodo
+        return sendResponse(res,201, {data:"seu retorno"});
 
     } catch (err) {
-
+      console.error(err)
       if(err instanceof ZodError){
         return sendError(res,400,err.errors[0].message);
 
