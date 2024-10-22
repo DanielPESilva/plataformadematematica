@@ -10,17 +10,17 @@ class AulaService {
         const schema = new AulaSchemas().listarSchema()
         filtro = schema.parse(filtro)
 
-        const { feito, revisar, titulo } = filtro;
-        const filtrado = {
-          titulo,
-          feito: feito === "true" ? true : feito === "false" ? false : undefined,
-          revisar: revisar === "true" ? true : revisar === "false" ? false : undefined,
-        };
+        console.log("2 - Filtrado", filtro);
 
-        const filtroRepository = AulaRepository.createFilterAula(filtrado);
+        const filtroRepository = AulaRepository.createFilterAula(filtro);
+
+        console.log("3 - Passou pelo Repository",filtroRepository);
+    
         const aulas = await AulaRepository.findAll(filtroRepository)
 
-        return await AulaRepositoryRepository.findMany(aulas);
+        console.log("4 - Passou pelo Repository",filtroRepository);
+
+        return aulas;
     }
     async listarPorID(id) {
         // teste se o id é um número

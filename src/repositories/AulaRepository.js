@@ -26,7 +26,7 @@ class AulaRepository {
   //   //repository de deletar aula
   // } 
 
-  static createFilterAula(parametros) {
+  async createFilterAula(parametros) {
     let filtro = {
         where: {
           ...(parametros.modulo_id != undefined && { modulo_id: parametros.modulo_id }), // Inclui filtro para modulo_id
@@ -54,6 +54,10 @@ class AulaRepository {
             }
         }
     }
+    if (parametros.titulo) filtro.where.titulo = { contains: parametros.titulo };
+    if (parametros.feito) filtro.where.feito = { contains: parametros.feito };
+    if (parametros.revisar) filtro.where.revisar = { contains: parametros.revisar };
+
     return filtro;
 }
 

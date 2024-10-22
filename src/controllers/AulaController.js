@@ -24,12 +24,13 @@ class AulaController {
       const { titulo, feito, revisar } = req.query; 
       const parametros = {
         titulo: titulo,
-        feito: feito,
-        revisar: revisar,
+        feito: Boolean(feito),
+        revisar: Boolean(revisar),
     }
-      const data = await AulaService.listar(parametros);
+    console.log("1 - Aqui",parametros)
+      const aulaExist = await AulaService.listar(parametros);
 
-      return sendResponse(res,200,{data:data});
+      return sendResponse(res,200,{data:aulaExist});
 
     } catch (err) {
       if(err instanceof ZodError){
