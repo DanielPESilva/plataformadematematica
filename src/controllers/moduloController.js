@@ -1,97 +1,26 @@
-import bcrypt from "bcryptjs";
 import env from "dotenv";
-import { prisma } from "../configs/prismaClient.js"
 import { sendError, sendResponse } from "../utils/messages.js";
+import moduloService from "../services/moduloService.js";
 
 env.config()
 
-app.use(express.json());
-
 class ModuloController{
-    static listar = async (req, res) => {
-        try{
-            const moduloExists = await prisma.modulo.findMany({
-                where: {
-                    mod_tema:notnull
-                },
-                select: {
-                    mod_id: true,
-                    mod_tema: true,
-                    mod_descricao: true,
-                    mod_pdf: true,
-                    mod_linkVideo: true,
-                    modulo: {
-                        select:{
-                            turma: {
-                                select: {
-                                    tur_id:true
-                            }
-                        }
-                    }
-                },
-            }
-            }
-        );
-            if (!moduloExists) {
-            return res.status(400).json([{
-                error: true,
-                code: 400,
-                massage: "Nenhuma modulo encontrado"}])
-            } else{
-            return res.status(200).json({
-                error: false,
-                code: 200,
-                massage: "Modulo encontrado",
-                data: moduloExists
-                });
-            }
+  static listar = async (req, res) => {
+    try {
+      const { turma_id, titulo, descricao, image } = req.body;
+      const filtro = {
+        turma_id: turma_id,    
+        titulo: titulo,      
+        descricao: descricao,
+        image: image
         
-        // você retornar utilizando esse metodo
-        return sendResponse(res,201, {data:novoUsuario});
-    } catch (err) {
+      };
+      const response = await moduloService.listar(filtro);
 
-        if(err instanceof ZodError){
-            return sendError(res,400,err.errors[0].message);
-    
-        }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-            return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
-    
-        }else{
-            return sendError(res,500,"Ocorreu um erro interno no servidor!");
-        }
-    }
-    }
-    static listarPorID = async (req, res) => {
-        try{
-            const moduloExists = await prisma.modulo.findFirst({
-                where:{
-                    que_id: parseInt(req.params.id),
-                },
-                select:{
-                    mod_id: true,
-                    mod_tema: true,
-                    mod_descricao: true,
-                    mod_pdf: true,
-                    mod_linkVideo: true,
-                    modulo: {
-                        select:{
-                            turma: {
-                                select: {
-                                    tur_id: true,
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        if(moduloExists){
-            return res.status(200).json (moduloExists);
-        }
-
-    // você retornar utilizando esse metodo
-    return sendResponse(res,201, {data:"seu retorno"});
+      return sendResponse(res,201, {data: response});
 
     } catch (err) {
+      console.log(err)
 
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
@@ -102,35 +31,56 @@ class ModuloController{
         }else{
           return sendError(res,500,"Ocorreu um erro interno no servidor!");
         }
-       }
     }
+
+  };
+
+    static listarPorId = async (req, res) => {
+      try {
+        const id = { id: req.params.id };
+        console.log(id)
+        const response = await moduloService.listarPorId(parseInt(id.id));
+       
+        return sendResponse(res,201, {data:response});
+  
+      } catch (err) {
+        console.log(err)
+  
+          if(err instanceof ZodError){
+            return sendError(res,400,err.errors[0].message);
+    
+          }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
+            return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+    
+          }else{
+            return sendError(res,500,"Ocorreu um erro interno no servidor!");
+          }
+      }
+      try {
+        
+
+        res.status(200).json({
+          data: response,
+          error: false,
+          code: 200,
+          message: "modulo encontrado ",
+        });
+      } catch (error) {
+        return res.status(error.code || 500).json(error);
+      };
+    };
 
   //POST
   static inserir = async (req, res) => {
     try {
-        const { mod_id, mod_tema, mod_descricao, mod_pdf, mod_linkVideo } = req.body
 
-      const moduloCreated = await prisma.usuarios.create({
-        data: {
-            mod_id,
-            mod_tema,
-            mod_descricao,
-            mod_pdf,
-            mod_linkVideo
-        }
-      })
+      // modulo_criado = await ModuloService.inserir(insert)
 
-      return res.status(201).json({
-        error: false,
-        code: 201,
-        message: "Modulo criado.",
-        data: moduloCreated
-      })
-
-    // você retornar utilizando esse metodo
-    return sendResponse(res,201, {data:"seu retorno"});
+      // você retornar utilizando esse metodo
+      return sendResponse(res,201, {data:"seu retorno"});
 
     } catch (err) {
+      console.log(err)
 
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
@@ -146,30 +96,14 @@ class ModuloController{
 
     static deletar = async (req, res) => {
         try {
-            const id = parseInt(req.params.id);
-
-            const moduloDeletada = await prisma.modulo.delete({
-                where: { que_id: id }
-            });
-
-            if (!moduloDeletada) {
-                return res.status(400).json([{
-                    error: true,
-                    code: 400,
-                    massage: "Modulo não foi deletada"}])
-            } else{
-                return res.status(200).json({
-                    error: false,
-                    code: 200,
-                    massage: "Modulo deletada",
-                    data: ModuloDeletada
-                });
-            }
+        
+          // deletado = await ModuloService.excluir(filtro)
 
         // você retornar utilizando esse metodo
         return sendResponse(res,201, {data:"seu retorno"});
 
     } catch (err) {
+      console.log(err)
 
         if(err instanceof ZodError){
             return sendError(res,400,err.errors[0].message);
@@ -185,36 +119,13 @@ class ModuloController{
     // PUT
   static atualizar = async (req, res) => {
     try {
-      if (!req.params.id) {
-        return res.status(400).json([{ error: true, code: 400, message: "ID obrigatório."}])
-      }
-
-      const id = req.params.id
-      const { tema, descricao, pdf, link_video } = req.body
-
-      if (!tema|| !descricao || !pdf || !link_video && !id) {
-        return res.status(400).json([{error: true, code: 400, message: "Deve haver alguma alteração."}])
-      }
-
-      const moduloUpdate = await prisma.users.update({
-        where: {
-          mod_id: id
-        },
-        data: {
-            mod_id: true,
-            mod_tema: true,
-            mod_descricao: true,
-            mod_pdf: true,
-            mod_linkVideo: true
-        }
-      })
-
-      return res.status(201).json(moduloUpdate)
-
+      // atualizado = await ModuloService.atualizar(filtro)
+      
     // você retornar utilizando esse metodo
     return sendResponse(res,201, {data:"seu retorno"});
 
     } catch (err) {
+      console.log(err)
 
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
