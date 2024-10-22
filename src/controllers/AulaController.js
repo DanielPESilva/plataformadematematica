@@ -1,5 +1,4 @@
 import env from "dotenv";
-import { prisma } from "../configs/prismaClient.js";
 import AulaService from "../services/AulaService.js";
 import CommonResponse from "../utils/commonResponse.js";
 import path from "path";
@@ -21,11 +20,10 @@ class AulaController {
    */
   static listar = async (req, res) => {
     try {
-      const { titulo, feito, revisar } = req.query; 
+      const { titulo, aluno_id } = req.query; 
       const parametros = {
         titulo: titulo,
-        feito: Boolean(feito),
-        revisar: Boolean(revisar),
+        aluno_id:parseInt(aluno_id)
     }
     console.log("1 - Aqui",parametros)
       const aulaExist = await AulaService.listar(parametros);

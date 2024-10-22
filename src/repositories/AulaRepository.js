@@ -26,7 +26,7 @@ class AulaRepository {
   //   //repository de deletar aula
   // } 
 
-  async createFilterAula(parametros) {
+ createFilterAula(parametros) {
     let filtro = {
         where: {
           ...(parametros.modulo_id != undefined && { modulo_id: parametros.modulo_id }), // Inclui filtro para modulo_id
@@ -35,28 +35,27 @@ class AulaRepository {
           ...(parametros.pdf_questoes && { pdf_questoes: { contains: parametros.pdf_questoes } }), // Filtro para PDF de questões
           ...(parametros.pdf_resolucao && { pdf_resolucao: { contains: parametros.pdf_resolucao } }), // Filtro para PDF de resolução
           ...(parametros.descricao && { descricao: { contains: parametros.descricao } }),  // Filtro para descrição
-          ...(parametros.feito !== undefined && { feito: parametros.feito }),        // Filtro para feito
-          ...(parametros.revisar !== undefined && { revisar: parametros.revisar }),// Filtro para revisar
+          ...(parametros.aluno_id != NaN && {aluno_id: parametros.aluno_id})
         },
         select: {
-            id: true,                // Incluir o ID na consulta
-            modulo_id: true,         // Incluir o modulo_id na consulta
-            titulo: true,            // Incluir o título na consulta
-            video: true,             // Incluir o vídeo na consulta
-            pdf_questoes: true,      // Incluir o PDF de questões na consulta
-            pdf_resolucao: true,     // Incluir o PDF de resolução na consulta
-            descricao: true,           // Incluir a descrição na consulta
-            feito: {
-              select: {
-                feito: true,
-                revisar: true,
+          aluno_id:true,
+          feito:true,
+          revisar:true,
+            aula:{
+              select:{
+                id: true,                // Incluir o ID na consulta
+                modulo_id: true,         // Incluir o modulo_id na consulta
+                titulo: true,            // Incluir o título na consulta
+                video: true,             // Incluir o vídeo na consulta
+                pdf_questoes: true,      // Incluir o PDF de questões na consulta
+                pdf_resolucao: true,     // Incluir o PDF de resolução na consulta
+                descricao: true,
               }
             }
         }
     }
     if (parametros.titulo) filtro.where.titulo = { contains: parametros.titulo };
-    if (parametros.feito) filtro.where.feito = { contains: parametros.feito };
-    if (parametros.revisar) filtro.where.revisar = { contains: parametros.revisar };
+    if (parametros.aluno_id) filtro.where.aluno_id = { contains: parametros.aluno_id };
 
     return filtro;
 }
