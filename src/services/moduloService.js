@@ -1,62 +1,68 @@
 import moduloRepository from "../repositories/moduloRepository.js";
-import prisma from '../prismaClient';
+import { z } from "zod";
+import 'dotenv/config';
 
 class ModuloService {
-    async listar() {
-        const filtros = moduloRepository.constructFilters(tema);
-        return await moduloRepository.findAll(filtros);
+    static async listar(filtro) { 
+
+        const filtroSchema = z.object({
+            turma_id: z.preprocess((val) => Number(val), z.number({
+                invalid_type_error: "Id informado não é do tipo number.",
+            }).int({
+                message: "Id informado não é um número inteiro."
+            }).positive({
+                message: "Id informado não é positivo."
+            })).optional(),
+            titulo: z.string({
+                invalid_type_error:'O titulo informado não é do tipo string.'
+            }).optional(),
+            descricao: z.string({
+                invalid_type_error: "A descrição informada deve ser do tipo string."
+            }).optional(),
+            imagem: z.string({
+                invalid_type_error: "A imagem informada deve ser do tipo string."
+            }).optional()
+            });
+
+        // const filtroValidated = filtroSchema.parse(filtro);
+        const consulta = moduloRepository.constructFilters(filtro)
+        const busca = moduloRepository.listar(consulta)
+        console.log()
+        console.log(consulta)
+
+
+        return busca
+
+        };
+
+        static  async listarPorId(id) {
+            const idSchema = z.object({
+                id: z.preprocess((val) => Number(val), z.number({
+                    invalid_type_error: "Id informado não é do tipo number.",
+                }).int({
+                    message: "Id informado não é um número inteiro."
+                }).positive({
+                    message: "Id informado não é positivo."
+                }))
+            });
+            const parsedIdSchema = idSchema.parse({id:id});
+            const consulta = moduloRepository.constructFilters(parsedIdSchema)
+            const response = await moduloRepository.listarPorId(consulta);
+          return response
+      };
+
+
+  
+
+      static async inserir(data) {
+        return await moduloRepository.create(data);
     }
 
-    async listarPorID(id) {
-        return moduloRepository.findById(id);  
-    }
-
-    async inserir(data) {
-        const inserir = async (req, res) => {
-            try {
-              const parsedData = moduloSchema.parse(req.body);
-        
-              const moduloCreated = await prisma.modulos.create({
-                data: {
-                  mod_id: parsedData.mod_id,
-                  mod_tema: parsedData.mod_tema,
-                  mod_descricao: parsedData.mod_descricao,
-                  mod_pdf: parsedData.mod_pdf,
-                  mod_linkVideo: parsedData.mod_linkVideo,
-                },
-              });
-        
-              return res.status(201).json({
-                error: false,
-                code: 201,
-                message: 'Módulo criado.',
-                data: moduloCreated,
-              });
-            } catch (error) {
-              if (error instanceof z.ZodError) {
-                return res.status(400).json({
-                  error: true,
-                  code: 400,
-                  message: 'Erro de validação.',
-                  details: error.errors,
-                });
-              }
-              console.error(error);
-              return res.status(500).json({
-                error: true,
-                code: 500,
-                message: 'Erro interno.',
-              });
-            }
-          };
-                return await moduloRepository.create(data);
-            }
-
-    async atualizar(id, data) {
+    static async atualizar(id, data) {
         return await moduloRepository.update(id, data);
     }
 
-    async excluir() {
+    static async excluir() {
         const modulo = await moduloRepository.findById(id);
         if (!modulo) {
             throw new Error('Modulo not found')
@@ -67,4 +73,4 @@ class ModuloService {
 
 }
 
-export default new ModuloService();
+export default ModuloService;
