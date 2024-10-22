@@ -10,7 +10,7 @@ const router = express.Router();
 
 router
   .get("/modulo", moduloController.listar)
-  .get("/modulo/:id", moduloController.listarPorID)
+  .get("/modulo/:id", moduloController.listarPorId)
   .post("/modulo", moduloController.inserir)
   .patch("/modulo/:id", moduloController.atualizar)
   .delete("/modulo/:id", moduloController.deletar)
