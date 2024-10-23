@@ -23,8 +23,8 @@ class ModuloRepository {
     });
   }
 
-  static async update(id_atualizar, data) {
-    return await prisma.modulo.update({ where: { id: id_atualizar }, data });
+  static async atualizar( data) {
+    return await prisma.modulo.update( data );
   }
 
   static async delete(id_excluir) {

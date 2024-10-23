@@ -115,10 +115,17 @@ class ModuloController{
     // PUT
   static atualizar = async (req, res) => {
     try {
-      // atualizado = await ModuloService.atualizar(filtro)
-      
-    // você retornar utilizando esse metodo
-    return sendResponse(res,201, {data:"seu retorno"});
+      let id = req.params.id
+     
+      const { turma_id, titulo, descricao, image } = req.body;
+      const data = {
+        turma_id: turma_id,    
+        titulo: titulo,      
+        descricao: descricao,
+        image: image
+      }
+      const response = await moduloService.atualizar(parseInt(id),data)
+    return sendResponse(res,201, {data:response});
 
     } catch (err) {
       console.log(err)
