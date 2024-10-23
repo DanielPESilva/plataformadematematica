@@ -35,3 +35,4 @@ mod_linkVideo: z.string().url('O link do vídeo deve ser uma URL válida.').opti
 
 // Esquema para atualizações, permitindo campos parciais
 export const updateModuloSchema = moduloSchema.partial();
+

@@ -1,6 +1,7 @@
 import env from "dotenv";
 import { sendError, sendResponse } from "../utils/messages.js";
 import moduloService from "../services/moduloService.js";
+import { ZodError } from "zod";
 
 env.config()
 
@@ -56,28 +57,23 @@ class ModuloController{
             return sendError(res,500,"Ocorreu um erro interno no servidor!");
           }
       }
-      try {
-        
-
-        res.status(200).json({
-          data: response,
-          error: false,
-          code: 200,
-          message: "modulo encontrado ",
-        });
-      } catch (error) {
-        return res.status(error.code || 500).json(error);
-      };
+     
     };
 
   //POST
   static inserir = async (req, res) => {
     try {
+      const { turma_id, titulo, descricao, image } = req.body;
+      const data = {
+        turma_id: turma_id,    
+        titulo: titulo,      
+        descricao: descricao,
+        image: image
+        
+      };
+      const response = await moduloService.inserir(data);
 
-      // modulo_criado = await ModuloService.inserir(insert)
-
-      // você retornar utilizando esse metodo
-      return sendResponse(res,201, {data:"seu retorno"});
+      return sendResponse(res,201, {data: response});
 
     } catch (err) {
       console.log(err)
