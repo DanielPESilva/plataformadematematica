@@ -19,18 +19,14 @@ class ModuloService {
             descricao: z.string({
                 invalid_type_error: "A descrição informada deve ser do tipo string."
             }).optional(),
-            imagem: z.string({
+            image: z.string({
                 invalid_type_error: "A imagem informada deve ser do tipo string."
             }).optional()
             });
 
-        // const filtroValidated = filtroSchema.parse(filtro);
-        const consulta = moduloRepository.constructFilters(filtro)
+        const filtroValidated = filtroSchema.parse(filtro);
+        const consulta = moduloRepository.constructFilters(filtroValidated)
         const busca = moduloRepository.listar(consulta)
-        console.log()
-        console.log(consulta)
-
-
         return busca
 
         };
@@ -55,7 +51,36 @@ class ModuloService {
   
 
       static async inserir(data) {
-        return await moduloRepository.create(data);
+        const filtroSchema = z.object({
+            turma_id: z.preprocess((val) => Number(val), z.number({
+                invalid_type_error: "Id informado não é do tipo number.",
+            }).int({
+                message: "Id informado não é um número inteiro."
+            }).positive({
+                message: "Id informado não é positivo."
+            })),
+            titulo: z.string({
+                invalid_type_error:'O titulo informado não é do tipo string.'
+            }),
+            descricao: z.string({
+                invalid_type_error: "A descrição informada deve ser do tipo string."
+            }),
+            image: z.string({
+                invalid_type_error: "A imagem informada deve ser do tipo string."
+            })
+            });
+
+        const filtroValidated = filtroSchema.parse(data);
+        const moduloResponse={         
+            turma_id: filtroValidated.turma_id,   
+            titulo: filtroValidated.titulo,      
+            descricao: filtroValidated.descricao,   
+            image: filtroValidated.image
+        
+        }
+        const response = moduloRepository.inserir(moduloResponse)
+
+        return response
     }
 
     static async atualizar(id, data) {

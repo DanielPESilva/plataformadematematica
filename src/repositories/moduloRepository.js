@@ -10,8 +10,17 @@ class ModuloRepository {
     return await prisma.modulo.findUnique(filtros);
   }
 
-  static async create(data_criar) {
-    return await prisma.modulo.create({ data: data_criar });
+  static async inserir(data_criar) {
+    return await prisma.modulo.create({
+      data: data_criar,
+      select: {
+        id: true,          
+        turma_id: true,   
+        titulo: true,      
+        descricao: true,  
+        image: true
+    }
+    });
   }
 
   static async update(id_atualizar, data) {
