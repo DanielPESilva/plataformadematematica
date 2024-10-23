@@ -62,15 +62,22 @@ class ModuloController{
   //POST
   static inserir = async (req, res) => {
     try {
-      const { turma_id, titulo, descricao, image } = req.body;
+      const generateRandomNumber = () => Math.floor(Math.random() * 1000) + 1;
+      const file = req.file
+
+      if(file){
+        file.originalname = `${generateRandomNumber()}_${file.originalname}`
+      }
+
+      const { turma_id, titulo, descricao} = req.body;
       const data = {
         turma_id: turma_id,    
         titulo: titulo,      
         descricao: descricao,
-        image: image
-        
+        image: file ? file.originalname : null
       };
-      const response = await moduloService.inserir(data);
+
+      const response = await moduloService.inserir(data, file);
 
       return sendResponse(res,201, {data: response});
 

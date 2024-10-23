@@ -42,7 +42,11 @@ class ModuloService {
         return response
     };
 
-      static async inserir(data) {
+      static async inserir(data, file) {
+        console.log(arquivo.mimetype)
+        if (arquivo.mimetype != 'text/csv') {
+            throw new Error("Arquivo do tipo errado.");
+        }
 
         const filtroValidated = moduloSchema.inserirSchema.parse(data);
         const moduloResponse={         
@@ -50,8 +54,21 @@ class ModuloService {
             titulo: filtroValidated.titulo,      
             descricao: filtroValidated.descricao,   
             image: filtroValidated.image
-        
         }
+        const outputPath = path.join(__dirname, `../../uploads/imagens/${moduloResponse.image}.png`);
+
+        console.log(file.buffer);
+        sharp(file.buffer)
+        .resize(480, 280) 
+        .toFormat('png', { quality: 10 }) 
+        .toFile(outputPath, (err, info) => {
+            if (err) {
+            console.error('Erro ao redimensionar a imagem:', err);
+            } else {
+            console.log('Imagem redimensionada com sucesso:', info);
+            }
+        });
+
         const response = moduloRepository.inserir(moduloResponse)
 
         return response
