@@ -15,14 +15,12 @@ const fileFilter = (req, file, cb) => {
         'application/pdf', // PDF
         'application/msword', // DOC
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
-        'image/jpeg', // JPEG
-        'image/png' // PNG
     ];
 
     if (allowedTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
-        cb(new Error('Tipo de arquivo enviado não é suportado. Envie no formato: .PDF, .DOC, .DOCX, .JPEG, .PNG'));
+        cb(new Error('Tipo de arquivo enviado não é suportado. Envie no formato: .PDF, .DOC, .DOCX'));
     }
 };
 
@@ -32,11 +30,7 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         let uploadPath;
 
-        if (file.mimetype.startsWith('application')) {
-            uploadPath = path.join(__dirname, '../../uploads/pdf');
-        } else if (file.mimetype.startsWith('image')) {
-            uploadPath = path.join(__dirname, '../../uploads/imagens');
-        }
+        uploadPath = path.join(__dirname, '../../uploads/pdf');
 
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
@@ -77,7 +71,7 @@ router
     router.get("/aula/:id",AulaController.listarPorID)
     router.post(
         '/aula',
-        upload.fields([{ name: 'perguntas' }, { name: 'gabarito' }, { name: 'image' }]),
+        upload.fields([{ name: 'perguntas' }, { name: 'gabarito' }]),
         (err, req, res, next) => {
             if (err.message == "Tipo de arquivo enviado não é suportado. Envie no formato: .PDF, .DOC, .DOCX") {
                 return sendError(res,400,[err.message]);

@@ -19,8 +19,19 @@ class AulaRepository {
       data: { posicao, titulo, pdf, link_video }
     });
   }
-  async create(data) {
-    return await prisma.questao.create({data})
+  async create(data_insert) {
+    return await prisma.aula.create({
+      data :data_insert,
+      select: {
+        id: true,                
+        modulo_id: true,         
+        titulo: true,            
+        video: true,             
+        pdf_questoes: true,       
+        pdf_resolucao: true,      
+        descricao: true           
+      }
+    })
   }
   async deletar(dados) {
     //repository de deletar aula
