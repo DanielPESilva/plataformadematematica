@@ -10,23 +10,19 @@ dotenv.config();
 
 
 class UsuarioService {
-    async listar(nome,matricula, page = 1, perPage = 10) {
-        const filtros = usuarioRepository.constructFilters(nome, matricula);
-        return await usuarioRepository.findAll(filtros, page, perPage);
-    }
 
-    async listarPorID(id) {
-        return usuarioRepository.findById(id);  
+        static async listarUsuarios(parametros){
+            parametros = UsuarioSchema.listarUsuarios.parse(parametros);
 
-    }
+            let filtro = usuarioRepository.createFilterUsuario(parametros)
 
-    async listarPorMatricula(matricula) {
-        return usuarioRepository.findByMatricula(matricula);
-    }
+            const usuarios = await usuarioRepository.listarUsuarios(filtro)
 
-    async inserir(data) {
-        return await usuarioRepository.create(data);
-    }
+            if(usuarios.length == 0){
+                throw new Error ("Nenhum usuario encontrado")
+            }
+            return usuarios;
+        }
 
     static async inserir_csv(arquivo) {
         if (arquivo.mimetype != 'text/csv') {
@@ -114,26 +110,6 @@ class UsuarioService {
     }
     
 
-    static async atualizar(id, data) {
-        const user = await usuarioRepository.findById(id);
-
-        if (data.email && user.email !== data.email) {
-            const emailExists = await usuarioRepository.findByEmail(data.email);
-            if (emailExists) {
-                throw new Error ('Email exists');
-            }
-        }
-        return await usuarioRepository.update(id, data);
-    }
-
-    static async excluir() {
-        const user = await usuarioRepository.findById(id);
-        if (!user) {
-            throw new Error('User not found')
-        }
-
-        return await usuarioRepository.delete(id);
-    }
 
 }
 

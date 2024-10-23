@@ -1,15 +1,16 @@
+import id from 'faker-br/lib/locales/id_ID';
 import { z } from 'zod';
 
-export const usuarioSchema = z.object({
-    id: z.number().int().optional(), // Campo auto-incremento, será opcional ao criar um novo usuário
-    name: z.string().min(1, 'Nome é obrigatório'), // Campo obrigatório, não permite valor vazio
-    tel: z.string().max(256, 'Telefone muito longo').optional().nullable(), // Campo opcional e pode ser nulo
-    email: z.string().email('Email inválido').optional().nullable(), // Campo único, opcional e pode ser nulo
-    matricula: z.string().max(100, 'Login muito longo').optional().nullable(), // Campo único, opcional e pode ser nulo
-    senha: z.string().max(100, 'Senha muito longa').optional().nullable(), // Campo opcional e pode ser nulo
-    cpf: z.string().max(11, 'CPF invalido').optional().nullable(), // Campo opcional e pode ser nulo
+class UsuarioSchema{
+  
+  static listarUsuarios = z.object({
+    nome: z.string().trim().min(1).max(100).optional(),
+    senha:z.string().trim().min(6).max(240).optional(),
+    matricula: z.number().int().min(1).positive().optional(),
+    active: z.coerce.boolean().optional(),
+
   });
+
+}
   
-  // Esquema para atualizações, permitindo campos parciais
-  export const updateUserSchema = userSchema.partial();
-  
+export default UsuarioSchema;

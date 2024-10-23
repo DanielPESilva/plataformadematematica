@@ -1,17 +1,10 @@
 import {prisma} from "../configs/prismaClient.js";
 
 class usuarioRepository {
-  async create(data) {
-    return await prisma.usuario.create({ data });
-  }
 
-  async update(id, data) {
-    return await prisma.usuario.update({ where: { id }, data });
-  }
-
-  async delete(id) {
-    return await prisma.usuario.delete({ where: { id } });
-  }
+  static async listarUsuarios(filtros){
+    return await prisma.usuario.findMany(filtros);
+}
 
   static async listar_csv() {
     return await prisma.usuario.findMany({
@@ -96,28 +89,25 @@ class usuarioRepository {
     ])
     return { users, total, page, perPage };
   }
+  static createFilterUsuario(parametros) {
+    let filtro = {
+        where: {
+            ...(parametros.nome && { nome: { contains: parametros.nome } }),              
+            ...(parametros.senha && { senha: { contains: parametros.senha } }),           
+            ...(parametros.matricula != undefined && { matricula: parametros.matricula }), 
+            ...(parametros.active != undefined && { active: parametros.active })           
+        },
+        select: {
+            id: true,            
+            nome: true,          
+            senha: true,       
+            matricula: true,     
+            active: true         
+        }
+    }
+    return filtro;
+}
 
-  constructFilters(nome, matricula) {
-    let filtros = {
-      where: {
-        active: "Y",
-      },
-      select: {
-        usu_id: true,
-        usu_nome: true,
-        usu_tel: true,
-        usu_email: true,
-        usu_matricula: true,
-        usu_cpf: true,
-        usu_senha: false,
-      },
-    };
-
-    if (nome) filtros.where.usu_nome = { contains: nome };
-    if (matricula) filtros.where.usu_matricula = { contains: matricula };
-
-    return filtros;
-  }
 }
 
 export default usuarioRepository;

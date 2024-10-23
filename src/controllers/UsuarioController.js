@@ -7,68 +7,38 @@ import UsuarioService from '../services/usuarioService.js';
 import { ZodError } from "zod";
 
 
-env.config(); // inicializar as variáveis de ambiente
+env.config(); 
 
 class systemUsuarioController {
-  // GET - listar usuario por name com paginação 
-  static listar = async (req, res) => {
-    try {
-      // fazer uma busca no banco de dados por todos os registros em system_usuario
-      const userExists = await prisma.system_usuario.findMany({
-        where: {
-          active: 'Y',
-          email: {
-            contains: '@gmail.com' //like
-          }
-        },
-      
-        select: {
-          usu_id: true,
-          usu_nome: true,
-          usu_tel: true,
-          password: false,
-          active: true,
-          system_user_group: {
-            select: {
-              system_group: {
-                select: {
-                  name: true,
-                }
-              }
-            }
-          },
+
+    static listarUsuario = async (req, res) =>{
+      try{
+        const {nome,senha,matricula,active} = req.query
+
+        const parametros = {
+          nome:nome,
+          senha:senha,
+          matricula:matricula,
+          active: active,
         }
-        }
-      );
 
-      if (!userExists) {
-        return res.status(400).json([{
-           error: true, 
-           code: 400, 
-           message: "Nenhum usuário encontrado" }])
-      } else {
-        return res.status(200).json(
-          {
-            error: false,
-            code: 200,
-            message: "Usuário encontrado",
-            data: userExists
-      });
+        const listarUsuarios = await UsuarioService.listarUsuarios(parametros);
+        return sendResponse(res,200,{data:listarUsuarios});
+        
+      }catch (err){
+        if(err instanceof ZodError){
+          return sendError(res,400,err.errors[0].message);
+  
+        }else if (err.message === "Nenhum usuário encontrado") {
+          return sendError(res,404,"Nenhum usuário encontrado");
+  
+        }else{
+          return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
+    }
+  };
 
-    } catch (err) {
 
-      if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
-
-      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
-
-      }else{
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
-      }
-     }
-  }
 
   // GET por ID - listar Usuario por ID 
   static listarPorID = async (req, res) => {
