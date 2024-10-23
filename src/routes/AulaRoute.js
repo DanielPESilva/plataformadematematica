@@ -73,7 +73,7 @@ const upload = multer({
 */
 
 router
-    router.get("/aula", AulaController.listar)
+    router.get("/aula", AulaController.listarAll)
     router.get("/aula/:id",AulaController.listarPorID)
     router.post(
         '/aula',

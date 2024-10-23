@@ -12,7 +12,7 @@ class AulaService {
 
         console.log("2 - Filtrado", filtro);
 
-        const filtroRepository = AulaRepository.createFilterAula(filtro);
+        const filtroRepository = AulaRepository.createFilterFeito(filtro);
 
         console.log("3 - Passou pelo Repository",filtroRepository);
     

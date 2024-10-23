@@ -7,6 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import { sendError, sendResponse } from "../utils/messages.js";
 import { ZodError } from 'zod';
+import { error } from "console";
 
 env.config();
 
@@ -18,19 +19,24 @@ class AulaController {
    * - feito: Se a aula foi feita ou não ("true" ou "false").
    * - revisar: Se a aula precisa ser revisada ("true" ou "false").
    */
-  static listar = async (req, res) => {
+  static listarAll = async (req, res) => {
     try {
-      const { titulo, aluno_id } = req.query; 
+      const { titulo, aluno_id, modulo_id } = req.query;
+
       const parametros = {
         titulo: titulo,
+        modulo_id: parseInt(modulo_id),
         aluno_id:parseInt(aluno_id)
     }
+
     console.log("1 - Aqui",parametros)
       const aulaExist = await AulaService.listar(parametros);
+      console.log("5 - Retornou do service", JSON.stringify(aulaExist));
 
       return sendResponse(res,200,{data:aulaExist});
 
     } catch (err) {
+      console.error(err);
       if(err instanceof ZodError){
         return sendError(res,400,err.errors[0].message);
 
