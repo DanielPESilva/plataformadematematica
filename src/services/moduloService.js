@@ -1,25 +1,46 @@
 import moduloRepository from "../repositories/moduloRepository.js";
-import { z } from "zod";
 import 'dotenv/config';
+import sharp from "sharp";
+import fs from "fs";
+import path from "path";
 import moduloSchema from "../schemas/moduloSchema.js";
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 class ModuloService {
     static async listar(filtro) { 
 
-        const filtroValidated = moduloSchema.listarSchema.parse(filtro);
+        const filtroValidated = moduloSchema.listarSchema.parse(filtro)
         const consulta = moduloRepository.constructFilters(filtroValidated)
-        const busca = moduloRepository.listar(consulta)
+        const busca = await moduloRepository.listar(consulta)
+
+        if (!busca) {
+            throw new Error("nem um modulo foi encontrado.");
+        }
+
+        const imagePromises = [];
+
+        for (const modulo of busca) {
+            const imagePath = path.join(__dirname, `../../uploads/imagens/${modulo.image}`);
+            const imagePromise = fs.promises.readFile(imagePath)
+            .then( async data => data.toString('base64'))
+            .catch(err => {
+                throw new Error("Ocorreu um erro ao enviar as imagens.");
+            });
+            imagePromises.push( modulo.image = await imagePromise);
+        }
         return busca
+    };
 
-        };
-
-        static  async listarPorId(id) {
+    static  async listarPorId(id) {
     
-            const parsedIdSchema = moduloSchema.listarPoIdSchema.parse({id:id});
-            const consulta = moduloRepository.constructFilters(parsedIdSchema)
-            const response = await moduloRepository.listarPorId(consulta);
-          return response
-      };
+        const parsedIdSchema = moduloSchema.listarPoIdSchema.parse({id:id});
+        const consulta = moduloRepository.constructFilters(parsedIdSchema)
+        const response = await moduloRepository.listarPorId(consulta);
+        return response
+    };
 
       static async inserir(data) {
 

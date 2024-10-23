@@ -10,11 +10,10 @@ class ModuloController{
     try {
       const { turma_id, titulo, descricao, image } = req.body;
       const filtro = {
-        turma_id: turma_id,    
-        titulo: titulo,      
+        turma_id: turma_id,
+        titulo: titulo,
         descricao: descricao,
         image: image
-        
       };
       const response = await moduloService.listar(filtro);
 
