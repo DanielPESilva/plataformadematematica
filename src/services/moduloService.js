@@ -34,45 +34,43 @@ class ModuloService {
         return busca
     };
 
-    static  async listarPorId(id) {
-    
-        const parsedIdSchema = moduloSchema.listarPoIdSchema.parse({id:id});
-        const consulta = moduloRepository.constructFilters(parsedIdSchema)
-        const response = await moduloRepository.listarPorId(consulta);
-        return response
-    };
+        static  async listarPorId(id) {
+            const parsedIdSchema = moduloSchema.listarPoIdSchema.parse({id:id});
+            const consulta = moduloRepository.constructFilters(parsedIdSchema)
+            const response = await moduloRepository.listarPorId(consulta);
+            return response
+        };
 
-      static async inserir(data, file) {
-        console.log(arquivo.mimetype)
-        if (arquivo.mimetype != 'text/csv') {
-            throw new Error("Arquivo do tipo errado.");
-        }
+        static async inserir(data, file) {
 
-        const filtroValidated = moduloSchema.inserirSchema.parse(data);
-        const moduloResponse={         
-            turma_id: filtroValidated.turma_id,   
-            titulo: filtroValidated.titulo,      
-            descricao: filtroValidated.descricao,   
-            image: filtroValidated.image
-        }
-        const outputPath = path.join(__dirname, `../../uploads/imagens/${moduloResponse.image}.png`);
-
-        console.log(file.buffer);
-        sharp(file.buffer)
-        .resize(480, 280) 
-        .toFormat('png', { quality: 10 }) 
-        .toFile(outputPath, (err, info) => {
-            if (err) {
-            console.error('Erro ao redimensionar a imagem:', err);
-            } else {
-            console.log('Imagem redimensionada com sucesso:', info);
+            const tipo = file.mimetype
+            if (!tipo.includes('image')) {
+                throw new Error("file do tipo errado.");
             }
-        });
 
-        const response = moduloRepository.inserir(moduloResponse)
+            const filtroValidated = moduloSchema.inserirSchema.parse(data);
+            const moduloResponse={         
+                turma_id: filtroValidated.turma_id,   
+                titulo: filtroValidated.titulo,      
+                descricao: filtroValidated.descricao,   
+                image: filtroValidated.image
+            }
+            const outputPath = path.join(__dirname, `../../uploads/imagens/${moduloResponse.image}`);
+            const formato = moduloResponse.image.split('.')
 
-        return response
-    }
+            sharp(file.buffer)
+            .resize(480, 280) 
+            .toFormat(formato[formato.length - 1], { quality: 10 }) 
+            .toFile(outputPath, (err, info) => {
+                if (err) {
+                    throw new Error('Erro ao redimensionar a imagem');
+                }
+            });
+
+            const response = moduloRepository.inserir(moduloResponse)
+
+            return response
+        }
 
     static async atualizar(id, data) {
         const parametro = moduloSchema.atualizarSchema.parse(data);

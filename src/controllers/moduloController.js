@@ -32,7 +32,6 @@ class ModuloController{
           return sendError(res,500,"Ocorreu um erro interno no servidor!");
         }
     }
-
   };
 
     static listarPorId = async (req, res) => {
@@ -64,6 +63,7 @@ class ModuloController{
     try {
       const generateRandomNumber = () => Math.floor(Math.random() * 1000) + 1;
       const file = req.file
+      console.log(file)
 
       if(file){
         file.originalname = `${generateRandomNumber()}_${file.originalname}`
@@ -87,8 +87,11 @@ class ModuloController{
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
   
-        }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-          return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+        }else if(err.message == "file do tipo errado." ){
+          return sendError(res,404,[err.message]);
+  
+        }else if(err.message == 'Erro ao redimensionar a imagem' ){
+          return sendError(res,404,[err.message]);
   
         }else{
           return sendError(res,500,"Ocorreu um erro interno no servidor!");
