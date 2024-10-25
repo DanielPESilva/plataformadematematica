@@ -1,14 +1,12 @@
 import { z } from 'zod'
 
 class AulaSchema{
-    static createQestaoSchema =
-    z.object({
-        id: z.number().min(1, 'Obrigatorio').positive(),
-        posicao: z.string().min(1, 'Posição é obrigatorio'),
-        titulo: z.string().min(1, 'Titulo é Obrigatorio'),
-        pdf: z.string(),
-        link_video: z.string()
-    })
+    listarSchema(){
+        return z.object({
+        titulo: z.string("Precisa ser uma String").optional(),
+        aluno_id:z.number().positive().optional().nullable(),
+        modulo_id:z.number().positive().optional().nullable(),
+    })}
 }
 
-export default  AulaSchema
+export default  AulaSchema;
