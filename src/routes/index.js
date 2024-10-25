@@ -3,6 +3,7 @@ import users from "./UsuarioRoutes.js";
 import login from "./loginRoute.js";
 import turma from "./TurmaRoutes.js";
 import aula from "./AulaRoute.js";
+import modulo from "./ModuloRoutes.js"
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import getSwaggerOptions from "../docs/config/head.js";
@@ -23,7 +24,8 @@ const routes = (app) => {
         login,
         turma,
         aula,
-        users
+        users,
+        modulo
 
     );
 
