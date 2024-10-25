@@ -5,31 +5,47 @@ class AulaService {
   /**
    * Há validação do zod, falta padronizare organizar...
    */
-    async listar(filtro) {
-        // Regra de negócio e validações
-        const schema = new AulaSchemas().listarSchema()
-        filtro = schema.parse(filtro)
+  async listar(parametros) {
+    const schema = new AulaSchemas().listarSchema();
+    let parametrosValidados;
+        parametrosValidados = schema.parse(parametros);
 
-        if(filtro.titulo || filtro.modulo_id){
-          const filtroRepository = AulaRepository.createFilterAula(filtro);
-          const aulas = await AulaRepository.findAllAulas(filtroRepository)
-  
-          return aulas;
+        if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
+            const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
+            const aulas = await AulaRepository.findAllAulas(filtroRepository);
+
+            return aulas;
         }
-        if(filtro.aluno_id){
-          const filtroRepository = AulaRepository.createFilterFeito(filtro);
-          const aulas = await AulaRepository.findAllFeitos(filtroRepository)
-  
-          return aulas;
+
+        if (parametrosValidados.aluno_id) {
+            const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
+            const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
+
+            return aulasFeitasRevisadas;
         }
-    }
-    async listarPorID(id) {
-        // teste se o id é um número
-        if (isNaN(id)) {
-          throw new Error('ID deve ser um número inteiro)');
+        if(!parametrosValidados.aluno_id && !parametrosValidados.titulo && !parametrosValidados.modulo_id){
+          const todasAsAulas = await AulaRepository.findAllAulas();
+          return todasAsAulas;
         }
-        return AulaRepository.findById(id);
+        else{
+          throw new Error("Nenhum registro encontrado.");
+        }
+}
+
+    async listarPorID(idDoParam) {
+
+      const schema = new AulaSchemas().listarPorIdSchema()
+      let IdValidado;
+      IdValidado = schema.parse(idDoParam)
+
+      const filtroDoRepository = AulaRepository.createFilterAula(IdValidado)
+      const aula = await AulaRepository.findById(filtroDoRepository)
+
+      if(!aula){
+          throw new Error("Nenhuma aula encontrada.");
       }
+      return aula
+  }
 
     static async atualizar(id, titulo, posicao, pdf, link_video) {
       // Regra de negócio e validações

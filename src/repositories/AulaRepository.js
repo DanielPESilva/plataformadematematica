@@ -1,21 +1,16 @@
 import { prisma } from "../configs/prismaClient.js";
 
 class AulaRepository {
-  async findAllFeitos(filtros) {
-    return await prisma.feito.findMany(filtros);
+  async findAllFeitos(parametros) {
+    return await prisma.feito.findMany(parametros);
   }
-  async findAllAulas(filtros) {
-    return await prisma.aula.findMany(filtros);
+  async findAllAulas(parametros) {
+    return await prisma.aula.findMany(parametros);
   }
-  // async findById(id) {
-  //   const filtros = this.constructFilters();
-  //   const aula = await prisma.aula.findUnique({
-  //     where: { id },
-  //     select: filtros.select,
-  //   });
-  //   return aula;
-  // }
 
+  async findById(parametro){
+    return await prisma.aula.findUnique(parametro);
+}
   // async update(id, posicao, titulo, pdf, link_video) {
   //   return await prisma.questao.update({
   //     where: { id },
