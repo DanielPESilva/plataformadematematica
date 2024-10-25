@@ -10,17 +10,18 @@ class AulaService {
         const schema = new AulaSchemas().listarSchema()
         filtro = schema.parse(filtro)
 
-        console.log("2 - Filtrado", filtro);
-
-        const filtroRepository = AulaRepository.createFilterFeito(filtro);
-
-        console.log("3 - Passou pelo Repository",filtroRepository);
-    
-        const aulas = await AulaRepository.findAll(filtroRepository)
-
-        console.log("4 - Passou pelo Repository",filtroRepository);
-
-        return aulas;
+        if(filtro.titulo || filtro.modulo_id){
+          const filtroRepository = AulaRepository.createFilterAula(filtro);
+          const aulas = await AulaRepository.findAllAulas(filtroRepository)
+  
+          return aulas;
+        }
+        if(filtro.aluno_id){
+          const filtroRepository = AulaRepository.createFilterFeito(filtro);
+          const aulas = await AulaRepository.findAllFeitos(filtroRepository)
+  
+          return aulas;
+        }
     }
     async listarPorID(id) {
         // teste se o id é um número

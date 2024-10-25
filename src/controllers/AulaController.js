@@ -7,7 +7,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import { sendError, sendResponse } from "../utils/messages.js";
 import { ZodError } from 'zod';
-import { error } from "console";
 
 env.config();
 
@@ -25,13 +24,11 @@ class AulaController {
 
       const parametros = {
         titulo: titulo,
-        modulo_id: parseInt(modulo_id),
-        aluno_id:parseInt(aluno_id)
+        modulo_id: modulo_id ? parseInt(modulo_id) : undefined,
+        aluno_id: aluno_id ? parseInt(aluno_id) : undefined 
     }
 
-    console.log("1 - Aqui",parametros)
       const aulaExist = await AulaService.listar(parametros);
-      console.log("5 - Retornou do service", JSON.stringify(aulaExist));
 
       return sendResponse(res,200,{data:aulaExist});
 
