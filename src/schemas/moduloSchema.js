@@ -1,12 +1,72 @@
-import { z } from 'zod';
+import {z} from 'zod'
 
-export const moduloSchema = z.object({
-  id: z.number().int().optional(), // Campo auto-incremento, será opcional ao criar um novo usuário
-  tema: z.string().min(1, 'Tema é obrigatório'), // Campo obrigatório, não permite valor vazio
-  descricao: z.string().min(1, 'Descricao é obrigatório'), // Campo obrigatório, não permite valor vazio
-  pdf: z.string().optional().nullable(), // Campo opcional e pode ser nulo
-  link_video: z.string().optional().nullable(), // Campo opcional e pode ser nulo
-});
+class moduloSchema {
+  static inserirSchema = z.object({
+    turma_id: z.preprocess((val) => Number(val), z.number({
+        invalid_type_error: "Id informado não é do tipo number.",
+    }).int({
+        message: "Id informado não é um número inteiro."
+    }).positive({
+        message: "Id informado não é positivo."
+    })),
+    titulo: z.string({
+        invalid_type_error:'O titulo informado não é do tipo string.'
+    }),
+    descricao: z.string({
+        invalid_type_error: "A descrição informada deve ser do tipo string."
+    }),
+    image: z.string({
+        invalid_type_error: "A imagem informada deve ser do tipo string."
+    })
+    });
 
-// Esquema para atualizações, permitindo campos parciais
-export const updateModuloSchema = moduloSchema.partial();
+    static listarPoIdSchema = z.object({
+        id: z.preprocess((val) => Number(val), z.number({
+            invalid_type_error: "Id informado não é do tipo number.",
+        }).int({
+            message: "Id informado não é um número inteiro."
+        }).positive({
+            message: "Id informado não é positivo."
+        }))
+    });
+
+    static listarSchema = z.object({
+        turma_id: z.preprocess((val) => Number(val), z.number({
+            invalid_type_error: "Id informado não é do tipo number.",
+        }).int({
+            message: "Id informado não é um número inteiro."
+        }).positive({
+            message: "Id informado não é positivo."
+        })).optional(),
+        titulo: z.string({
+            invalid_type_error:'O titulo informado não é do tipo string.'
+        }).optional(),
+        descricao: z.string({
+            invalid_type_error: "A descrição informada deve ser do tipo string."
+        }).optional(),
+        image: z.string({
+            invalid_type_error: "A imagem informada deve ser do tipo string."
+        }).optional()
+        });
+
+        static atualizarSchema = z.object({
+            turma_id: z.preprocess((val) => Number(val), z.number({
+                invalid_type_error: "Id informado não é do tipo number.",
+            }).int({
+                message: "Id informado não é um número inteiro."
+            }).positive({
+                message: "Id informado não é positivo."
+            })).optional(),
+            titulo: z.string({
+                invalid_type_error:'O titulo informado não é do tipo string.'
+            }).optional(),
+            descricao: z.string({
+                invalid_type_error: "A descrição informada deve ser do tipo string."
+            }).optional(),
+            image: z.string({
+                invalid_type_error: "A imagem informada deve ser do tipo string."
+            }).optional()
+            });
+
+}
+export default moduloSchema;
