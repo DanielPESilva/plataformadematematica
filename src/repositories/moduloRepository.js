@@ -50,6 +50,16 @@ class ModuloRepository {
     };
     return filtro;
 }
+  static async turma_exist(id_turma){
+    return await prisma.turma.findFirst({
+      where:{
+        id: id_turma
+      },
+      select:{
+        id:true
+      }
+    })
+  }
 
 }
 

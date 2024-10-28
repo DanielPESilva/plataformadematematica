@@ -1,5 +1,5 @@
 import turmaRepository from "../repositories/turmaRepository.js";
-import {TurmaSchema, updateTurmaSchema} from "../schemas/TurmaSchemas.js";
+import {TurmaSchema, updateTurmaSchema} from "../schemas/turmaSchemas.js";
 
 class turmaService {
   static async listar(data) {
