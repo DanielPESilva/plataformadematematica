@@ -69,31 +69,6 @@ class questaoController {
      }
   };
 
-  static buscar_arquivo = async (req, res) => {
-    try {
-      const fileName = req.params.fileName;
-      const tipoArquivo = req.params.tipoArquivo
-
-      let diretorio = '../../uploads/imagens'
-
-      if(tipoArquivo == "documento"){
-        diretorio = '../../uploads/pdf'
-      }
-      const filePath = path.join(__dirname, '../../uploads/pdf', fileName);
-
-      res.sendFile(filePath, (err) => {
-          if (err) {
-              return sendError(res,404,['Arquivo não foi encontrado']);
-          }
-      });
-
-    } catch (err) {
-      console.error(err)
-      return sendError(res,500,"Ocorreu um erro interno no servidor!");
-
-     }
-  };
-
   static atualizar = async (req, res) => {
     try {
       console.log(req.body);
@@ -162,6 +137,9 @@ class questaoController {
       if(err instanceof ZodError){
         return sendError(res,400,[err.errors[0].message, err.errors[0].path]);
 
+      }else if(err.message == "O modulo informado não existe." ){
+        return sendError(res,404,[err.message]);
+
       }else {
         return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
@@ -205,6 +183,25 @@ class questaoController {
       }else{
         return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
+     }
+  };
+
+  static buscar_arquivo = async (req, res) => {
+    try {
+      const fileName = req.params.fileName;
+
+      const filePath = path.join(__dirname, '../../uploads/pdf', fileName);
+
+      res.sendFile(filePath, (err) => {
+          if (err) {
+              return sendError(res,404,['Arquivo não foi encontrado']);
+          }
+      });
+
+    } catch (err) {
+      console.error(err)
+      return sendError(res,500,"Ocorreu um erro interno no servidor!");
+
      }
   };
 }

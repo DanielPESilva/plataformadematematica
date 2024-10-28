@@ -24,6 +24,13 @@ class AulaService {
 
   async create(parametros) {
     const insert = AulaSchema.schemaInsert.parse(parametros)
+
+    const modulo = await AulaRepository.modulo_exist(insert.modulo_id)
+    if (!modulo) {
+      throw new Error("O modulo informado não existe.");
+    }
+
+
     const AulaCriada = AulaRepository.create(insert)
     return AulaCriada
 

@@ -1,10 +1,10 @@
 import { prisma } from "../configs/prismaClient.js";
 
 class AulaRepository {
-  async findAll(filtros) {
+  static async findAll(filtros) {
     return await prisma.questao.findMany(filtros);
   }
-  async findById(id) {
+  static async findById(id) {
     const filtros = this.constructFilters();
     const questao = await prisma.questao.findUnique({
       where: { id },
@@ -13,13 +13,13 @@ class AulaRepository {
     return questao;
   }
 
-  async update(id, posicao, titulo, pdf, link_video) {
+  static async update(id, posicao, titulo, pdf, link_video) {
     return await prisma.questao.update({
       where: { id },
       data: { posicao, titulo, pdf, link_video }
     });
   }
-  async create(data_insert) {
+  static async create(data_insert) {
     return await prisma.aula.create({
       data :data_insert,
       select: {
@@ -33,7 +33,7 @@ class AulaRepository {
       }
     })
   }
-  async deletar(dados) {
+  static async deletar(dados) {
     //repository de deletar aula
   } 
 
@@ -58,9 +58,20 @@ class AulaRepository {
         }
     }
     return filtro;
-}
+  }
+
+  static async modulo_exist(id_modulo){
+    return await prisma.modulo.findFirst({
+      where:{
+        id: id_modulo
+      },
+      select:{
+        id:true
+      }
+    })
+  }
 
 }
   
 
-export default new AulaRepository();
+export default AulaRepository;
