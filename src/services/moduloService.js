@@ -46,6 +46,13 @@ class ModuloService {
                 descricao: filtroValidated.descricao,   
                 image: imageUrl
             }
+
+            const turma = await moduloRepository.turma_exist(moduloResponse.turma_id)
+
+            if (!turma) {
+                throw new Error("A turma informada não existe.");
+            }
+
             const outputPath = path.join(__dirname, `../../uploads/imagens/${filtroValidated.image}`);
             const formato = filtroValidated.image.split('.')
 
