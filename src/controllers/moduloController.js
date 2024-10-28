@@ -25,8 +25,8 @@ class ModuloController{
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
   
-        }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-          return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+        }else if(err.message == "nem um modulo foi encontrado." ){
+          return sendError(res,404,["nem um modulo foi encontrado."]);
   
         }else{
           return sendError(res,500,"Ocorreu um erro interno no servidor!");
@@ -48,8 +48,8 @@ class ModuloController{
           if(err instanceof ZodError){
             return sendError(res,400,err.errors[0].message);
     
-          }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-            return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+          }else if(err.message == "nem um modulo foi encontrado." ){
+            return sendError(res,404,["nem um modulo foi encontrado."]);
     
           }else{
             return sendError(res,500,"Ocorreu um erro interno no servidor!");
@@ -63,7 +63,6 @@ class ModuloController{
     try {
       const generateRandomNumber = () => Math.floor(Math.random() * 1000) + 1;
       const file = req.file
-      console.log(file)
 
       if(file){
         file.originalname = `${generateRandomNumber()}_${file.originalname}`
@@ -76,8 +75,9 @@ class ModuloController{
         descricao: descricao,
         image: file ? file.originalname : null
       };
+      const imageUrl = `${req.protocol}://${req.get('host')}/imagens/${file.originalname}`;
 
-      const response = await moduloService.inserir(data, file);
+      const response = await moduloService.inserir(data, file, imageUrl);
 
       return sendResponse(res,201, {data: response});
 
@@ -87,7 +87,7 @@ class ModuloController{
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
   
-        }else if(err.message == "file do tipo errado." ){
+        }else if(err.message == "Arquivo não é uma imagem." ){
           return sendError(res,404,[err.message]);
   
         }else if(err.message == 'Erro ao redimensionar a imagem' ){

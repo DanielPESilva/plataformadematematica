@@ -1,7 +1,6 @@
 import moduloRepository from "../repositories/moduloRepository.js";
 import 'dotenv/config';
 import sharp from "sharp";
-import fs from "fs";
 import path from "path";
 import moduloSchema from "../schemas/moduloSchema.js";
 import { fileURLToPath } from 'url';
@@ -20,17 +19,6 @@ class ModuloService {
             throw new Error("nem um modulo foi encontrado.");
         }
 
-        const imagePromises = [];
-
-        for (const modulo of busca) {
-            const imagePath = path.join(__dirname, `../../uploads/imagens/${modulo.image}`);
-            const imagePromise = fs.promises.readFile(imagePath)
-            .then( async data => data.toString('base64'))
-            .catch(err => {
-                throw new Error("Ocorreu um erro ao enviar as imagens.");
-            });
-            imagePromises.push( modulo.image = await imagePromise);
-        }
         return busca
     };
 
@@ -38,14 +26,17 @@ class ModuloService {
             const parsedIdSchema = moduloSchema.listarPoIdSchema.parse({id:id});
             const consulta = moduloRepository.constructFilters(parsedIdSchema)
             const response = await moduloRepository.listarPorId(consulta);
+            if (!response) {
+                throw new Error("nem um modulo foi encontrado.");
+            }
             return response
         };
 
-        static async inserir(data, file) {
+        static async inserir(data, file, imageUrl) {
 
             const tipo = file.mimetype
-            if (!tipo.includes('image')) {
-                throw new Error("file do tipo errado.");
+            if (!tipo.includes('image')) {  
+                throw new Error("Arquivo não é uma imagem.");
             }
 
             const filtroValidated = moduloSchema.inserirSchema.parse(data);
@@ -53,14 +44,14 @@ class ModuloService {
                 turma_id: filtroValidated.turma_id,   
                 titulo: filtroValidated.titulo,      
                 descricao: filtroValidated.descricao,   
-                image: filtroValidated.image
+                image: imageUrl
             }
-            const outputPath = path.join(__dirname, `../../uploads/imagens/${moduloResponse.image}`);
-            const formato = moduloResponse.image.split('.')
+            const outputPath = path.join(__dirname, `../../uploads/imagens/${filtroValidated.image}`);
+            const formato = filtroValidated.image.split('.')
 
             sharp(file.buffer)
             .resize(480, 280) 
-            .toFormat(formato[formato.length - 1], { quality: 10 }) 
+            .toFormat(formato[formato.length - 1], { quality: 100 }) 
             .toFile(outputPath, (err, info) => {
                 if (err) {
                     throw new Error('Erro ao redimensionar a imagem');
