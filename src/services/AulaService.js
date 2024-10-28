@@ -7,8 +7,8 @@ class AulaService {
    */
     async listar(filtro) {
         // Regra de negócio e validações
-        const schema = new AulaSchemas().listarSchema()
-        filtro = schema.parse(filtro)
+        filtro = AulaSchemas.listarSchema.parse(filtro)
+
 
         if(filtro.titulo || filtro.modulo_id){
           const filtroRepository = AulaRepository.createFilterAula(filtro);
@@ -36,14 +36,29 @@ class AulaService {
       return await AulaRepository.update(id, titulo, posicao, pdf, link_video);
     }
 
-    async create(perguntas, gabarito, parametros) {
-    
+  static async atualizar(id, titulo, posicao, pdf, link_video) {
+    // Regra de negócio e validações
+    return await questaoRepository.update(id, titulo, posicao, pdf, link_video);
+  }
+
+  async create(parametros) {
+    const insert = AulaSchemas.schemaInsert.parse(parametros)
+
+
+    const modulo = await AulaRepository.modulo_exist(insert.modulo_id)
+    if (!modulo) {
+      throw new Error("O modulo informado não existe.");
+    }
+
+    const AulaCriada = AulaRepository.create(insert)
+    return AulaCriada
 
   }
+
   async deletar(dados) {
     //service de deletar aula
   } 
-  }
+}
 
 
 export default new AulaService();
