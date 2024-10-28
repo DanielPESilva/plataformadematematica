@@ -111,30 +111,30 @@ async function seedDatabase() {
     // Inserindo dados na tabela `modulo`
     const modulos = await prisma.modulo.createMany({
       data: [
-        { turma_id: 1, titulo: 'Módulo 1', descricao: 'Descrição do Módulo 1 do 1º Ano', image:"teste.png" },
-        { turma_id: 1, titulo: 'Módulo 2', descricao: 'Descrição do Módulo 2 do 1º Ano', image:"teste.png" },
-        { turma_id: 2, titulo: 'Módulo 1', descricao: 'Descrição do Módulo 1 do 2º Ano', image:"teste.png" },
-        { turma_id: 2, titulo: 'Módulo 2', descricao: 'Descrição do Módulo 2 do 2º Ano', image:"teste.png" },
-        { turma_id: 3, titulo: 'Módulo 1', descricao: 'Descrição do Módulo 1 do 3º Ano', image:"teste.png" },
-        { turma_id: 3, titulo: 'Módulo 2', descricao: 'Descrição do Módulo 2 do 3º Ano', image:"teste.png" },
+        { turma_id: 1, titulo: 'Módulo 1', descricao: 'Descrição do Módulo 1 do 1º Ano', image:"http://localhost:3051/imagens/teste.png" },
+        { turma_id: 1, titulo: 'Módulo 2', descricao: 'Descrição do Módulo 2 do 1º Ano', image:"http://localhost:3051/imagens/teste.png" },
+        { turma_id: 2, titulo: 'Módulo 1', descricao: 'Descrição do Módulo 1 do 2º Ano', image:"http://localhost:3051/imagens/teste.png" },
+        { turma_id: 2, titulo: 'Módulo 2', descricao: 'Descrição do Módulo 2 do 2º Ano', image:"http://localhost:3051/imagens/teste.png" },
+        { turma_id: 3, titulo: 'Módulo 1', descricao: 'Descrição do Módulo 1 do 3º Ano', image:"http://localhost:3051/imagens/teste.png" },
+        { turma_id: 3, titulo: 'Módulo 2', descricao: 'Descrição do Módulo 2 do 3º Ano', image:"http://localhost:3051/imagens/teste.png" },
       ],
     });
 
     // Inserindo dados na tabela `aula`
     const aulas = await prisma.aula.createMany({
       data: [
-        { modulo_id: 1, titulo: 'Aula 1.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.1 do 1º Ano', image:"teste.png" },
-        { modulo_id: 1, titulo: 'Aula 1.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.2 do 1º Ano', image:"teste.png" },
-        { modulo_id: 2, titulo: 'Aula 2.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.1 do 1º Ano', image:"teste.png" },
-        { modulo_id: 2, titulo: 'Aula 2.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.2 do 1º Ano', image:"teste.png" },
-        { modulo_id: 3, titulo: 'Aula 1.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.1 do 2º Ano', image:"teste.png" },
-        { modulo_id: 3, titulo: 'Aula 1.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.2 do 2º Ano', image:"teste.png" },
-        { modulo_id: 4, titulo: 'Aula 2.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.1 do 2º Ano', image:"teste.png" },
-        { modulo_id: 4, titulo: 'Aula 2.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.2 do 2º Ano', image:"teste.png" },
-        { modulo_id: 5, titulo: 'Aula 1.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.1 do 3º Ano', image:"teste.png" },
-        { modulo_id: 5, titulo: 'Aula 1.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.2 do 3º Ano', image:"teste.png" },
-        { modulo_id: 6, titulo: 'Aula 2.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.1 do 3º Ano', image:"teste.png" },
-        { modulo_id: 6, titulo: 'Aula 2.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.2 do 3º Ano', image:"teste.png" },
+        { modulo_id: 1, titulo: 'Aula 1.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.1 do 1º Ano' },
+        { modulo_id: 1, titulo: 'Aula 1.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.2 do 1º Ano' },
+        { modulo_id: 2, titulo: 'Aula 2.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.1 do 1º Ano' },
+        { modulo_id: 2, titulo: 'Aula 2.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.2 do 1º Ano' },
+        { modulo_id: 3, titulo: 'Aula 1.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.1 do 2º Ano' },
+        { modulo_id: 3, titulo: 'Aula 1.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.2 do 2º Ano' },
+        { modulo_id: 4, titulo: 'Aula 2.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.1 do 2º Ano' },
+        { modulo_id: 4, titulo: 'Aula 2.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.2 do 2º Ano' },
+        { modulo_id: 5, titulo: 'Aula 1.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.1 do 3º Ano' },
+        { modulo_id: 5, titulo: 'Aula 1.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 1.2 do 3º Ano' },
+        { modulo_id: 6, titulo: 'Aula 2.1', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.1 do 3º Ano' },
+        { modulo_id: 6, titulo: 'Aula 2.2', video: faker.internet.url(), pdf_questoes: faker.internet.url(), pdf_resolucao: faker.internet.url(), descricao: 'Descrição da Aula 2.2 do 3º Ano' },
       ],
     });
 

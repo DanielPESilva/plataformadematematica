@@ -18,6 +18,11 @@ class AulaSchema{
         pdf_resolucao: z.string().max(200).optional(),
         descricao: z.string()
       });
+    static listarSchema = z.object({
+        titulo: z.string("Precisa ser uma String").optional(),
+        aluno_id:z.number().positive().optional().nullable(),
+        modulo_id:z.number().positive().optional().nullable(),
+    })
 }
 
-export default  AulaSchema
+export default  AulaSchema;
