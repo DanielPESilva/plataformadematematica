@@ -1,24 +1,6 @@
 # Instalação de Dependências
 
-## Downloads de Pastas 
-
-- `npm install @babel/preset-env`
-- `npm install @prisma/client`
-- `npm install bcryptjs`
-- `npm install cors`
-- `npm install dotenv`
-- `npm install env`
-- `npm install express`
-- `npm install faker-br`
-- `npm install jsonwebtoken`
-- `npm install mariadb`
-- `npm install mysql`
-- `npm install mysql2`
-- `npm install node`
-- `npm install supertest`
-- `npm install swagger-jsdoc`
-- `npm install swagger-ui-express`
-- `npm install zod`
+- __(Thalysson)__ Hove um problema na instalação do pacote Sharp no meu computador, na hora de executar o comando `npm run dev`, a versão miníma que o node deve estar é 20.3.0
 
 # Comandos do Git
 
