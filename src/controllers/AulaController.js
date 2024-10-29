@@ -142,7 +142,7 @@ class AulaController {
       return sendResponse(res,201, {data:questaoCreate});
 
     } catch (err) {
-      console.error(err)
+
       if(err instanceof ZodError){
         return sendError(res,400,[err.errors[0].message, err.errors[0].path]);
 
@@ -208,7 +208,6 @@ class AulaController {
       });
 
     } catch (err) {
-      console.error(err)
       return sendError(res,500,"Ocorreu um erro interno no servidor!");
 
      }

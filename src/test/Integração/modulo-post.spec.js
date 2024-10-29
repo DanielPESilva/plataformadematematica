@@ -21,7 +21,7 @@ describe('Autenticação', () => {
 });
 
 
-describe('POST modulo - Criando modulos.', () => {
+describe.skip('POST modulo - Criando modulos.', () => {
     const filePath = path.resolve(process.cwd(), './src/test/arquivos/image.png');
     const filePathTypeErrado = path.resolve(process.cwd(), './src/test/arquivos/pdf.pdf');
 

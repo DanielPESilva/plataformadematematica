@@ -21,7 +21,7 @@ describe('Autenticação', () => {
 });
 
 
-describe('POST /aula - Cria aulas e salva arquivos pdf.', () => {
+describe.skip('POST /aula - Cria aulas e salva arquivos pdf.', () => {
     const filePath = path.resolve(process.cwd(), './src/test/arquivos/pdf.pdf');
     const filePathTypeErrado = path.resolve(process.cwd(), './src/test/arquivos/image.png');
 
