@@ -9,7 +9,7 @@ class usuarioRepository {
             id: true,
             nome: true,
             matricula: true,
-            ativo: true,
+            active: true,
         },
     });
 }
@@ -21,7 +21,7 @@ static async buscarUsuarioPorId(id) {
             id: true,
             nome: true,
             matricula: true,
-            ativo: true,
+            active: true,
         },
     });
 }

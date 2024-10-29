@@ -1,4 +1,5 @@
 import usuarioRepository from "../repositories/usuarioRepository.js";
+import UsuarioSchema from "../schemas/usuarioSchema.js";
 import Stream from "stream";
 import csvParser from "csv-parser";
 import bcrypt from "bcryptjs";

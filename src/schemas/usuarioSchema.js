@@ -4,7 +4,7 @@ class UsuarioSchema {
     static listarUsuarios = z.object({
         nome: z.string().optional(),
         matricula: z.number().optional(),
-        ativo: z.boolean().optional(),
+        active: z.boolean().optional(),
     });
 
     static buscarUsuarioPorId = z.object({

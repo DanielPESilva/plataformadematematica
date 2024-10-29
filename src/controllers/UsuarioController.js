@@ -18,6 +18,7 @@ class systemUsuarioController {
         const usuarios = await UsuarioService.listarUsuarios(filtros);
         return sendResponse(res, 200, { data: usuarios });
     } catch (err) {
+      console.log(err)
         return sendError(res, 400, err.message);
     }
 };
