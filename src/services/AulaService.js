@@ -1,49 +1,79 @@
 import AulaRepository from "../repositories/AulaRepository.js";
+import AulaSchema from "../schemas/AulaSchemas.js";
 import AulaSchemas from "../schemas/AulaSchemas.js";
 class AulaService {
 
   /**
    * Há validação do zod, falta padronizare organizar...
    */
-    async listar(filtro) {
-        // Regra de negócio e validações
-        const schema = new AulaSchemas().listarSchema()
-        filtro = schema.parse(filtro)
+  async listar(parametros) {
+    const schema = new AulaSchemas().listarSchema();
+    let parametrosValidados;
+        parametrosValidados = schema.parse(parametros);
+        
+      if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
+          const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
+          const aulas = await AulaRepository.findAllAulas(filtroRepository);
 
-        if(filtro.titulo || filtro.modulo_id){
-          const filtroRepository = AulaRepository.createFilterAula(filtro);
-          const aulas = await AulaRepository.findAllAulas(filtroRepository)
-  
           return aulas;
-        }
-        if(filtro.aluno_id){
-          const filtroRepository = AulaRepository.createFilterFeito(filtro);
-          const aulas = await AulaRepository.findAllFeitos(filtroRepository)
-  
-          return aulas;
-        }
-    }
-    async listarPorID(id) {
-        // teste se o id é um número
-        if (isNaN(id)) {
-          throw new Error('ID deve ser um número inteiro)');
-        }
-        return AulaRepository.findById(id);
       }
+      if (parametrosValidados.aluno_id) {
+          const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
+          const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
 
-    static async atualizar(id, titulo, posicao, pdf, link_video) {
-      // Regra de negócio e validações
-      return await AulaRepository.update(id, titulo, posicao, pdf, link_video);
-    }
+          return aulasFeitasRevisadas;
+      }
+      if(!parametrosValidados.aluno_id && !parametrosValidados.titulo && !parametrosValidados.modulo_id){
+        const todasAsAulas = await AulaRepository.findAllAulas();
+        return todasAsAulas;
+      }else{
+        throw new Error("Nenhum registro encontrado.");
+      }
+  }
 
-    async create(perguntas, gabarito, parametros) {
+  async listarPorID(idDoParam) {
+
+    const schema = new AulaSchema().listarPorIdSchema();
+    const IdValidado = schema.parse(idDoParam);
+    
+    const filtroDoRepository = AulaRepository.createFilterAula({ id: IdValidado.id });
+    const aula = await AulaRepository.findById(filtroDoRepository);
     
 
+    if (!aula) {
+      throw new Error("Nenhuma aula encontrada.");
+    }
+    return aula;
   }
+
+  static async atualizar(id, titulo, posicao, pdf, link_video) {
+      // Regra de negócio e validações
+      return await AulaRepository.update(id, titulo, posicao, pdf, link_video);
+  }
+
+  static async atualizar(id, titulo, posicao, pdf, link_video) {
+    // Regra de negócio e validações
+    return await questaoRepository.update(id, titulo, posicao, pdf, link_video);
+  }
+
+  async create(parametros) {
+    const insert = AulaSchemas.schemaInsert.parse(parametros)
+
+
+    const modulo = await AulaRepository.modulo_exist(insert.modulo_id)
+    if (!modulo) {
+      throw new Error("O modulo informado não existe.");
+    }
+
+    const AulaCriada = AulaRepository.create(insert)
+    return AulaCriada
+
+  }
+
   async deletar(dados) {
     //service de deletar aula
-  } 
-  }
+  }  
+}
 
 
 export default new AulaService();

@@ -1,51 +1,62 @@
 import {prisma} from "../configs/prismaClient.js";
 
 class usuarioRepository {
+  
+  static async findAll(filtros, page, perPage) {
+    const skip = (page - 1) * perPage;
+    const take = perPage;
 
-  static async listarUsuarios(filtros){
-    return await prisma.usuario.findMany(filtros);
-}
+    const [users, total] = await Promise.all([
+      prisma.usuario.findMany({
+        ...filtros,
+        skip,
+        take,
+      }),
+      prisma.usuario.count({ where: filtros.where }),
+    ]);
+    return { users, total, page, perPage };
+  }
 
   static async listar_csv() {
     return await prisma.usuario.findMany({
       select: {
-        nome:true,
-        matricula:true
-      }
+        nome: true,
+        matricula: true,
+      },
     });
   }
 
-  static async buscar_turmas(){
-    return await prisma.grupo.findMany()
+  static async buscar_turmas() {
+    return await prisma.grupo.findMany();
   }
 
-  static async inserir_alunos(insert){
+  static async inserir_alunos(insert) {
     return await prisma.aluno.createMany({
-      data: insert
-    })
+      data: insert,
+    });
   }
 
-  static async grupo_alunos(){
+  static async grupo_alunos() {
     return await prisma.grupo.findFirst({
-      where:{
-        nome: { contains: "alunos" }
-      }
-    })
+      where: {
+        nome: { contains: "alunos" },
+      },
+    });
   }
 
-  static async inserir_usuarios(insert){
+  static async inserir_usuarios(insert) {
     return await prisma.usuario.create({
-      data:{
-        ...insert
+      data: {
+        ...insert,
       },
-      select:{
-        id:true,
+      select: {
+        id: true,
         nome: true,
-        matricula:true,
-        grupo_id:true,
-        active:true
-      }
-    })
+        matricula: true,
+        grupo_id: true,
+        active: true,
+      },
+    });
   }
 
   async findByMatricula(matricula) {
@@ -76,38 +87,39 @@ class usuarioRepository {
   }
 
   async findAll(filtros, page, perPage) {
-    const skip = (page -1) * perPage;
+    const skip = (page - 1) * perPage;
     const take = perPage;
 
     const [users, total] = await Promise.all([
-        prisma.usuario.findMany({
-            ...filtros,
-            skip,
-            take,
-        }),
-        prisma.usuario.count({ where: filtros.where })
-    ])
+      prisma.usuario.findMany({
+        ...filtros,
+        skip,
+        take,
+      }),
+      prisma.usuario.count({ where: filtros.where }),
+    ]);
     return { users, total, page, perPage };
   }
   static createFilterUsuario(parametros) {
     let filtro = {
-        where: {
-            ...(parametros.nome && { nome: { contains: parametros.nome } }),              
-            ...(parametros.senha && { senha: { contains: parametros.senha } }),           
-            ...(parametros.matricula != undefined && { matricula: parametros.matricula }), 
-            ...(parametros.active != undefined && { active: parametros.active })           
-        },
-        select: {
-            id: true,            
-            nome: true,          
-            senha: true,       
-            matricula: true,     
-            active: true         
-        }
-    }
+      where: {
+        ...(parametros.nome && { nome: { contains: parametros.nome } }),
+        ...(parametros.senha && { senha: { contains: parametros.senha } }),
+        ...(parametros.matricula != undefined && {
+          matricula: parametros.matricula,
+        }),
+        ...(parametros.active != undefined && { active: parametros.active }),
+      },
+      select: {
+        id: true,
+        nome: true,
+        senha: true,
+        matricula: true,
+        active: true,
+      },
+    };
     return filtro;
-}
-
+  }
 }
 
 export default usuarioRepository;
