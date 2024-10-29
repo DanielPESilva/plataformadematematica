@@ -1,9 +1,9 @@
 import { sendError } from "../utils/messages.js";
 import path from "path";
 import fs from 'fs'
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// import { fileURLToPath } from 'url';
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 import AulaController from "../controllers/AulaController.js"
 import express from "express"
 const router = express.Router();
@@ -30,7 +30,7 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         let uploadPath;
 
-        uploadPath = path.join(__dirname, '../../uploads/pdf');
+        uploadPath = path.join(process.cwd(), './uploads/pdf');
 
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
@@ -71,7 +71,7 @@ router
     router.get("/aula/:id",AulaController.listarPorID)
     router.post(
         '/aula',
-        upload.fields([{ name: 'perguntas' }, { name: 'gabarito' }]),
+        upload.fields([{ name: 'pdf_questoes' }, { name: 'pdf_resolucao' }]),
         (err, req, res, next) => {
             if (err.message == "Tipo de arquivo enviado não é suportado. Envie no formato: .PDF, .DOC, .DOCX") {
                 return sendError(res,400,[err.message]);
