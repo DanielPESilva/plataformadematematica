@@ -2,20 +2,29 @@ import {prisma} from "../configs/prismaClient.js";
 
 class usuarioRepository {
   
-  static async findAll(filtros, page, perPage) {
-    const skip = (page - 1) * perPage;
-    const take = perPage;
+  static async listarUsuarios(filtros) {
+    return await prisma.usuario.findMany({
+        where: filtros,
+        select: {
+            id: true,
+            nome: true,
+            matricula: true,
+            ativo: true,
+        },
+    });
+}
 
-    const [users, total] = await Promise.all([
-      prisma.usuario.findMany({
-        ...filtros,
-        skip,
-        take,
-      }),
-      prisma.usuario.count({ where: filtros.where }),
-    ]);
-    return { users, total, page, perPage };
-  }
+static async buscarUsuarioPorId(id) {
+    return await prisma.usuario.findUnique({
+        where: { id },
+        select: {
+            id: true,
+            nome: true,
+            matricula: true,
+            ativo: true,
+        },
+    });
+}
 
   static async listar_csv() {
     return await prisma.usuario.findMany({

@@ -10,9 +10,22 @@ dotenv.config();
 
 
 class UsuarioService {
-  static async listarUsuarios(filtros, page, perPage) {
-    return await usuarioRepository.findAll(filtros, page, perPage);
-  }
+
+  static async listarUsuarios(filtros) {
+    const validFiltros = UsuarioSchema.listarUsuarios.parse(filtros);
+    return await usuarioRepository.listarUsuarios(validFiltros);
+}
+
+static async buscarUsuarioPorId(id) {
+    UsuarioSchema.buscarUsuarioPorId.parse({ id });
+    const usuario = await usuarioRepository.buscarUsuarioPorId(id);
+    
+    if (!usuario) {
+        throw new Error("Usuário não encontrado.");
+    }
+    
+    return usuario;
+}
 
   static async inserir_csv(arquivo) {
     if (arquivo.mimetype != "text/csv") {

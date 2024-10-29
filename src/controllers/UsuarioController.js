@@ -4,148 +4,36 @@ import { prisma } from "../configs/prismaClient.js";
 import { sendError, sendResponse } from '../utils/messages.js';
 import UsuarioService from '../services/usuarioService.js';
 
+
 import { ZodError } from "zod";
 
 
 env.config(); 
 
 class systemUsuarioController {
-  //get usuario
-  static async listar(req, res) {
+
+  static listar = async (req, res) => {
     try {
-      const query = req.query;
-      const parsed = UsuarioSchema.listarUsuarios.parse(query); // Valida os parâmetros
-      const usuarios = await UsuarioService.listarUsuarios(
-        parsed,
-        parsed.page,
-        parsed.perPage
-      );
-      return res.status(200).json(usuarios);
-    } catch (error) {
-      return sendError(res, 500, {
-        message: error.message || "Erro ao listar usuários.",
-      });
-    }
-  }
-
-  // GET por ID - listar Usuario por ID
-  static listarPorID = async (req, res) => {
-    try {
-      console.log(req.params.id);
-
-      const userExists = await prisma.system_usuario.findFirst({
-        //filtro
-        where: {
-          id: parseInt(req.params.id),
-        },
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          password: false, // `password` não é incluído aqui
-          active: true,
-          system_user_group: {
-            select: {
-              system_group: {
-                select: {
-                  name: true,
-                },
-              },
-            },
-          },
-        },
-      });
-
-      console.log(userExists);
-
-      if (userExists) {
-        return res.status(200).json(userExists);
-      }
+        const filtros = req.query;
+        const usuarios = await UsuarioService.listarUsuarios(filtros);
+        return sendResponse(res, 200, { data: usuarios });
     } catch (err) {
-      if (err instanceof ZodError) {
-        return sendError(res, 400, err.errors[0].message);
-      } else if (
-        err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service."
-      ) {
-        return sendError(res, 404, [
-          "Aqui vai a mensagem de Erro que vc gerou lá no service.",
-        ]);
-      } else {
-        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
-      }
+        return sendError(res, 400, err.message);
     }
-  };
+};
 
-  // POST - cadastrar Usuario
-  static inserir = async (req, res) => {
+static buscarPorId = async (req, res) => {
     try {
-      const { name, email, senha, ativo } = req.body;
-
-      const erros = [];
-
-      // validar os dados
-      if (!name) {
-        erros.push({ error: true, code: 400, message: "name é obrigatório" });
-      }
-      if (!email) {
-        erros.push({ error: true, code: 400, message: "Email é obrigatório" });
-      }
-      if (!senha) {
-        erros.push({ error: true, code: 400, message: "Senha é obrigatório" });
-      }
-      if (!ativo) {
-        erros.push({ error: true, code: 400, message: "Ativo é obrigatório" });
-      }
-
-      // verificar se o email já está cadastrado
-      const userExists = await prisma.usuario.findFirst({
-        where: {
-          email: {
-            equals: req.body.email,
-          },
-        },
-      });
-
-      // se o email já estiver cadastrado, retornar erro
-      if (!userExists) {
-      } else {
-        erros.push({ error: true, code: 400, message: "Email já cadastrado" });
-      }
-
-      if (erros.length > 0) {
-        return res.status(400).json(erros);
-      }
-
-      // criptografar a senha
-      const senhaCrypt = bcrypt.hashSync(senha, parseInt(process.env.SALT));
-
-      // criar o usuario
-      const userCreated = await prisma.usuario.create({
-        data: {
-          name,
-          email,
-          senha: senhaCrypt,
-          ativo,
-        },
-      });
-
-      // retornar o usuario criado sem o campo senha
-      delete userCreated.senha;
-      return res.status(201).json(userCreated);
+        const { id } = req.params;
+        const usuario = await UsuarioService.buscarUsuarioPorId(parseInt(id));
+        return sendResponse(res, 200, { data: usuario });
     } catch (err) {
-      if (err instanceof ZodError) {
-        return sendError(res, 400, err.errors[0].message);
-      } else if (
-        err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service."
-      ) {
-        return sendError(res, 404, [
-          "Aqui vai a mensagem de Erro que vc gerou lá no service.",
-        ]);
-      } else {
-        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
-      }
+      console.log(err)
+        return sendError(res, 404, err.message);
     }
-  };
+};
+
+
 
   static inserir_csv = async (req, res) => {
     try {
