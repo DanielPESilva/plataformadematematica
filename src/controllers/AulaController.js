@@ -49,10 +49,6 @@ class AulaController {
   static listarPorID = async (req, res) => {
     try {
       const parametros = { id: parseInt(req.params.id) };
-
-      console.log(parametros);
-      
-
       const aulaExists = await AulaService.listarPorID(parametros);
 
       return sendResponse(res, 200, { data: aulaExists });
@@ -68,31 +64,6 @@ class AulaController {
       }else{
         return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
-     }
-  };
-
-  static buscar_arquivo = async (req, res) => {
-    try {
-      const fileName = req.params.fileName;
-      const tipoArquivo = req.params.tipoArquivo
-
-      let diretorio = '../../uploads/imagens'
-
-      if(tipoArquivo == "documento"){
-        diretorio = '../../uploads/pdf'
-      }
-      const filePath = path.join(__dirname, '../../uploads/pdf', fileName);
-
-      res.sendFile(filePath, (err) => {
-          if (err) {
-              return sendError(res,404,['Arquivo não foi encontrado']);
-          }
-      });
-
-    } catch (err) {
-      console.error(err)
-      return sendError(res,500,"Ocorreu um erro interno no servidor!");
-
      }
   };
 
@@ -147,29 +118,27 @@ class AulaController {
 
         const parametros = {
           modulo_id: req.body.modulo_id,
-          titulo: req.body.titulo,
+          titulo: req.body.titulo == '' ? undefined : req.body.titulo,
           video: req.body.video,
-          descricao: req.body.descricao,
-          pdf_questoes: files.perguntas ? files.perguntas[0].filename : null,
-          pdf_resolucao: files.gabarito ? files.gabarito[0].filename : null,
-          imagem: files.image ? files.image[0].filename : null
-      };
+          descricao: req.body.descricao == '' ? undefined : req.body.descricao,
+          pdf_questoes: files.perguntas ? files.perguntas[0].filename : undefined,
+          pdf_resolucao: files.gabarito ? files.gabarito[0].filename : undefined
+        };
+      console.log(parametros)
       
-        console.log(parametros)
-        // const questaoCreate = await questaoService.create(perguntas, gabarito, parametros)
+      const questaoCreate = await AulaService.create(parametros)
 
-        // você retornar utilizando esse metodo
-        return sendResponse(res,201, {data:"seu retorno"});
+      return sendResponse(res,201, {data:questaoCreate});
 
     } catch (err) {
       console.error(err)
       if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
+        return sendError(res,400,[err.errors[0].message, err.errors[0].path]);
 
-      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+      }else if(err.message == "O modulo informado não existe." ){
+        return sendError(res,404,[err.message]);
 
-      }else{
+      }else {
         return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
     }
@@ -212,6 +181,25 @@ class AulaController {
       }else{
         return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
+     }
+  };
+
+  static buscar_arquivo = async (req, res) => {
+    try {
+      const fileName = req.params.fileName;
+
+      const filePath = path.join(__dirname, '../../uploads/pdf', fileName);
+
+      res.sendFile(filePath, (err) => {
+          if (err) {
+              return sendError(res,404,['Arquivo não foi encontrado']);
+          }
+      });
+
+    } catch (err) {
+      console.error(err)
+      return sendError(res,500,"Ocorreu um erro interno no servidor!");
+
      }
   };
 }
