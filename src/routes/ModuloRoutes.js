@@ -16,7 +16,7 @@ const upload = multer({ storage: storage });
 router
   .get("/modulo", moduloController.listar)
   .get("/modulo/:id", moduloController.listarPorId)
-  .post("/modulo", upload.single('file'), moduloController.inserir)
+  .post("/modulo", upload.single('imagem'), moduloController.inserir)
   .patch("/modulo/:id", moduloController.atualizar)
   .delete("/modulo/:id", moduloController.deletar)
  

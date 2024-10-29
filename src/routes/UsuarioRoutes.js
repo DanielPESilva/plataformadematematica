@@ -22,7 +22,7 @@ router
   .get("/usuario", systemUsuarioController.listar)
   .get("/usuario/:id", systemUsuarioController.listarPorID)
   .post("/usuario", systemUsuarioController.inserir)
-  .post("/usuario/csv", upload.single('file'), systemUsuarioController.inserir_csv)
+  .post("/usuario/csv", upload.single('file-csv'), systemUsuarioController.inserir_csv)
   .patch("/usuario/:id", systemUsuarioController.atualizar)
   .delete("/usuario/:id", systemUsuarioController.deletar)
  
