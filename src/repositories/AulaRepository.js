@@ -10,11 +10,8 @@ class AulaRepository {
  static async findById(parametro){
     return await prisma.aula.findUnique(parametro);
 }
-  static async update(id, posicao, titulo, pdf, link_video) {
-    return await prisma.questao.update({
-      where: { id },
-      data: { posicao, titulo, pdf, link_video }
-    });
+  static async update(filtro) {
+    return await prisma.campus.update(filtro);
 
   }
   static async create(data_insert) {

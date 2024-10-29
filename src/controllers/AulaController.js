@@ -69,47 +69,26 @@ class AulaController {
 
   static atualizar = async (req, res) => {
     try {
-      console.log(req.body);
-  
-      if (!req.params.id) {
-        return res.status(400).json(CommonResponse.notFound("ID da questão é obrigatório"));
+      let id = req.params.id
+      let aulaAtributos = {
+        id: parseInt(id),
+        ...req.body
       }
+      const aula = await AulaService.atualizar(aulaAtributos)
+
+        return sendResponse(res,200, {data:aula});
   
-      const id = parseInt(req.params.id);
-      const { data } = req.body;
+      } catch (err) {
+        if(err instanceof ZodError){
+          return sendError(res,400,err.errors[0].message);
+
+        }else if(err.message == "O recurso solicitado não foi encontrado no servidor."){
+          return sendError(res,404,["O recurso solicitado não foi encontrado no servidor."]);
   
-      
-      if (!data || Object.keys(data).length === 0) {
-        return res.status(400).json(CommonResponse.notFound("Nenhum campo fornecido para atualização"));
+        }else{
+          return sendError(res,500,"Ocorreu um erro interno no servidor!");
+        }
       }
-  
-      const { titulo, posicao, pdf, link_video } = data;
-  
-      
-      if (titulo || posicao || pdf || link_video) {
-        
-        const questaoAtualizada = await questaoRepository.update(id, posicao, titulo, pdf, link_video);
-  
-        return res.status(200).json(CommonResponse.success(questaoAtualizada, "Questão atualizada com sucesso"));
-      } else {
-        return res.status(400).json(CommonResponse.notFound("Nenhum campo válido fornecido para atualização"));
-      }
-
-      // você retornar utilizando esse metodo
-      return sendResponse(res,201, {data:"seu retorno"});
-
-    } catch (err) {
-
-      if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
-
-      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
-
-      }else{
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
-      }
-     }
   }
 
   static inserir = async(req, res) => {

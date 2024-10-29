@@ -46,6 +46,16 @@ class AulaSchema{
         pdf_resolucao: z.string().max(200).optional(),
         descricao: z.string()
       })}
+
+    UpdateSchema(){ z.object({
+        id: z.number().int().positive(),
+        modulo_id: z.coerce.number().int().min(1).optional(),
+        titulo: z.string().max(100).nullish().min(1).max(100).optional(),
+        video: z.string().url().max(240).optional(),
+        pdf_questoes: z.string().max(200).optional(),
+        pdf_resolucao: z.string().max(200).optional(),
+        descricao: z.string().optional()
+      })}
 }
 
 export default  AulaSchema;
