@@ -70,11 +70,12 @@ class AulaController {
   static atualizar = async (req, res) => {
     try {
       let id = req.params.id
-      let aulaAtributos = {
+      let parametros = {
         id: parseInt(id),
         ...req.body
       }
-      const aula = await AulaService.atualizar(aulaAtributos)
+      
+      const aula = await AulaService.atualizar(parametros)
 
         return sendResponse(res,200, {data:aula});
   
@@ -103,7 +104,6 @@ class AulaController {
           pdf_questoes: files.perguntas ? files.perguntas[0].filename : undefined,
           pdf_resolucao: files.gabarito ? files.gabarito[0].filename : undefined
         };
-      console.log(parametros)
       
       const questaoCreate = await AulaService.create(parametros)
 

@@ -33,7 +33,7 @@ class AulaService {
     const IdValidado = schema.parse(idDoParam);
     
     const filtroDoRepository = AulaRepository.createFilterAula({ id: IdValidado.id });
-    const aula = await AulaRepository.findById(filtroDoRepository);
+    const aula = await AulaRepository.filtrarPorId(filtroDoRepository);
     
     if (!aula) {
       throw new Error("Nenhuma aula encontrada.");
@@ -42,11 +42,13 @@ class AulaService {
   }
 
   static async atualizar(parametros) {
+    
     const schema = new AulaSchema().UpdateSchema();
     const parametrosValidados = schema.parse(parametros);
-    
+  
     const { id, modulo_id, titulo, video, pdf_questoes, pdf_resolucao, descricao } = parametrosValidados;
-    const aulaExist = await AulaRepository.findById(id);
+    
+    const aulaExist = await AulaRepository.buscarPorId(id);
 
     if (!aulaExist) {
       throw new Error("O recurso solicitado não foi encontrado no servidor.");

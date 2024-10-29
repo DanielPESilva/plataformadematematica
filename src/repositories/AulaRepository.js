@@ -7,11 +7,16 @@ class AulaRepository {
  static async findAllAulas(parametros) {
     return await prisma.aula.findMany(parametros);
   }
- static async findById(parametro){
+ static async filtrarPorId(parametro){
     return await prisma.aula.findUnique(parametro);
-}
+ }
+  static async buscarPorId(id) {
+  return await prisma.aula.findUnique({
+      where: { id: id }
+  });
+  }
   static async update(filtro) {
-    return await prisma.campus.update(filtro);
+    return await prisma.aula.update(filtro);
 
   }
   static async create(data_insert) {
