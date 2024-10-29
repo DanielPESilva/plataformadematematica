@@ -1,4 +1,5 @@
 import AulaRepository from "../repositories/AulaRepository.js";
+import AulaSchema from "../schemas/AulaSchemas.js";
 import AulaSchemas from "../schemas/AulaSchemas.js";
 class AulaService {
 
@@ -32,19 +33,24 @@ class AulaService {
         }
 }
 
-    async listarPorID(idDoParam) {
+  async listarPorID(idDoParam) {
 
-      const schema = new AulaSchemas().listarPorIdSchema()
-      let IdValidado;
-      IdValidado = schema.parse(idDoParam)
+    const schema = new AulaSchema().listarPorIdSchema();
+    const IdValidado = schema.parse(idDoParam);
 
-      const filtroDoRepository = AulaRepository.createFilterAula(IdValidado)
-      const aula = await AulaRepository.findById(filtroDoRepository)
+    console.log(IdValidado);
+    
+    const filtroDoRepository = AulaRepository.createFilterAula({ id: IdValidado.id });
+    console.log("Filtro do repositório",filtroDoRepository);
+    
+    const aula = await AulaRepository.findById(filtroDoRepository);
+    console.log(aula);
+    
 
-      if(!aula){
-          throw new Error("Nenhuma aula encontrada.");
-      }
-      return aula
+    if (!aula) {
+      throw new Error("Nenhuma aula encontrada.");
+    }
+    return aula;
   }
 
     static async atualizar(id, titulo, posicao, pdf, link_video) {

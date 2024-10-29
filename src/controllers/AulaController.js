@@ -48,12 +48,14 @@ class AulaController {
   
   static listarPorID = async (req, res) => {
     try {
+      const parametros = { id: parseInt(req.params.id) };
 
-      const idDoParam = {bem_id : parseInt(req.params.id)}
+      console.log(parametros);
+      
 
-      const aulaExists = await AulaService.listarPorID(idDoParam);
+      const aulaExists = await AulaService.listarPorID(parametros);
 
-      return sendResponse(res,200,{data: aulaExists})
+      return sendResponse(res, 200, { data: aulaExists });
     
     } catch (err) {
 

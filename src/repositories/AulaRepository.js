@@ -27,6 +27,7 @@ class AulaRepository {
 createFilterAula(parametros) {
   let filtro = {
       where: {
+        id: parametros.id,
         ...(parametros.modulo_id != undefined && { modulo_id: parametros.modulo_id }), // Inclui filtro para modulo_id
         ...(parametros.titulo && { titulo: { contains: parametros.titulo } }),         
         // ...(parametros.aluno_id != NaN && {aluno_id: parametros.aluno_id})

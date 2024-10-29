@@ -18,7 +18,7 @@ class AulaSchema{
             }).optional().nullable(),
         });
     }
-    listarPorIdSchema(){
+    listarPorIdSchema() {
         return z.object({
             id: z.preprocess((val) => Number(val), z.number({
                 invalid_type_error: "ID informado não é do tipo number",
@@ -28,7 +28,7 @@ class AulaSchema{
                 message: "ID informado não é positivo"
             }))
         })
-    }
+} 
 }
 
 export default  AulaSchema;
