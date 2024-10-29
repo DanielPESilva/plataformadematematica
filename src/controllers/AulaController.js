@@ -48,32 +48,18 @@ class AulaController {
   
   static listarPorID = async (req, res) => {
     try {
-      const id_questao = parseInt(req.params.id);
+      const parametros = { id: parseInt(req.params.id) };
+      const aulaExists = await AulaService.listarPorID(parametros);
 
-      const questaoExists = await questaoService.listarPorID(id_questao);
-
-      if (questaoExists) {
-        return res.status(200).json(CommonResponse.success(questaoExists));
-      } else {
-        return res
-          .status(400)
-          .json(
-            CommonResponse.notFound(
-              messages.validationGeneric.resourceNotFound("questao")
-            )
-          );
-      }
-
-      // você retornar utilizando esse metodo
-      return sendResponse(res,201, {data:"seu retorno"});
+      return sendResponse(res, 200, { data: aulaExists });
     
     } catch (err) {
 
       if(err instanceof ZodError){
         return sendError(res,400,err.errors[0].message);
 
-      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+      }else if(err.message == "Nenhuma aula encontrada." ){
+        return sendError(res,404,["Nenhuma aula encontrada."]);
 
       }else{
         return sendError(res,500,"Ocorreu um erro interno no servidor!");
