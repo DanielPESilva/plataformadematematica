@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express, { json } from "express";
 import routes from "./routes/index.js";
 import cors from "cors"; // permite o fornt-end usar essa api (resumindo)
