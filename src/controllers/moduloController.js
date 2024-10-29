@@ -82,7 +82,7 @@ class ModuloController{
       return sendResponse(res,201, {data: response});
 
     } catch (err) {
-
+      console.error(err)
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
   

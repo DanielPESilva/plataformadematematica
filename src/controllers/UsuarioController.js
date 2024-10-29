@@ -205,10 +205,7 @@ class systemUsuarioController {
 
     } catch (err) {
 
-      if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
-
-      }else if(err.message == "Arquivo do tipo errado." ){
+      if(err.message == "Arquivo do tipo errado." ){
         return sendError(res,404,[err.message]);
 
       }else if(err.message == "Estrutura do CSV está incorreta." ){

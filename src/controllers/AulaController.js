@@ -118,10 +118,9 @@ class AulaController {
           titulo: req.body.titulo == '' ? undefined : req.body.titulo,
           video: req.body.video,
           descricao: req.body.descricao == '' ? undefined : req.body.descricao,
-          pdf_questoes: files.perguntas ? files.perguntas[0].filename : undefined,
-          pdf_resolucao: files.gabarito ? files.gabarito[0].filename : undefined
+          pdf_questoes: files.pdf_questoes ? files.pdf_questoes[0].filename : undefined,
+          pdf_resolucao: files.pdf_resolucao ? files.pdf_resolucao[0].filename : undefined
         };
-      console.log(parametros)
       
       const questaoCreate = await AulaService.create(parametros)
 

@@ -1,31 +1,53 @@
-import commonResponses from "../schemas/commonResponses.js";
-
-const authRoutes = {
+const loginRoutes = {
     "/login": {
         post: {
-            tags: ["Auth"],
-            summary: "Realiza login",
+            tags: ["Login"],
+            summary: "Realiza o login do usuário e fornece o token de acesso.",
             requestBody: {
                 content: {
                     "application/json": {
                         schema: {
                             type: "object",
                             properties: {
-                                titulo: { type: "string", example: "john@gmail.com" },
-                                senha: { type: "string", example: "ABCDabcd1234" }
+                                matricula: {
+                                    type: "integer",
+                                    description: "Matricula do usuário.",
+                                    example: "12345"
+                                },
+                                senha: {
+                                    type: "string",
+                                    description: "Senha do usuário",
+                                    example: "senhatest"
+                                }
                             },
-                            required: ["titulo", "senha"]
+                            required: ["matricula", "senha"]
                         }
                     }
                 }
             },
             responses: {
-                200: commonResponses[200]("#/components/schemas/RespostaLogin"),
-                400: commonResponses[400](),
-                401: commonResponses[401]()
+                "200": {
+                    description: "Requisição bem-sucedida.",
+                    content: {
+                        $ref: "#/components/schemas/retornoLogin"
+                    }
+                },
+                "401": {
+                    description: "Matricula inválida ou senha não fornecida.",
+                    content: {
+                        $ref: "#/components/schemas/typeErrorLogin"
+                    }                
+                },
+                "500": {
+                    description: "Servidor encontrou um erro interno.",
+                    content: {
+                        $ref: "#/components/schemas/erro500Login"
+                    }                
+                },
             }
-        }
+        },
     }
-};
+}
 
-export default authRoutes;
+export default loginRoutes;
+
