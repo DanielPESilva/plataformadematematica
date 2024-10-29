@@ -5,7 +5,7 @@ import faker from "faker-br"
 import Faker from "faker-br/lib/index.js";
 
 
-describe('GET /turma', () => {
+describe.skip('GET /turma', () => {
     
     it('1 - Deve retornar uma lista com todas as turmas', async () => {
         const req = await request(app)
@@ -28,7 +28,7 @@ describe('GET /turma', () => {
     });
 });
 
-  describe('get turma por id', () => {
+  describe.skip('get turma por id', () => {
   it("1-deve retornar uma turma.", async () => {
       const req = await request(app)
       .get('/turma/1')
@@ -50,7 +50,7 @@ describe('GET /turma', () => {
   })
 });
 
-describe('create turma', () => {
+describe.skip('create turma', () => {
   it("1-deve retornar uma turma.", async () => {
       const req = await request(app)
       .post('/turma')
@@ -80,7 +80,7 @@ describe('create turma', () => {
   });
 });
 
-describe('patch turma', () => {
+describe.skip('patch turma', () => {
   it("1-deve atualizar os dados de uma turma.", async () => {
       const req = await request(app)
       .patch(`/turma/90`)

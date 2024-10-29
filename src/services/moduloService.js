@@ -3,9 +3,9 @@ import 'dotenv/config';
 import sharp from "sharp";
 import path from "path";
 import moduloSchema from "../schemas/moduloSchema.js";
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// import { fileURLToPath } from 'url';
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 
 class ModuloService {
@@ -53,17 +53,13 @@ class ModuloService {
                 throw new Error("A turma informada não existe.");
             }
 
-            const outputPath = path.join(__dirname, `../../uploads/imagens/${filtroValidated.image}`);
+            const outputPath = path.join(process.cwd(), `./uploads/imagens/${filtroValidated.image}`);
             const formato = filtroValidated.image.split('.')
 
             sharp(file.buffer)
             .resize(480, 280) 
             .toFormat(formato[formato.length - 1], { quality: 100 }) 
-            .toFile(outputPath, (err, info) => {
-                if (err) {
-                    throw new Error('Erro ao redimensionar a imagem');
-                }
-            });
+            .toFile(outputPath);
 
             const response = moduloRepository.inserir(moduloResponse)
 

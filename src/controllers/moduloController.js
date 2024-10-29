@@ -70,12 +70,11 @@ class ModuloController{
 
       const { turma_id, titulo, descricao} = req.body;
       const data = {
-        turma_id: turma_id,    
+        turma_id: parseInt(turma_id),    
         titulo: titulo,      
         descricao: descricao,
         image: file ? file.originalname : null
       };
-      console.log(file.originalname)
       const imageUrl = `${req.protocol}://${req.get('host')}/imagens/${file.originalname}`;
 
       const response = await moduloService.inserir(data, file, imageUrl);
@@ -83,15 +82,11 @@ class ModuloController{
       return sendResponse(res,201, {data: response});
 
     } catch (err) {
-      console.log(err)
 
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
   
         }else if(err.message == "Arquivo não é uma imagem." ){
-          return sendError(res,400,[err.message]);
-  
-        }else if(err.message == 'Erro ao redimensionar a imagem' ){
           return sendError(res,400,[err.message]);
   
         }else if(err.message == "A turma informada não existe." ){
