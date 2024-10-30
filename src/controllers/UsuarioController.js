@@ -49,7 +49,7 @@ class systemUsuarioController {
 
   static criarUsuario = async (req, res) => {
     try {
-      const { nome, matricula, senha, active, grupo_id } = UsuarioSchema.criarUsuario.parse(req.body);
+      const { nome, matricula, senha, active, grupo_id } = UsuarioSchema.criarUsuario.parse(req.body)
       const parametros = {
         nome: nome,
         matricula: parseInt(matricula),
