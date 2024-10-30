@@ -78,7 +78,7 @@ class AulaService {
     return await AulaRepository.update(filtro);
   }
 
-  static async create(parametros) {
+  static async create_aula(parametros) {
     const insert = AulaSchemas.schemaInsert.parse(parametros);
 
     const modulo = await AulaRepository.modulo_exist(insert.modulo_id);
@@ -86,7 +86,25 @@ class AulaService {
       throw new Error("O modulo informado não existe.");
     }
 
-    const AulaCriada = await AulaRepository.create(insert);
+    const AulaCriada = await AulaRepository.create_aula(insert);
+    return AulaCriada;
+  }
+
+  static async feito_status(parametros) {
+    const schema = new AulaSchema().feito_status();
+    const parametrosValidados = schema.parse(parametros);
+    console.log("1 - Aqui está os parametros pós-zod",parametrosValidados);
+    
+    const feito = await AulaRepository.buscarFeito(parametrosValidados);
+    console.log("2 - Feito:",feito);
+    
+    if (!feito == null || !feito ==undefined) {
+      throw new Error("A aula já foi assistida.");
+    }
+
+    const AulaCriada = await AulaRepository.feito(parametrosValidados);
+    console.log("AulaAssistida",AulaCriada);
+    
     return AulaCriada;
   }
 

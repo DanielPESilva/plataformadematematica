@@ -11,3 +11,16 @@
 # Comandos Diversos
 
 - `sudo kill -9 $(sudo lsof -t -i:3051)` &rarr; Derruba uma porta
+
+## Para atualizar ou mudar de versão do node siga os seguintes passos:
+- `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash`;
+
+```bash
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+```
+- `nvm install 20.3.0`
+
+## Sharp Problem
+
+- `npm install --include=optional sharp && npm install --os=linux --cpu=x64 sharp`

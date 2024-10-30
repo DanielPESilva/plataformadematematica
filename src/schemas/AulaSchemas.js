@@ -31,15 +31,30 @@ class AulaSchema{
             }))
         })
     } 
-    // createQestaoSchema(){
-    // z.object({
-    //     id: z.number().min(1, 'Obrigatorio').positive(),
-    //     posicao: z.string().min(1, 'Posição é obrigatorio'),
-    //     titulo: z.string().min(1, 'Titulo é Obrigatorio'),
-    //     pdf: z.string(),
-    //     link_video: z.string()
-    // })}
-
+    feito_status() {
+        return z.object({
+            //ALUNO_ID
+            aluno_id: z.number({
+                invalid_type_error: "ID informado não é do tipo number",
+            }).int({
+                message: "ID informado não é um número inteiro",
+            }).positive({
+                message: "ID informado não é positivo",
+            }),
+            //AULA_ID
+            aula_id:z.number({
+                invalid_type_error: "ID informado não é do tipo number",
+            }).int({
+                message: "ID informado não é um número inteiro",
+            }).positive({
+                message: "ID informado não é positivo",
+            }),
+            //FEITO
+            feito:z.boolean({
+                invalid_type_error: "O campo 'ativo' deve ser um booleano", 
+              })
+            });
+    } 
     schemaInsert(){ z.object({
         modulo_id: z.coerce.number().int(),
         titulo: z.string().max(100).nullish(),
@@ -51,6 +66,7 @@ class AulaSchema{
 
       UpdateSchema() {
         return z.object({
+            //ID
             id: z.number({
                 invalid_type_error: "ID informado não é do tipo number",
             }).int({
