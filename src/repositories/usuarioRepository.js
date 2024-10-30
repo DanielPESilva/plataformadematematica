@@ -1,58 +1,71 @@
 import {prisma} from "../configs/prismaClient.js";
 
 class usuarioRepository {
-  async create(data) {
-    return await prisma.usuario.create({ data });
-  }
+  
+  static async listarUsuarios(filtros) {
+    return await prisma.usuario.findMany({
+        where: filtros,
+        select: {
+            id: true,
+            nome: true,
+            matricula: true,
+            active: true,
+        },
+    });
+}
 
-  async update(id, data) {
-    return await prisma.usuario.update({ where: { id }, data });
-  }
-
-  async delete(id) {
-    return await prisma.usuario.delete({ where: { id } });
-  }
+static async buscarUsuarioPorId(id) {
+    return await prisma.usuario.findUnique({
+        where: { id },
+        select: {
+            id: true,
+            nome: true,
+            matricula: true,
+            active: true,
+        },
+    });
+}
 
   static async listar_csv() {
     return await prisma.usuario.findMany({
       select: {
-        nome:true,
-        matricula:true
-      }
+        nome: true,
+        matricula: true,
+      },
     });
   }
 
-  static async buscar_turmas(){
-    return await prisma.grupo.findMany()
+  static async buscar_turmas() {
+    return await prisma.grupo.findMany();
   }
 
-  static async inserir_alunos(insert){
+  static async inserir_alunos(insert) {
     return await prisma.aluno.createMany({
-      data: insert
-    })
+      data: insert,
+    });
   }
 
-  static async grupo_alunos(){
+  static async grupo_alunos() {
     return await prisma.grupo.findFirst({
-      where:{
-        nome: { contains: "alunos" }
-      }
-    })
+      where: {
+        nome: { contains: "alunos" },
+      },
+    });
   }
 
-  static async inserir_usuarios(insert){
+  static async inserir_usuarios(insert) {
     return await prisma.usuario.create({
-      data:{
-        ...insert
+      data: {
+        ...insert,
       },
-      select:{
-        id:true,
+      select: {
+        id: true,
         nome: true,
-        matricula:true,
-        grupo_id:true,
-        active:true
-      }
-    })
+        matricula: true,
+        grupo_id: true,
+        active: true,
+      },
+    });
   }
 
   async findByMatricula(matricula) {
@@ -83,40 +96,38 @@ class usuarioRepository {
   }
 
   async findAll(filtros, page, perPage) {
-    const skip = (page -1) * perPage;
+    const skip = (page - 1) * perPage;
     const take = perPage;
 
     const [users, total] = await Promise.all([
-        prisma.usuario.findMany({
-            ...filtros,
-            skip,
-            take,
-        }),
-        prisma.usuario.count({ where: filtros.where })
-    ])
+      prisma.usuario.findMany({
+        ...filtros,
+        skip,
+        take,
+      }),
+      prisma.usuario.count({ where: filtros.where }),
+    ]);
     return { users, total, page, perPage };
   }
-
-  constructFilters(nome, matricula) {
-    let filtros = {
+  static createFilterUsuario(parametros) {
+    let filtro = {
       where: {
-        active: "Y",
+        ...(parametros.nome && { nome: { contains: parametros.nome } }),
+        ...(parametros.senha && { senha: { contains: parametros.senha } }),
+        ...(parametros.matricula != undefined && {
+          matricula: parametros.matricula,
+        }),
+        ...(parametros.active != undefined && { active: parametros.active }),
       },
       select: {
-        usu_id: true,
-        usu_nome: true,
-        usu_tel: true,
-        usu_email: true,
-        usu_matricula: true,
-        usu_cpf: true,
-        usu_senha: false,
+        id: true,
+        nome: true,
+        senha: true,
+        matricula: true,
+        active: true,
       },
     };
-
-    if (nome) filtros.where.usu_nome = { contains: nome };
-    if (matricula) filtros.where.usu_matricula = { contains: matricula };
-
-    return filtros;
+    return filtro;
   }
 }
 
