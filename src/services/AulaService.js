@@ -10,7 +10,7 @@ class AulaService {
             const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
             const aulas = await AulaRepository.findAllAulas(filtroRepository);
             if (aulas.length === 0) {
-                throw new Error("Nenhum registro encontrado.");
+                throw new Error("Nenhuma aula encontrada.");
             }
             return aulas;
         }
@@ -19,14 +19,14 @@ class AulaService {
             const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
             const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
             if (aulasFeitasRevisadas.length === 0) {
-                throw new Error("Nenhum registro encontrado.");
+                throw new Error("Nenhuma aula encontrada.");
             }
             return aulasFeitasRevisadas;
         }
 
         const todasAsAulas = await AulaRepository.findAllAulas();
         if (todasAsAulas.length === 0) {
-            throw new Error("Nenhum registro encontrado.");
+            throw new Error("Nenhuma aula encontrada.");
         }
         return todasAsAulas;
   }
