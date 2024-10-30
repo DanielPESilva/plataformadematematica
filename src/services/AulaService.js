@@ -94,23 +94,30 @@ class AulaService {
   static async feito_status(parametros) {
 
     const parametrosValidados = AulaSchema.feito_status.parse(parametros);
-    console.log("1 - Aqui está os parametros pós-zod",parametrosValidados);
     
     const feito = await AulaRepository.buscarFeito(parametrosValidados);
-    console.log("2 - Feito:",feito);
     
     if (!feito == null || !feito ==undefined) {
       throw new Error("A aula já foi assistida.");
     }
 
     const AulaCriada = await AulaRepository.feito(parametrosValidados);
-    console.log("AulaAssistida",AulaCriada);
     
     return AulaCriada;
   }
 
-  static async deletar(dados) {
-    // service de deletar aula
+  static async deletar(idDoParam) {
+    const IdValidado = AulaSchema.Delet.parse(idDoParam);
+    
+    const filtroDoRepository = AulaRepository.createFilterAula({ id: IdValidado.id });
+    const aulaExists = await AulaRepository.filtrarPorId(filtroDoRepository);
+    
+    if (!aulaExists) {
+      throw new Error("Nenhuma aula encontrada.");
+    };
+    const aulaDeletada = await AulaRepository.delete(aulaExists.id)
+    
+    return aulaDeletada;
   }
 }
 

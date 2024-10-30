@@ -33,9 +33,9 @@ class AulaRepository {
       }
     })
   }
-  static async deletar(dados) {
-    //repository de deletar aula
-  } 
+  static async delete(id) {
+    return await prisma.aula.delete({ where: { id: id } });
+  }; 
   
  static createFilterAula(parametros) {
     let filtro = {

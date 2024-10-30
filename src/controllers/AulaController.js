@@ -2,7 +2,7 @@ import env from "dotenv";
 import AulaService from "../services/AulaService.js";
 import CommonResponse from "../utils/commonResponse.js";
 import path from "path";
-import { sendError, sendResponse } from "../utils/messages.js";
+import messages, { sendError, sendResponse } from "../utils/messages.js";
 import { boolean, ZodError } from 'zod';
 
 env.config();
@@ -147,26 +147,7 @@ class AulaController {
      }
   };
 
-  static deletar = async (req, res) => {
-    try {
-
-      // você retornar utilizando esse metodo
-      return sendResponse(res,201, {data:"seu retorno"});
-
-    } catch (err) {
-
-      if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
-
-      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
-
-      }else{
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
-      }
-     }
-  };
-
+  
   static buscar_arquivo = async (req, res) => {
     try {
       const fileName = req.params.fileName;
@@ -174,14 +155,36 @@ class AulaController {
       const filePath = path.join(process.cwd(), './uploads/pdf', fileName);
 
       res.sendFile(filePath, (err) => {
-          if (err) {
-              return sendError(res,404,['Arquivo não foi encontrado']);
-          }
+        if (err) {
+          return sendError(res,404,['Arquivo não foi encontrado']);
+        }
       });
-
+      
     } catch (err) {
       return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      
+    }
+  };
+  static deletar = async (req, res) => {
+    try {
+  
+      const id = { id: parseInt(req.params.id) };
 
+      const aulaDeletada = await AulaService.deletar(id);
+  
+      return sendResponse(res,204,messages.httpCodes, {data:aulaDeletada});
+  
+    } catch (err) {
+  
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+  
+      }else if(err.message == "Nenhuma aula encontrada." ){
+        return sendError(res,404,["Nenhuma aula encontrada."]);
+  
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
      }
   };
 }

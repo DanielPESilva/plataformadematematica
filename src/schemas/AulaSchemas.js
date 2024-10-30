@@ -101,6 +101,15 @@ class AulaSchema{
                 invalid_type_error: "Descrição precisa ser uma String",
             }).optional(),
         });
+        static Delet = z.object({
+            id: z.preprocess((val) => Number(val), z.number({
+                invalid_type_error: "ID informado não é do tipo number",
+            }).int({
+                message: "ID informado não é um número inteiro"
+            }).positive({
+                message: "ID informado não é positivo"
+            }))
+        })
 }
 
 export default  AulaSchema;

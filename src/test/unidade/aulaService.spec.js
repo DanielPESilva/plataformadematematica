@@ -87,7 +87,7 @@ describe('1 - (GET) Fazendo teste do método que lista aulas.', () => {
         AulaSchemas.listarSchema.parse.mockReturnValue(parametros);
         AulaRepository.findAllAulas.mockResolvedValue([]);
 
-        await expect(AulaService.listar(parametros)).rejects.toThrow("Nenhum registro encontrado.");
+        await expect(AulaService.listar(parametros)).rejects.toThrow("Nenhuma aula encontrada.");
     });
 });
 
