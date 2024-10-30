@@ -1,12 +1,10 @@
 import AulaRepository from "../repositories/AulaRepository.js";
 import AulaSchema from "../schemas/AulaSchemas.js";
-import AulaSchemas from "../schemas/AulaSchemas.js";
 
 class AulaService {
 
   static async listar(parametros) {
-    const schema = new AulaSchemas().listarSchema();
-    const parametrosValidados = schema.parse(parametros);
+    const parametrosValidados = AulaSchema.listarSchema.parse(parametros);
     
     if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
       const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
@@ -29,8 +27,7 @@ class AulaService {
   }
 
   static async listarPorID(idDoParam) {
-    const schema = new AulaSchema().listarPorIdSchema();
-    const IdValidado = schema.parse(idDoParam);
+    const IdValidado = AulaSchema.listarPorIdSchema.parse(idDoParam);
     
     const filtroDoRepository = AulaRepository.createFilterAula({ id: IdValidado.id });
     const aula = await AulaRepository.filtrarPorId(filtroDoRepository);
@@ -43,8 +40,7 @@ class AulaService {
 
   static async atualizar(parametros) {
     
-    const schema = new AulaSchema().UpdateSchema();
-    const parametrosValidados = schema.parse(parametros);
+    const parametrosValidados = AulaSchema.UpdateSchema.parse(parametros);
   
     const { id, modulo_id, titulo, video, pdf_questoes, pdf_resolucao, descricao } = parametrosValidados;
     
@@ -79,7 +75,7 @@ class AulaService {
   }
 
   static async create_aula(parametros) {
-    const insert = AulaSchemas.schemaInsert.parse(parametros);
+    const insert = AulaSchema.schemaInsert.parse(parametros);
 
     const modulo = await AulaRepository.modulo_exist(insert.modulo_id);
     if (!modulo) {
@@ -91,8 +87,8 @@ class AulaService {
   }
 
   static async feito_status(parametros) {
-    const schema = new AulaSchema().feito_status();
-    const parametrosValidados = schema.parse(parametros);
+
+    const parametrosValidados = AulaSchema.feito_status.parse(parametros);
     console.log("1 - Aqui está os parametros pós-zod",parametrosValidados);
     
     const feito = await AulaRepository.buscarFeito(parametrosValidados);
