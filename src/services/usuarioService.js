@@ -28,6 +28,18 @@ static async buscarUsuarioPorId(id) {
     return usuario;
 }
 
+static async criarUsuario(data) {
+
+  const validatedData = UsuarioSchema.criarUsuario.parse(data);
+  const grupoExiste = usuarioRepository.buscarGrupoPorId(validatedData.grupo_id)
+  if (!grupoExiste) {
+    throw new Error("grupo não encontrado.");
+}
+  const filtroRepository = await usuarioRepository.criarUsuario(validatedData)
+  return filtroRepository;
+};
+
+
   static async inserir_csv(arquivo) {
     if (arquivo.mimetype != "text/csv") {
       throw new Error("Arquivo do tipo errado.");
