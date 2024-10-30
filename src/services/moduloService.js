@@ -103,15 +103,16 @@ class ModuloService {
         return await moduloRepository.atualizar(atualizacao);
     }
 
-    static async excluir() {
-        const modulo = await moduloRepository.findById(id);
+    static async deletar(id) {
+        const deleteSchema = moduloSchema.deletarSchema.parse({id:id});
+        const consulta = moduloRepository.constructFilters(deleteSchema)
+        const modulo = await moduloRepository.listarPorId(consulta);
         if (!modulo) {
-            throw new Error('Modulo not found')
+            throw new Error("O recurso solicitado não foi encontrado no servidor.");
         }
-
-        return await moduloRepository.delete(id);
+        const response = await moduloRepository.deletar(deleteSchema.id);
+        return response
     }
-
 }
 
 export default ModuloService;

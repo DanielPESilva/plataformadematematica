@@ -27,9 +27,14 @@ class ModuloRepository {
     return await prisma.modulo.update( data );
   }
 
-  static async delete(id_excluir) {
-    return await prisma.modulo.delete({ where: { id: id_excluir } });
+  static async deletar(id) {
+    return await prisma.modulo.delete({
+       where: { 
+        id: id 
+      } 
+    });
   }
+
 
 
   static constructFilters(parametros) {
