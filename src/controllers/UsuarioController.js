@@ -10,52 +10,56 @@ import { boolean, ZodError } from "zod";
 env.config(); 
 
 class systemUsuarioController {
-
   static listar = async (req, res) => {
     try {
-        const filtros = req.query;
-        const usuarios = await UsuarioService.listarUsuarios(filtros);
-        return sendResponse(res, 200, { data: usuarios });
+      const filtros = req.query;
+      const usuarios = await UsuarioService.listarUsuarios(filtros);
+      return sendResponse(res, 200, { data: usuarios });
     } catch (err) {
-      console.log(err)
-        return sendError(res, 400, err.message);
+      console.error(err);
+      return sendError(res, 400, err.message);
     }
-};
+  };
 
-static buscarPorId = async (req, res) => {
+  static buscarPorId = async (req, res) => {
     try {
-        const { id } = req.params;
-        const usuario = await UsuarioService.buscarUsuarioPorId(parseInt(id));
-        return sendResponse(res, 200, { data: usuario });
+      const { id } = req.params;
+      const usuario = await UsuarioService.buscarUsuarioPorId(parseInt(id));
+      return sendResponse(res, 200, { data: usuario });
     } catch (err) {
-      console.log(err)
+      console.error(err);
+      if (err.message === 'Usuário não encontrado') {
         return sendError(res, 404, err.message);
+      }
+      return sendError(res, 500, 'Ocorreu um erro interno no servidor!');
     }
-};
+  };
 
- static criarUsuario = async(req, res) => {
-  try {
-    const {nome,matricula,senha,active,grupo_id} = req.body
+  static criarUsuario = async (req, res) => {
+    try {
+      const { nome, matricula, senha, active, grupo_id } = req.body;
+      const parametros = {
+        nome: nome,
+        matricula: parseInt(matricula),
+        senha: senha,
+        active: Boolean(active),
+        grupo_id: parseInt(grupo_id),
+      };
 
-    const parametros = {nome:nome,matricula:parseInt(matricula),senha:senha,active:Boolean(active),grupo_id:parseInt(grupo_id)}
-    console.log(parametros)
+      const usuario = await UsuarioService.criarUsuario(parametros);
+      return sendResponse(res, 201, { data: usuario });
 
-    const usuario = await UsuarioService.criarUsuario(parametros); // Chama a função de serviço para criar o usuário
-
-    return sendResponse(res, 201, { data: usuario });
-    
-  } catch (error) {
-    if(error instanceof ZodError){
-      return sendError(res,400,error.errors[0].message);
-
-    }else if(error.message == "Não foi possivel criar usuario pois grupo não existe" ){
-      return sendError(res,404,["Não foi possivel criar usuario pois email já está cadastrado."]);
-
-    }else{
-      return sendError(res,500,"Ocorreu um erro interno no servidor!");
+    } catch (error) {
+      console.error(error);
+      if (error instanceof ZodError) {
+        return sendError(res, 400, error.errors[0].message);
+      } else if (error.message === "Não foi possível criar usuário pois grupo não existe") {
+        return sendError(res, 404, ["Não foi possível criar usuário pois o grupo não existe."]);
+      } else {
+        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
+      }
     }
-  }
-}
+  };
 
 
 
