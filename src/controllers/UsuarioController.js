@@ -2,9 +2,10 @@ import bcrypt from "bcryptjs";
 import env from "dotenv";
 import { sendError, sendResponse } from '../utils/messages.js';
 import UsuarioService from '../services/usuarioService.js';
-
+import { z } from "zod";
 
 import { boolean, ZodError } from "zod";
+import UsuarioSchema from "../schemas/usuarioSchema.js";
 
 
 env.config(); 
@@ -18,6 +19,7 @@ class systemUsuarioController {
     } catch (err) {
       console.error(err);
       return sendError(res, 400, err.message);
+      
     }
   };
 
@@ -26,18 +28,28 @@ class systemUsuarioController {
       const { id } = req.params;
       const usuario = await UsuarioService.buscarUsuarioPorId(parseInt(id));
       return sendResponse(res, 200, { data: usuario });
+      
     } catch (err) {
-      console.error(err);
-      if (err.message === 'Usuário não encontrado') {
-        return sendError(res, 404, err.message);
+      if (err instanceof ZodError) {
+        const errorMessages = err.issues.map((issue) => ({
+          path: issue.path[0],
+          message: issue.message,
+        }));
+        return sendError(res, 400, errorMessages);
       }
-      return sendError(res, 500, 'Ocorreu um erro interno no servidor!');
+      
+      console.error('Erro ao buscar usuário por ID:', err);
+      if (err.message === 'Usuário não encontrado') {
+        return sendError(res, 404, 'Usuário não encontrado');
+      }
+      
+      return sendError(res, 500, "Ocorreu um erro interno no servidor!");
     }
   };
 
   static criarUsuario = async (req, res) => {
     try {
-      const { nome, matricula, senha, active, grupo_id } = req.body;
+      const { nome, matricula, senha, active, grupo_id } = UsuarioSchema.criarUsuario.parse(req.body);
       const parametros = {
         nome: nome,
         matricula: parseInt(matricula),
