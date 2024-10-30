@@ -1,36 +1,38 @@
 import AulaRepository from "../repositories/AulaRepository.js";
 import AulaSchema from "../schemas/AulaSchemas.js";
-import AulaSchemas from "../schemas/AulaSchemas.js";
 
 class AulaService {
 
   static async listar(parametros) {
-    const schema = new AulaSchemas().listarSchema();
-    const parametrosValidados = schema.parse(parametros);
-    
-    if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
-      const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
-      const aulas = await AulaRepository.findAllAulas(filtroRepository);
-      return aulas;
-    }
+    const parametrosValidados = AulaSchema.listarSchema.parse(parametros);
+        
+        if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
+            const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
+            const aulas = await AulaRepository.findAllAulas(filtroRepository);
+            if (aulas.length === 0) {
+                throw new Error("Nenhuma aula encontrada.");
+            }
+            return aulas;
+        }
 
-    if (parametrosValidados.aluno_id) {
-      const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
-      const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
-      return aulasFeitasRevisadas;
-    }
+        if (parametrosValidados.aluno_id) {
+            const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
+            const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
+            if (aulasFeitasRevisadas.length === 0) {
+                throw new Error("Nenhuma aula encontrada.");
+            }
+            return aulasFeitasRevisadas;
+        }
 
-    if (!parametrosValidados.aluno_id && !parametrosValidados.titulo && !parametrosValidados.modulo_id) {
-      const todasAsAulas = await AulaRepository.findAllAulas();
-      return todasAsAulas;
-    } else {
-      throw new Error("Nenhum registro encontrado.");
-    }
+        const todasAsAulas = await AulaRepository.findAllAulas();
+        if (todasAsAulas.length === 0) {
+            throw new Error("Nenhuma aula encontrada.");
+        }
+        return todasAsAulas;
   }
 
   static async listarPorID(idDoParam) {
-    const schema = new AulaSchema().listarPorIdSchema();
-    const IdValidado = schema.parse(idDoParam);
+    const IdValidado = AulaSchema.listarPorIdSchema.parse(idDoParam);
     
     const filtroDoRepository = AulaRepository.createFilterAula({ id: IdValidado.id });
     const aula = await AulaRepository.filtrarPorId(filtroDoRepository);
@@ -43,8 +45,7 @@ class AulaService {
 
   static async atualizar(parametros) {
     
-    const schema = new AulaSchema().UpdateSchema();
-    const parametrosValidados = schema.parse(parametros);
+    const parametrosValidados = AulaSchema.UpdateSchema.parse(parametros);
   
     const { id, modulo_id, titulo, video, pdf_questoes, pdf_resolucao, descricao } = parametrosValidados;
     
@@ -78,15 +79,33 @@ class AulaService {
     return await AulaRepository.update(filtro);
   }
 
-  static async create(parametros) {
-    const insert = AulaSchemas.schemaInsert.parse(parametros);
+  static async create_aula(parametros) {
+    const insert = AulaSchema.schemaInsert.parse(parametros);
 
     const modulo = await AulaRepository.modulo_exist(insert.modulo_id);
     if (!modulo) {
       throw new Error("O modulo informado não existe.");
     }
 
-    const AulaCriada = await AulaRepository.create(insert);
+    const AulaCriada = await AulaRepository.create_aula(insert);
+    return AulaCriada;
+  }
+
+  static async feito_status(parametros) {
+
+    const parametrosValidados = AulaSchema.feito_status.parse(parametros);
+    console.log("1 - Aqui está os parametros pós-zod",parametrosValidados);
+    
+    const feito = await AulaRepository.buscarFeito(parametrosValidados);
+    console.log("2 - Feito:",feito);
+    
+    if (!feito == null || !feito ==undefined) {
+      throw new Error("A aula já foi assistida.");
+    }
+
+    const AulaCriada = await AulaRepository.feito(parametrosValidados);
+    console.log("AulaAssistida",AulaCriada);
+    
     return AulaCriada;
   }
 

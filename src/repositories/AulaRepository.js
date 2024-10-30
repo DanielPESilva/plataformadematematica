@@ -19,7 +19,7 @@ class AulaRepository {
     return await prisma.aula.update(filtro);
 
   }
-  static async create(data_insert) {
+  static async create_aula(data_insert) {
     return await prisma.aula.create({
       data :data_insert,
       select: {
@@ -66,7 +66,6 @@ class AulaRepository {
         select: {
           aluno_id:true,
           feito:true,
-          revisar:true,
           aula_id:true,
           aula:{
             select:{
@@ -93,6 +92,22 @@ class AulaRepository {
         id:true
       }
     })
+  }
+
+  static async buscarFeito(parametro){
+    return await prisma.feito.findFirst({
+      where:{
+        aluno_id: parametro.aluno_id,
+        aula_id:parametro.aula_id,
+        feito:parametro.feito,
+      },
+      select:{
+        id:true
+      }
+    })
+  }
+  static async feito(data) {
+    return await prisma.feito.create({data});
   }
 
 }

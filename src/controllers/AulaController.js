@@ -3,7 +3,7 @@ import AulaService from "../services/AulaService.js";
 import CommonResponse from "../utils/commonResponse.js";
 import path from "path";
 import { sendError, sendResponse } from "../utils/messages.js";
-import { ZodError } from 'zod';
+import { boolean, ZodError } from 'zod';
 
 env.config();
 
@@ -102,7 +102,7 @@ class AulaController {
           pdf_resolucao: files.gabarito ? files.gabarito[0].filename : undefined
         };
       
-      const questaoCreate = await AulaService.create(parametros)
+      const questaoCreate = await AulaService.create_aula(parametros)
 
       return sendResponse(res,201, {data:questaoCreate});
 
@@ -120,19 +120,26 @@ class AulaController {
     }
   }
 
-  static aula_status = async (req, res) => {
+  static feito_status = async (req, res) => {
     try {
+      const { aluno_id,aula_id, feito  } = req.body
+      const parametros = {
+        aluno_id: parseInt(aluno_id),
+        aula_id: parseInt(aula_id),
+        feito: Boolean(feito),
+      };
 
-      // você retornar utilizando esse metodo
-      return sendResponse(res,201, {data:"seu retorno"});
+      const feitoDone = await AulaService.feito_status(parametros)
+
+      return sendResponse(res,201, {data:feitoDone});
 
     } catch (err) {
 
       if(err instanceof ZodError){
         return sendError(res,400,err.errors[0].message);
 
-      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+      }else if(err.message == "A aula já foi assistida." ){
+        return sendError(res,404,["A aula já foi assistida."]);
 
       }else{
         return sendError(res,500,"Ocorreu um erro interno no servidor!");

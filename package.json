@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "prisma": "npx prisma db pull",
-    "test":"jest",
+    "test": "jest",
     "test:watch": "jest --watchAll",
     "coverage": "jest --coverage",
     "seed": "node ./sql/seed.js",
