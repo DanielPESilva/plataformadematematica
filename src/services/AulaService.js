@@ -5,25 +5,30 @@ class AulaService {
 
   static async listar(parametros) {
     const parametrosValidados = AulaSchema.listarSchema.parse(parametros);
-    
-    if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
-      const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
-      const aulas = await AulaRepository.findAllAulas(filtroRepository);
-      return aulas;
-    }
+        
+        if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
+            const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
+            const aulas = await AulaRepository.findAllAulas(filtroRepository);
+            if (aulas.length === 0) {
+                throw new Error("Nenhum registro encontrado.");
+            }
+            return aulas;
+        }
 
-    if (parametrosValidados.aluno_id) {
-      const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
-      const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
-      return aulasFeitasRevisadas;
-    }
+        if (parametrosValidados.aluno_id) {
+            const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
+            const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
+            if (aulasFeitasRevisadas.length === 0) {
+                throw new Error("Nenhum registro encontrado.");
+            }
+            return aulasFeitasRevisadas;
+        }
 
-    if (!parametrosValidados.aluno_id && !parametrosValidados.titulo && !parametrosValidados.modulo_id) {
-      const todasAsAulas = await AulaRepository.findAllAulas();
-      return todasAsAulas;
-    } else {
-      throw new Error("Nenhum registro encontrado.");
-    }
+        const todasAsAulas = await AulaRepository.findAllAulas();
+        if (todasAsAulas.length === 0) {
+            throw new Error("Nenhum registro encontrado.");
+        }
+        return todasAsAulas;
   }
 
   static async listarPorID(idDoParam) {
