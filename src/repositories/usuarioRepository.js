@@ -48,6 +48,25 @@ return await prisma.usuario.create({data});
 
 }
 
+static async atualizarUsuario(id, dadosAtualizados) {
+  try {
+
+    const dadosFiltrados = Object.fromEntries(
+      Object.entries(dadosAtualizados).filter(([_, valor]) => valor !== undefined)
+    );
+
+    const usuarioAtualizado = await prisma.usuario.update({
+      where: { id },
+      data: dadosFiltrados,
+    });
+
+    return usuarioAtualizado;
+  } catch (error) {
+    console.error("Erro ao atualizar o usuário:", error);
+    throw new Error("Não foi possível atualizar o usuário.");
+  }
+}
+
   static async listar_csv() {
     return await prisma.usuario.findMany({
       select: {

@@ -61,7 +61,35 @@ static criarUsuario = async (req, res) => {
     if (error instanceof ZodError) {
       return sendError(res, 400, error.errors[0].message);
     } else if (error.message === "usuario já existe.") {
-      return sendError(res, 404, ["Não foi possível criar usuário pois o grupo não existe."]);
+      return sendError(res, 404, ["usuario já existe."]);
+    } else {
+      return sendError(res, 500, "Ocorreu um erro interno no servidor!");
+    }
+  }
+};
+
+static atualizarUsuario = async (req, res) => {
+  try {
+    const usuarioData = { ...req.body, id: parseInt(req.params.id) };
+    const { id, nome, matricula, active, grupo_id } = UsuarioSchema.atualizarUsuario.parse(usuarioData);
+
+    const parametros = {
+      id,
+      nome: nome,
+      matricula: String(matricula),
+      active: Boolean(active),
+      grupo_id: parseInt(grupo_id),
+    };
+
+    const usuarioAtualizado = await UsuarioService.atualizarUsuario(parametros);
+    return sendResponse(res, 200, { data: usuarioAtualizado });
+    
+  } catch (error) {
+    console.error(error);
+    if (error instanceof ZodError) {
+      return sendError(res, 400, error.errors[0].message);
+    } else if (error.message === "usuario não encontrado.") {
+      return sendError(res, 404, ["usuario não encontrado."]);
     } else {
       return sendError(res, 500, "Ocorreu um erro interno no servidor!");
     }
