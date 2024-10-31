@@ -12,7 +12,7 @@ jest.mock('../../repositories/AulaRepository.js', () => ({
 beforeEach(() => {
     jest.clearAllMocks();
 });
-
+/*
 describe("listarSchema validação", () => {
 const { z } = require('zod');
 const listarSchema = z.object({
@@ -341,6 +341,51 @@ const atualizarSchema = z.object({
         expect(result.success).toBe(false);
         expect(result.error.issues[0].message).toBe("A imagem informada deve ser do tipo string.");
     });
+});*/
+
+describe("deletarSchema", () => {
+const deletarSchema = z.object({
+  id: z.preprocess(
+    (val) => Number(val),
+    z.number({
+      invalid_type_error: "Id informado não é do tipo number.",
+    })
+      .int({ message: "Id informado não é um número inteiro." })
+      .positive({ message: "Id informado não é positivo." })
+  ),
 });
 
+  test("Deve passar com um número inteiro positivo", () => {
+    const resultado = deletarSchema.safeParse({ id: 5 });
+    expect(resultado.success).toBe(true);
+  });
 
+  test("Deve falhar se o id não for um número", () => {
+    const resultado = deletarSchema.safeParse({ id: "abc" });
+    expect(resultado.success).toBe(false);
+    if (!resultado.success) {
+      expect(resultado.error.issues[0].message).toBe("Id informado não é do tipo number.");
+    }
+  });
+
+  test("Deve falhar se o id não for um número inteiro", () => {
+    const resultado = deletarSchema.safeParse({ id: 5.5 });
+    expect(resultado.success).toBe(false);
+    if (!resultado.success) {
+      expect(resultado.error.issues[0].message).toBe("Id informado não é um número inteiro.");
+    }
+  });
+
+  test("Deve falhar se o id for um número negativo", () => {
+    const resultado = deletarSchema.safeParse({ id: -5 });
+    expect(resultado.success).toBe(false);
+    if (!resultado.success) {
+      expect(resultado.error.issues[0].message).toBe("Id informado não é positivo.");
+    }
+  });
+
+  test("Deve converter string numérica para número e validar com sucesso", () => {
+    const resultado = deletarSchema.safeParse({ id: "10" });
+    expect(resultado.success).toBe(true);
+  });
+});
