@@ -19,7 +19,7 @@ class AulaRepository {
     return await prisma.aula.update(filtro);
 
   }
-  static async create_aula(data_insert) {
+  static async create(data_insert) {
     return await prisma.aula.create({
       data :data_insert,
       select: {

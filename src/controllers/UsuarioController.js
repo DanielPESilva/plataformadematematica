@@ -48,16 +48,14 @@ static buscarPorId = async (req, res) => {
     } catch (err) {
       console.error(err);
 
-      if (err instanceof ZodError) {
-        return sendError(res, 400, err.errors[0].message);
-      } else if (
-        err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service."
-      ) {
-        return sendError(res, 404, [
-          "Aqui vai a mensagem de Erro que vc gerou lá no service.",
-        ]);
-      } else {
-        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
+      if(err.message == "Arquivo do tipo errado." ){
+        return sendError(res,404,[err.message]);
+
+      }else if(err.message == "Estrutura do CSV está incorreta." ){
+        return sendError(res,404,[err.message]);
+
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
     }
   };

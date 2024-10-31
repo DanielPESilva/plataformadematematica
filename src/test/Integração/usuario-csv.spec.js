@@ -35,7 +35,7 @@ describe('POST /usuario/csv - Cria usuarios utizando arquivos csv.', () => {
                 .set("Accept", "application/json")
                 .set("Authorization", `Bearer ${token}`)
                 .attach('file-csv', filePath)
-        
+        console.log(res.body)
         expect(res.body.error).toEqual(false)
         expect(res.status).toBe(201)
         expect(res.body.message).toEqual("Requisição bem sucedida, recurso foi criado")

@@ -112,4 +112,4 @@ class AulaSchema{
         })
 }
 
-export default  AulaSchema;
+export default AulaSchema;

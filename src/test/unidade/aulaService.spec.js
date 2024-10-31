@@ -11,7 +11,7 @@ jest.mock('../../repositories/AulaRepository.js', () => ({
     createFilterAula: jest.fn(),
     createFilterFeito: jest.fn(),
     modulo_exist: jest.fn(),
-    create_aula: jest.fn(),
+    create: jest.fn(),
     buscarPorId: jest.fn(),
     update: jest.fn(),
     buscarFeito: jest.fn(),
@@ -221,9 +221,9 @@ describe('4 - (POST) Testando a criação de uma nova aula. -> LINHA 201', () =>
     
         AulaSchemas.schemaInsert.parse.mockReturnValue(parametros);
         AulaRepository.modulo_exist.mockResolvedValue({ id: 1 });
-        AulaRepository.create_aula.mockResolvedValue(mockDeInventarios);
+        AulaRepository.create.mockResolvedValue(mockDeInventarios);
     
-        const data = await AulaService.create_aula(parametros);
+        const data = await AulaService.create(parametros);
     
         expect(data).toEqual(mockDeInventarios);
     });
@@ -241,7 +241,7 @@ describe('4 - (POST) Testando a criação de uma nova aula. -> LINHA 201', () =>
         AulaSchemas.schemaInsert.parse.mockReturnValue(parametros);
         AulaRepository.modulo_exist.mockResolvedValue(null);
     
-        await expect(AulaService.create_aula(parametros)).rejects.toThrow("O modulo informado não existe.");
+        await expect(AulaService.create(parametros)).rejects.toThrow("O modulo informado não existe.");
         expect(AulaRepository.modulo_exist).toHaveBeenCalledWith(parametros.modulo_id);
         
     });

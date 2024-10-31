@@ -79,7 +79,7 @@ class AulaService {
     return await AulaRepository.update(filtro);
   }
 
-  static async create_aula(parametros) {
+  static async create(parametros) {
     const insert = AulaSchema.schemaInsert.parse(parametros);
 
     const modulo = await AulaRepository.modulo_exist(insert.modulo_id);
@@ -87,7 +87,7 @@ class AulaService {
       throw new Error("O modulo informado não existe.");
     }
 
-    const AulaCriada = await AulaRepository.create_aula(insert);
+    const AulaCriada = await AulaRepository.create(insert);
     return AulaCriada;
   }
 
