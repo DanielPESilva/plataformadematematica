@@ -36,6 +36,10 @@ static async buscarGrupoPorId(id) {
   });
 };
 
+static async buscarUsuarioPorMatricula(filtro){
+  return await prisma.usuario.findFirst(filtro)
+}
+
 
   static async criarUsuario(data) {
     data.senha = await bcrypt.hash(data.senha, parseInt(process.env.SALT, 10));
@@ -131,7 +135,6 @@ return await prisma.usuario.create({data});
     let filtro = {
       where: {
         ...(parametros.nome && { nome: { contains: parametros.nome } }),
-        ...(parametros.senha && { senha: { contains: parametros.senha } }),
         ...(parametros.matricula != undefined && {
           matricula: parametros.matricula,
         }),

@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import env from "dotenv";
 import { sendError, sendResponse } from '../utils/messages.js';
 import UsuarioService from '../services/usuarioService.js';
-import { z } from "zod";
+
 
 import { boolean, ZodError } from "zod";
 import UsuarioSchema from "../schemas/usuarioSchema.js";
@@ -11,43 +11,30 @@ import UsuarioSchema from "../schemas/usuarioSchema.js";
 env.config(); 
 
 class systemUsuarioController {
+
   static listar = async (req, res) => {
     try {
-      const filtros = req.query;
-      const usuarios = await UsuarioService.listarUsuarios(filtros);
-      return sendResponse(res, 200, { data: usuarios });
+        const filtros = req.query;
+        const usuarios = await UsuarioService.listarUsuarios(filtros);
+        return sendResponse(res, 200, { data: usuarios });
     } catch (err) {
-      console.error(err);
-      return sendError(res, 400, err.message);
-      
+      console.log(err)
+        return sendError(res, 400, err.message);
     }
-  };
+};
 
-  static buscarPorId = async (req, res) => {
+static buscarPorId = async (req, res) => {
     try {
-      const { id } = req.params;
-      const usuario = await UsuarioService.buscarUsuarioPorId(parseInt(id));
-      return sendResponse(res, 200, { data: usuario });
-      
+        const { id } = req.params;
+        const usuario = await UsuarioService.buscarUsuarioPorId(parseInt(id));
+        return sendResponse(res, 200, { data: usuario });
     } catch (err) {
-      if (err instanceof ZodError) {
-        const errorMessages = err.issues.map((issue) => ({
-          path: issue.path[0],
-          message: issue.message,
-        }));
-        return sendError(res, 400, errorMessages);
-      }
-      
-      console.error('Erro ao buscar usuário por ID:', err);
-      if (err.message === 'Usuário não encontrado') {
-        return sendError(res, 404, 'Usuário não encontrado');
-      }
-      
-      return sendError(res, 500, "Ocorreu um erro interno no servidor!");
+      console.log(err)
+        return sendError(res, 404, err.message);
     }
-  };
+};
 
-  static criarUsuario = async (req, res) => {
+ static criarUsuario = async (req, res) => {
     try {
       const { nome, matricula, senha, active, grupo_id } = UsuarioSchema.criarUsuario.parse(req.body)
       const parametros = {
@@ -65,13 +52,14 @@ class systemUsuarioController {
       console.error(error);
       if (error instanceof ZodError) {
         return sendError(res, 400, error.errors[0].message);
-      } else if (error.message === "Não foi possível criar usuário pois grupo não existe") {
+      } else if (error.message === "usuario já existe.") {
         return sendError(res, 404, ["Não foi possível criar usuário pois o grupo não existe."]);
       } else {
         return sendError(res, 500, "Ocorreu um erro interno no servidor!");
       }
     }
   };
+
 
 
 
