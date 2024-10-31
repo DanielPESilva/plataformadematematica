@@ -58,7 +58,7 @@ return await prisma.usuario.create({data});
   }
 
   static async buscar_turmas() {
-    return await prisma.grupo.findMany();
+    return await prisma.turma.findMany();
   }
 
   static async inserir_alunos(insert) {

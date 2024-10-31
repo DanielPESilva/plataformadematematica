@@ -33,9 +33,9 @@ class AulaRepository {
       }
     })
   }
-  static async deletar(dados) {
-    //repository de deletar aula
-  } 
+  static async delete(id) {
+    return await prisma.aula.delete({ where: { id: id } });
+  }; 
   
  static createFilterAula(parametros) {
     let filtro = {
@@ -66,7 +66,6 @@ class AulaRepository {
         select: {
           aluno_id:true,
           feito:true,
-          revisar:true,
           aula_id:true,
           aula:{
             select:{
@@ -93,6 +92,22 @@ class AulaRepository {
         id:true
       }
     })
+  }
+
+  static async buscarFeito(parametro){
+    return await prisma.feito.findFirst({
+      where:{
+        aluno_id: parametro.aluno_id,
+        aula_id:parametro.aula_id,
+        feito:parametro.feito,
+      },
+      select:{
+        id:true
+      }
+    })
+  }
+  static async feito(data) {
+    return await prisma.feito.create({data});
   }
 
 }

@@ -80,9 +80,9 @@ router
         },
         AulaController.inserir
     );
-    router.post('/aula/status', AulaController.aula_status)
+    router.post('/aula/status', AulaController.feito_status)
     router.patch('/aula/:id',AulaController.atualizar);
-    router.delete('/aula', AulaController.deletar)
+    router.delete('/aula/:id', AulaController.deletar)
     router.get('/aula/arquivo/:fileName', AulaController.buscar_arquivo);
 
     export default router;

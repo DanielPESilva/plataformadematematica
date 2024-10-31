@@ -1,36 +1,38 @@
 import AulaRepository from "../repositories/AulaRepository.js";
 import AulaSchema from "../schemas/AulaSchemas.js";
-import AulaSchemas from "../schemas/AulaSchemas.js";
 
 class AulaService {
 
   static async listar(parametros) {
-    const schema = new AulaSchemas().listarSchema();
-    const parametrosValidados = schema.parse(parametros);
-    
-    if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
-      const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
-      const aulas = await AulaRepository.findAllAulas(filtroRepository);
-      return aulas;
-    }
+    const parametrosValidados = AulaSchema.listarSchema.parse(parametros);
+        
+        if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
+            const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
+            const aulas = await AulaRepository.findAllAulas(filtroRepository);
+            if (aulas.length === 0) {
+                throw new Error("Nenhuma aula encontrada.");
+            }
+            return aulas;
+        }
 
-    if (parametrosValidados.aluno_id) {
-      const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
-      const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
-      return aulasFeitasRevisadas;
-    }
+        if (parametrosValidados.aluno_id) {
+            const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
+            const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
+            if (aulasFeitasRevisadas.length === 0) {
+                throw new Error("Nenhuma aula encontrada.");
+            }
+            return aulasFeitasRevisadas;
+        }
 
-    if (!parametrosValidados.aluno_id && !parametrosValidados.titulo && !parametrosValidados.modulo_id) {
-      const todasAsAulas = await AulaRepository.findAllAulas();
-      return todasAsAulas;
-    } else {
-      throw new Error("Nenhum registro encontrado.");
-    }
+        const todasAsAulas = await AulaRepository.findAllAulas();
+        if (todasAsAulas.length === 0) {
+            throw new Error("Nenhuma aula encontrada.");
+        }
+        return todasAsAulas;
   }
 
   static async listarPorID(idDoParam) {
-    const schema = new AulaSchema().listarPorIdSchema();
-    const IdValidado = schema.parse(idDoParam);
+    const IdValidado = AulaSchema.listarPorIdSchema.parse(idDoParam);
     
     const filtroDoRepository = AulaRepository.createFilterAula({ id: IdValidado.id });
     const aula = await AulaRepository.filtrarPorId(filtroDoRepository);
@@ -43,8 +45,7 @@ class AulaService {
 
   static async atualizar(parametros) {
     
-    const schema = new AulaSchema().UpdateSchema();
-    const parametrosValidados = schema.parse(parametros);
+    const parametrosValidados = AulaSchema.UpdateSchema.parse(parametros);
   
     const { id, modulo_id, titulo, video, pdf_questoes, pdf_resolucao, descricao } = parametrosValidados;
     
@@ -79,7 +80,7 @@ class AulaService {
   }
 
   static async create(parametros) {
-    const insert = AulaSchemas.schemaInsert.parse(parametros);
+    const insert = AulaSchema.schemaInsert.parse(parametros);
 
     const modulo = await AulaRepository.modulo_exist(insert.modulo_id);
     if (!modulo) {
@@ -90,8 +91,33 @@ class AulaService {
     return AulaCriada;
   }
 
-  static async deletar(dados) {
-    // service de deletar aula
+  static async feito_status(parametros) {
+
+    const parametrosValidados = AulaSchema.feito_status.parse(parametros);
+    
+    const feito = await AulaRepository.buscarFeito(parametrosValidados);
+    
+    if (feito) {
+      throw new Error("A aula já foi assistida.");
+    }
+
+    const AulaCriada = await AulaRepository.feito(parametrosValidados);
+    
+    return AulaCriada;
+  }
+
+  static async deletar(idDoParam) {
+    const IdValidado = AulaSchema.Delet.parse(idDoParam);
+    
+    const filtroDoRepository = AulaRepository.createFilterAula({ id: IdValidado.id });
+    const aulaExists = await AulaRepository.filtrarPorId(filtroDoRepository);
+    
+    if (!aulaExists) {
+      throw new Error("Nenhuma aula encontrada.");
+    };
+    const aulaDeletada = await AulaRepository.delete(aulaExists.id)
+    
+    return aulaDeletada;
   }
 }
 

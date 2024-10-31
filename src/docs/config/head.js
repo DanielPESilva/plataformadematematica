@@ -3,11 +3,18 @@ import usersPaths from "../routes/users.js";
 import turmaPaths from "../routes/turma.js"
 import authSchemas from "../schemas/authSchema.js";
 import turmaSchema from "../schemas/turmaSchema.js";
+import loginSchema from "../schemas/loginSchemaDoc.js"
+import moduloRoutes from "../routes/modulo.js";
+import moduloSchema from "../schemas/moduloSchemaDoc.js";
+import usuarioCsvRoutes from "../routes/usuario-csv.js";
+import usuarioCsvSchema from "../schemas/usuario-csvSchemaDoc.js";
+import aulaRoutes from "../routes/aula.js";
+import aulaSchema from "../schemas/aulaSchemaDoc.js";
 
 // Função para definir as URLs do servidor dependendo do ambiente
 const getServersInCorrectOrder = () => {
-    const devUrl = { url: process.env.SWAGGER_DEV_URL || "http://localhost:3051" };
-    const prodUrl = { url: process.env.SWAGGER_PROD_URL || "http://localhost:3051" };
+    const devUrl = { url: "http://localhost:3051" };
+    const prodUrl = { url: "http://localhost:3051" };
 
     if (process.env.NODE_ENV === "production") return [prodUrl, devUrl];
     else return [devUrl, prodUrl];
@@ -26,8 +33,16 @@ const getSwaggerOptions = () => {
             servers: getServersInCorrectOrder(),
             tags: [
                 {
-                    name: "Auth",
+                    name: "Login",
                     description: "Rotas para autenticação"
+                },
+                {
+                    name: "Aula",
+                    description: "Rotas para gestão de aulas"
+                },
+                {
+                    name: "Modulo",
+                    description: "Rotas para gestão de modulos"
                 },
                 {
                     name: "Turmas",
@@ -37,11 +52,18 @@ const getSwaggerOptions = () => {
                     name: "Usuários", 
                     description: "Rotas para gestão de usuários"
                 },
+                {
+                    name: "Usuários/csv", 
+                    description: "Rotas para gestão de usuários"
+                },
             ],
             paths: {
                 ...authPaths,
                 ...usersPaths,
-                ...turmaPaths
+                ...turmaPaths,
+                ...moduloRoutes,
+                ...usuarioCsvRoutes,
+                ...aulaRoutes,
             },
             components: {
                 securitySchemes: {
@@ -53,7 +75,11 @@ const getSwaggerOptions = () => {
                 },
                 schemas: {
                     ...authSchemas,
-                    ...turmaSchema
+                    ...turmaSchema,
+                    ... loginSchema,
+                    ...moduloSchema,
+                    ...usuarioCsvSchema,
+                    ...aulaSchema,
                 }
             },
             security: [{
