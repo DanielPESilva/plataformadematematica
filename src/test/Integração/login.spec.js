@@ -10,7 +10,7 @@ describe('Teste de Autenticação', () => {
         .post('/login')
         .set("Accept", "aplication/json")
         .send({
-            matricula:12345,
+            matricula:"12345",
             senha:"senhatest"
         })
         expect(res.status).toBe(200)
@@ -21,7 +21,7 @@ describe('Teste de Autenticação', () => {
         .post('/login')
         .set("Accept", "aplication/json")
         .send({
-            matricula:12343453453535,
+            matricula:"12343453453535",
             senha:"senhatest"
         })
         expect(req.status).toBe(401)
@@ -35,7 +35,7 @@ describe('Teste de Autenticação', () => {
         .post('/login')
         .set("Accept", "aplication/json")
         .send({
-            matricula:12345,
+            matricula:"12345",
             senha:"senhaerrada"
         })
         expect(req.status).toBe(401)

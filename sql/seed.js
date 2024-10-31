@@ -73,11 +73,11 @@ async function seedDatabase() {
     // Inserindo dados na tabela `usuario`
     const usuarios = await prisma.usuario.createMany({
       data: [
-        { nome: "professor", grupo_id: 2, senha: senhaHash, matricula: 12345, active: true },
-        { nome: faker.name.findName(), grupo_id: 1, senha: senhaHash, matricula: 12346, active: true },
-        { nome: faker.name.findName(), grupo_id: 1, senha: senhaHash, matricula: 12347, active: false },
-        { nome: faker.name.findName(), grupo_id: 1, senha: senhaHash, matricula: 12348, active: true },
-        { nome: faker.name.findName(), grupo_id: 1, senha: senhaHash, matricula: 12349, active: true },
+        { nome: "professor", grupo_id: 2, senha: senhaHash, matricula: "12345", active: true },
+        { nome: faker.name.findName(), grupo_id: 1, senha: senhaHash, matricula: "12346", active: true },
+        { nome: faker.name.findName(), grupo_id: 1, senha: senhaHash, matricula: "12347", active: false },
+        { nome: faker.name.findName(), grupo_id: 1, senha: senhaHash, matricula: "12348", active: true },
+        { nome: faker.name.findName(), grupo_id: 1, senha: senhaHash, matricula: "12349", active: true },
       ],
     });
 
