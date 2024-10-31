@@ -20,10 +20,11 @@ const router = express.Router();
 
 router
   .get("/usuario", systemUsuarioController.listar)
-  .get("/usuario/:id", systemUsuarioController.listarPorID)
-  .post("/usuario", systemUsuarioController.inserir)
+  .get("/usuario/:id", systemUsuarioController.buscarPorId)
+  //.post("/usuario", systemUsuarioController.inserir)
   .post("/usuario/csv", upload.single('file-csv'), systemUsuarioController.inserir_csv)
   .patch("/usuario/:id", systemUsuarioController.atualizar)
-  .delete("/usuario/:id", systemUsuarioController.deletar)
+  .delete("/usuario/:id", systemUsuarioController.deletar);
+
  
   export default router;

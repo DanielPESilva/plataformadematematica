@@ -2,8 +2,8 @@ import env from "dotenv";
 import AulaService from "../services/AulaService.js";
 import CommonResponse from "../utils/commonResponse.js";
 import path from "path";
-import { sendError, sendResponse } from "../utils/messages.js";
-import { ZodError } from 'zod';
+import messages, { sendError, sendResponse } from "../utils/messages.js";
+import { boolean, ZodError } from 'zod';
 
 env.config();
 
@@ -66,47 +66,27 @@ class AulaController {
 
   static atualizar = async (req, res) => {
     try {
-      console.log(req.body);
-  
-      if (!req.params.id) {
-        return res.status(400).json(CommonResponse.notFound("ID da questão é obrigatório"));
+      let id = req.params.id
+      let parametros = {
+        id: parseInt(id),
+        ...req.body
       }
-  
-      const id = parseInt(req.params.id);
-      const { data } = req.body;
-  
       
-      if (!data || Object.keys(data).length === 0) {
-        return res.status(400).json(CommonResponse.notFound("Nenhum campo fornecido para atualização"));
-      }
+      const aula = await AulaService.atualizar(parametros)
+
+        return sendResponse(res,200, {data:aula});
   
-      const { titulo, posicao, pdf, link_video } = data;
+      } catch (err) {
+        if(err instanceof ZodError){
+          return sendError(res,400,err.errors[0].message);
+
+        }else if(err.message == "O recurso solicitado não foi encontrado no servidor."){
+          return sendError(res,404,["O recurso solicitado não foi encontrado no servidor."]);
   
-      
-      if (titulo || posicao || pdf || link_video) {
-        
-        const questaoAtualizada = await questaoRepository.update(id, posicao, titulo, pdf, link_video);
-  
-        return res.status(200).json(CommonResponse.success(questaoAtualizada, "Questão atualizada com sucesso"));
-      } else {
-        return res.status(400).json(CommonResponse.notFound("Nenhum campo válido fornecido para atualização"));
+        }else{
+          return sendError(res,500,"Ocorreu um erro interno no servidor!");
+        }
       }
-
-      // você retornar utilizando esse metodo
-      return sendResponse(res,201, {data:"seu retorno"});
-
-    } catch (err) {
-
-      if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
-
-      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
-
-      }else{
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
-      }
-     }
   }
 
   static inserir = async(req, res) => {
@@ -140,19 +120,26 @@ class AulaController {
     }
   }
 
-  static aula_status = async (req, res) => {
+  static feito_status = async (req, res) => {
     try {
+      const { aluno_id,aula_id, feito  } = req.body
+      const parametros = {
+        aluno_id: parseInt(aluno_id),
+        aula_id: parseInt(aula_id),
+        feito: Boolean(feito),
+      };
 
-      // você retornar utilizando esse metodo
-      return sendResponse(res,201, {data:"seu retorno"});
+      const feitoDone = await AulaService.feito_status(parametros)
+
+      return sendResponse(res,201, {data:feitoDone});
 
     } catch (err) {
 
       if(err instanceof ZodError){
         return sendError(res,400,err.errors[0].message);
 
-      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+      }else if(err.message == "A aula já foi assistida." ){
+        return sendError(res,404,["A aula já foi assistida."]);
 
       }else{
         return sendError(res,500,"Ocorreu um erro interno no servidor!");
@@ -160,41 +147,43 @@ class AulaController {
      }
   };
 
-  static deletar = async (req, res) => {
-    try {
-
-      // você retornar utilizando esse metodo
-      return sendResponse(res,201, {data:"seu retorno"});
-
-    } catch (err) {
-
-      if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
-
-      }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-        return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
-
-      }else{
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
-      }
-     }
-  };
-
+  
   static buscar_arquivo = async (req, res) => {
     try {
       const fileName = req.params.fileName;
-
       const filePath = path.join(process.cwd(), './uploads/pdf', fileName);
 
       res.sendFile(filePath, (err) => {
-          if (err) {
-              return sendError(res,404,['Arquivo não foi encontrado']);
-          }
+        if (err) {
+          return sendError(res,404,['Arquivo não foi encontrado']);
+        }
       });
-
+      
     } catch (err) {
       return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      
+    }
+  };
+  static deletar = async (req, res) => {
+    try {
+  
+      const id = { id: parseInt(req.params.id) };
 
+      const aulaDeletada = await AulaService.deletar(id);
+  
+      return sendResponse(res,204,messages.httpCodes, {data:aulaDeletada});
+  
+    } catch (err) {
+  
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+  
+      }else if(err.message == "Nenhuma aula encontrada." ){
+        return sendError(res,404,["Nenhuma aula encontrada."]);
+  
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
      }
   };
 }

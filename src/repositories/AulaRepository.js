@@ -7,14 +7,16 @@ class AulaRepository {
  static async findAllAulas(parametros) {
     return await prisma.aula.findMany(parametros);
   }
- static async findById(parametro){
+ static async filtrarPorId(parametro){
     return await prisma.aula.findUnique(parametro);
-}
-  static async update(id, posicao, titulo, pdf, link_video) {
-    return await prisma.questao.update({
-      where: { id },
-      data: { posicao, titulo, pdf, link_video }
-    });
+ }
+  static async buscarPorId(id) {
+  return await prisma.aula.findUnique({
+      where: { id: id }
+  });
+  }
+  static async update(filtro) {
+    return await prisma.aula.update(filtro);
 
   }
   static async create(data_insert) {
@@ -31,9 +33,9 @@ class AulaRepository {
       }
     })
   }
-  static async deletar(dados) {
-    //repository de deletar aula
-  } 
+  static async delete(id) {
+    return await prisma.aula.delete({ where: { id: id } });
+  }; 
   
  static createFilterAula(parametros) {
     let filtro = {
@@ -64,7 +66,6 @@ class AulaRepository {
         select: {
           aluno_id:true,
           feito:true,
-          revisar:true,
           aula_id:true,
           aula:{
             select:{
@@ -91,6 +92,22 @@ class AulaRepository {
         id:true
       }
     })
+  }
+
+  static async buscarFeito(parametro){
+    return await prisma.feito.findFirst({
+      where:{
+        aluno_id: parametro.aluno_id,
+        aula_id:parametro.aula_id,
+        feito:parametro.feito,
+      },
+      select:{
+        id:true
+      }
+    })
+  }
+  static async feito(data) {
+    return await prisma.feito.create({data});
   }
 
 }

@@ -1,79 +1,124 @@
 import AulaRepository from "../repositories/AulaRepository.js";
 import AulaSchema from "../schemas/AulaSchemas.js";
-import AulaSchemas from "../schemas/AulaSchemas.js";
+
 class AulaService {
 
-  /**
-   * Há validação do zod, falta padronizare organizar...
-   */
-  async listar(parametros) {
-    const schema = new AulaSchemas().listarSchema();
-    let parametrosValidados;
-        parametrosValidados = schema.parse(parametros);
+  static async listar(parametros) {
+    const parametrosValidados = AulaSchema.listarSchema.parse(parametros);
         
-      if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
-          const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
-          const aulas = await AulaRepository.findAllAulas(filtroRepository);
+        if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
+            const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
+            const aulas = await AulaRepository.findAllAulas(filtroRepository);
+            if (aulas.length === 0) {
+                throw new Error("Nenhuma aula encontrada.");
+            }
+            return aulas;
+        }
 
-          return aulas;
-      }
-      if (parametrosValidados.aluno_id) {
-          const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
-          const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
+        if (parametrosValidados.aluno_id) {
+            const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
+            const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
+            if (aulasFeitasRevisadas.length === 0) {
+                throw new Error("Nenhuma aula encontrada.");
+            }
+            return aulasFeitasRevisadas;
+        }
 
-          return aulasFeitasRevisadas;
-      }
-      if(!parametrosValidados.aluno_id && !parametrosValidados.titulo && !parametrosValidados.modulo_id){
         const todasAsAulas = await AulaRepository.findAllAulas();
+        if (todasAsAulas.length === 0) {
+            throw new Error("Nenhuma aula encontrada.");
+        }
         return todasAsAulas;
-      }else{
-        throw new Error("Nenhum registro encontrado.");
-      }
   }
 
-  async listarPorID(idDoParam) {
-
-    const schema = new AulaSchema().listarPorIdSchema();
-    const IdValidado = schema.parse(idDoParam);
+  static async listarPorID(idDoParam) {
+    const IdValidado = AulaSchema.listarPorIdSchema.parse(idDoParam);
     
     const filtroDoRepository = AulaRepository.createFilterAula({ id: IdValidado.id });
-    const aula = await AulaRepository.findById(filtroDoRepository);
+    const aula = await AulaRepository.filtrarPorId(filtroDoRepository);
     
-
     if (!aula) {
       throw new Error("Nenhuma aula encontrada.");
     }
     return aula;
   }
 
-  static async atualizar(id, titulo, posicao, pdf, link_video) {
-      // Regra de negócio e validações
-      return await AulaRepository.update(id, titulo, posicao, pdf, link_video);
+  static async atualizar(parametros) {
+    
+    const parametrosValidados = AulaSchema.UpdateSchema.parse(parametros);
+  
+    const { id, modulo_id, titulo, video, pdf_questoes, pdf_resolucao, descricao } = parametrosValidados;
+    
+    const aulaExist = await AulaRepository.buscarPorId(id);
+
+    if (!aulaExist) {
+      throw new Error("O recurso solicitado não foi encontrado no servidor.");
+    }
+
+    const filtro = {
+      where: { id: id },
+      data: {
+        modulo_id: modulo_id,
+        titulo: titulo,
+        video: video,
+        pdf_questoes: pdf_questoes,
+        pdf_resolucao: pdf_resolucao,
+        descricao: descricao
+      },
+      select: {
+        id: true,
+        modulo_id: true,
+        titulo: true,
+        video: true,
+        pdf_questoes: true,
+        pdf_resolucao: true,
+        descricao: true
+      }
+    };
+
+    return await AulaRepository.update(filtro);
   }
 
-  static async atualizar(id, titulo, posicao, pdf, link_video) {
-    // Regra de negócio e validações
-    return await questaoRepository.update(id, titulo, posicao, pdf, link_video);
-  }
+  static async create(parametros) {
+    const insert = AulaSchema.schemaInsert.parse(parametros);
 
-  async create(parametros) {
-    const insert = AulaSchemas.schemaInsert.parse(parametros)
-
-
-    const modulo = await AulaRepository.modulo_exist(insert.modulo_id)
+    const modulo = await AulaRepository.modulo_exist(insert.modulo_id);
     if (!modulo) {
       throw new Error("O modulo informado não existe.");
     }
 
-    const AulaCriada = AulaRepository.create(insert)
-    return AulaCriada
-
+    const AulaCriada = await AulaRepository.create(insert);
+    return AulaCriada;
   }
 
-  async deletar(dados) {
-    //service de deletar aula
-  }  
+  static async feito_status(parametros) {
+
+    const parametrosValidados = AulaSchema.feito_status.parse(parametros);
+    
+    const feito = await AulaRepository.buscarFeito(parametrosValidados);
+    
+    if (feito) {
+      throw new Error("A aula já foi assistida.");
+    }
+
+    const AulaCriada = await AulaRepository.feito(parametrosValidados);
+    
+    return AulaCriada;
+  }
+
+  static async deletar(idDoParam) {
+    const IdValidado = AulaSchema.Delet.parse(idDoParam);
+    
+    const filtroDoRepository = AulaRepository.createFilterAula({ id: IdValidado.id });
+    const aulaExists = await AulaRepository.filtrarPorId(filtroDoRepository);
+    
+    if (!aulaExists) {
+      throw new Error("Nenhuma aula encontrada.");
+    };
+    const aulaDeletada = await AulaRepository.delete(aulaExists.id)
+    
+    return aulaDeletada;
+  }
 }
 
-
-export default new AulaService();
+export default AulaService;
