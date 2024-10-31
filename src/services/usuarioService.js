@@ -47,17 +47,6 @@ static async criarUsuario(data) {
   return filtroRepository;
 };
 
-async atualizarUsuario(id, dadosAtualizados) {
-  try {
-      const usuario = await prisma.usuario.update({
-          where: { id: Number(id) },
-          data: dadosAtualizados,
-      });
-      return usuario;
-  } catch (error) {
-      throw new Error("Erro ao atualizar usuário: " + error.message);
-  }
-}
 
 
   static async inserir_csv(arquivo) {
