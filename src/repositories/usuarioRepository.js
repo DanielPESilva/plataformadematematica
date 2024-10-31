@@ -1,4 +1,5 @@
 import {prisma} from "../configs/prismaClient.js";
+import bcrypt from 'bcrypt';
 
 class usuarioRepository {
   
@@ -24,6 +25,27 @@ static async buscarUsuarioPorId(id) {
             active: true,
         },
     });
+};
+
+static async buscarGrupoPorId(id) {
+  return await prisma.grupo.findUnique({
+      where: { id },
+      select: {
+          id: true,
+      },
+  });
+};
+
+static async buscarUsuarioPorMatricula(filtro){
+  return await prisma.usuario.findFirst(filtro)
+}
+
+
+  static async criarUsuario(data) {
+    data.senha = await bcrypt.hash(data.senha, parseInt(process.env.SALT, 10));
+
+return await prisma.usuario.create({data});
+
 }
 
   static async listar_csv() {
@@ -113,7 +135,6 @@ static async buscarUsuarioPorId(id) {
     let filtro = {
       where: {
         ...(parametros.nome && { nome: { contains: parametros.nome } }),
-        ...(parametros.senha && { senha: { contains: parametros.senha } }),
         ...(parametros.matricula != undefined && {
           matricula: parametros.matricula,
         }),

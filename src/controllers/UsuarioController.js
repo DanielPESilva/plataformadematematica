@@ -1,11 +1,11 @@
 import bcrypt from "bcryptjs";
 import env from "dotenv";
-import { prisma } from "../configs/prismaClient.js";
 import { sendError, sendResponse } from '../utils/messages.js';
 import UsuarioService from '../services/usuarioService.js';
 
 
-import { ZodError } from "zod";
+import { boolean, ZodError } from "zod";
+import UsuarioSchema from "../schemas/usuarioSchema.js";
 
 
 env.config(); 
@@ -33,6 +33,41 @@ static buscarPorId = async (req, res) => {
         return sendError(res, 404, err.message);
     }
 };
+
+static criarUsuario = async (req, res) => {
+  try {
+
+    const usuarioData = {
+      ...req.body,
+      matricula: String(req.body.matricula),
+    };
+
+
+    const { nome, matricula, senha, active, grupo_id } = UsuarioSchema.criarUsuario.parse(usuarioData);
+
+    const parametros = {
+      nome: nome,
+      matricula: matricula,
+      senha: senha,
+      active: Boolean(active),
+      grupo_id: parseInt(grupo_id),
+    };
+
+    const usuario = await UsuarioService.criarUsuario(parametros);
+    return sendResponse(res, 201, { data: usuario });
+
+  } catch (error) {
+    console.error(error);
+    if (error instanceof ZodError) {
+      return sendError(res, 400, error.errors[0].message);
+    } else if (error.message === "usuario já existe.") {
+      return sendError(res, 404, ["Não foi possível criar usuário pois o grupo não existe."]);
+    } else {
+      return sendError(res, 500, "Ocorreu um erro interno no servidor!");
+    }
+  }
+};
+
 
 
 
