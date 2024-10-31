@@ -3,6 +3,7 @@ import { describe, expect, it} from '@jest/globals';
 import app from '../../app.js'
 import path from "path";
 import fs from "fs";
+import messages, { sendError, sendResponse } from "../../utils/messages.js";
 import faker from 'faker-br';
 
 let token = null
@@ -20,6 +21,72 @@ describe('Autenticação', () => {
     })
 });
 
+describe('GET /aula - Listar todas as aulas.', () => {
+    it('1- Deve retornar as aulas.', async () => {
+
+        const res = await request(app)
+            .get('/aula')
+            .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(res.status).toBe(200);
+        expect(res.body.code).toBe(200);
+        expect(res.body).toHaveProperty('data');
+        expect(Array.isArray(res.body.data)).toBe(true);
+        expect(res.body.message).toBe("Requisição bem sucedida.");
+        expect(res.body.data.length).toBeGreaterThan(0);
+    });
+    it('2- Deve retornar as aulas filtradas utilizando o titulo ou id do modulo.', async () => {
+
+        const res = await request(app)
+            .get('/aula')
+            .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${token}`)
+            .query({ titulo: 'Aula 1.1' });
+
+        expect(res.status).toBe(200);
+        expect(res.body.code).toBe(200);
+        expect(res.body).toHaveProperty('data');
+        expect(res.body.data[0].titulo).toBe('Aula 1.1')
+        expect(Array.isArray(res.body.data)).toBe(true);
+        expect(res.body.message).toBe("Requisição bem sucedida.");
+        expect(res.body.data.length).toBeGreaterThan(0);
+    });
+    it('3- Deve retornar as aulas filtradas utilizando o id do aluno .', async () => {
+
+        const res = await request(app)
+            .get('/aula')
+            .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${token}`)
+            .query({ aluno_id: 1 });
+
+        expect(res.status).toBe(200);
+        expect(res.body.code).toBe(200);
+        expect(res.body).toHaveProperty('data');
+        expect(res.body.data[0].aluno_id).toBe(1)
+        expect(Array.isArray(res.body.data)).toBe(true);
+        expect(res.body.message).toBe("Requisição bem sucedida.");
+        expect(res.body.data.length).toBeGreaterThan(0);
+    });
+    it('4- Deve retornar erro 404 quando não encontrar uma aula', async () => {
+        const res = await request(app)
+            .get('/aula')
+            .query({ titulo: 'Aula test' }) 
+        expect(res.body.error).toBe(true);
+        expect(res.status).toBe(404);
+        expect(res.body.message).toBe("O recurso solicitado não foi encontrado no servidor.");
+        expect(res.body.errors[0]).toBe("Nenhuma aula encontrada.");
+    });
+    it('5- Deve retornar erro 400 quando houver um bad request', async () => {
+        const res = await request(app)
+            .get('/aula')
+            .query({ aluno_id: "asd" }) 
+        expect(res.body.error).toBe(true);
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe("Requisição com sintaxe incorreta ou outros problemas.");
+        expect(res.body.errors[0].message).toBe("ID do aluno deve ser um número");
+    });
+})
 
 describe.skip('POST /aula - Cria aulas e salva arquivos pdf.', () => {
     const filePath = path.resolve(process.cwd(), './src/test/arquivos/pdf.pdf');

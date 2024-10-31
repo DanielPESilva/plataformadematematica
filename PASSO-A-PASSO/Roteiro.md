@@ -1,7 +1,8 @@
 # Instalação de Dependências
 
 - __(Thalysson)__ Hove um problema na instalação do pacote Sharp no meu computador, na hora de executar o comando `npm run dev`, a versão miníma que o node deve estar é 20.3.0,ou seja, atualize ou mude de versão do node e vá
-na parte de __Sharp Problem__ 
+na parte de __Sharp Problem__;
+
 
 # Comandos do Git
 

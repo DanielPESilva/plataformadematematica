@@ -1,9 +1,8 @@
 import env from "dotenv";
 import AulaService from "../services/AulaService.js";
-import CommonResponse from "../utils/commonResponse.js";
 import path from "path";
 import messages, { sendError, sendResponse } from "../utils/messages.js";
-import { boolean, ZodError } from 'zod';
+import {  ZodError } from 'zod';
 
 env.config();
 
