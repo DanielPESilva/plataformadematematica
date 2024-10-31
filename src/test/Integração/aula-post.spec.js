@@ -13,7 +13,7 @@ describe('Autenticação', () => {
         .post('/login')
         .set("Accept", "aplication/json")
         .send({
-            matricula:12345,
+            matricula:"12345",
             senha:"senhatest"
         })
         token = req.body.data.token

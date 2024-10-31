@@ -55,6 +55,7 @@ static async buscarUsuarioPorId(id) {
     let usuario_existentes = await usuarioRepository.listar_csv();
     const grupo = await usuarioRepository.grupo_alunos();
     const turmas_ids = await usuarioRepository.buscar_turmas();
+    console.log(turmas_ids)
 
     let usuario_csv = [];
     const header = ["nome", "matricula", "senha"];
@@ -65,7 +66,7 @@ static async buscarUsuarioPorId(id) {
         .on("data", (row) => {
           const tupula = {
             nome: row["nome"],
-            matricula: parseInt(row["matricula"]),
+            matricula: row["matricula"],
             senha: row["senha"],
           };
           usuario_csv.push(tupula);
