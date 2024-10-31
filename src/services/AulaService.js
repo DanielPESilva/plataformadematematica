@@ -97,7 +97,7 @@ class AulaService {
     
     const feito = await AulaRepository.buscarFeito(parametrosValidados);
     
-    if (!feito == null || !feito ==undefined) {
+    if (feito) {
       throw new Error("A aula já foi assistida.");
     }
 
