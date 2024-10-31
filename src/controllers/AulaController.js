@@ -151,7 +151,6 @@ class AulaController {
   static buscar_arquivo = async (req, res) => {
     try {
       const fileName = req.params.fileName;
-
       const filePath = path.join(process.cwd(), './uploads/pdf', fileName);
 
       res.sendFile(filePath, (err) => {
