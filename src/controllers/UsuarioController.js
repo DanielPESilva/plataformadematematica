@@ -97,7 +97,28 @@ static atualizar = async (req, res) => {
     }
 }
 
+static deletarUsuario = async (req, res) => {
+  try {
 
+    const id = { id: parseInt(req.params.id) };
+
+    const usuarioDeletado = await UsuarioService.deletarUsuario(id);
+
+    return sendResponse(res,204,messages.httpCodes, {data:usuarioDeletado});
+
+  } catch (err) {
+    console.error(err)
+    if(err instanceof ZodError){
+      return sendError(res,400,err.errors[0].message);
+
+    }else if(err.message == "Nenhum usuario encontrado." ){
+      return sendError(res,404,["Nenhum usuario encontrado"]);
+
+    }else{
+      return sendError(res,500,"Ocorreu um erro interno no servidor!");
+    }
+   }
+};
 
   static inserir_csv = async (req, res) => {
     try {
