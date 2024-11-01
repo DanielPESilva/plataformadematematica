@@ -29,6 +29,12 @@ class UsuarioSchema {
         senha: z.string().trim().min(6).optional(),
         grupo_id: z.number().int().positive("ID deve ser um número positivo").optional(),
     });
+
+
+    static deletarUsuario =z.object({
+        id: z.number().min(1)
+    });
+
 }
 
 export default UsuarioSchema;

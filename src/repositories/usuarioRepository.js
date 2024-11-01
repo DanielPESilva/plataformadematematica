@@ -1,5 +1,7 @@
+import { number } from "zod";
 import {prisma} from "../configs/prismaClient.js";
 import bcrypt from 'bcrypt';
+
 
 class usuarioRepository {
   
@@ -16,6 +18,7 @@ class usuarioRepository {
 }
 
 static async buscarUsuarioPorId(id) {
+  
     return await prisma.usuario.findUnique({
         where: { id:id },
         select: {
@@ -26,6 +29,12 @@ static async buscarUsuarioPorId(id) {
         },
     });
 };
+
+static async deletarUsuarioPorId(){
+    return await prisma.usuario.findUnique
+
+}
+
 
 static async buscarId(id) {
   return await prisma.usuario.findUnique({
@@ -46,6 +55,17 @@ static async buscarGrupoPorId(id) {
       },
   });
 };
+
+
+static async removerDependencias(idAluno) {
+
+  return await prisma.aluno.delete({ where: { id: parseInt(idAluno)} });
+
+}
+
+
+
+
 
 static async buscarUsuarioPorMatricula(filtro){
   return await prisma.usuario.findFirst(filtro)

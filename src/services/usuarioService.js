@@ -47,9 +47,17 @@ static async criarUsuario(data) {
   return filtroRepository;
 };
 
+static async deletarUsuario(id) {
+
+  const UsuarioDeletado = await usuarioRepository.removerDependencias(id);
+  
+  return UsuarioDeletado;
+}
+
+
+
 static async atualizar (parametros){
   const parametrosValidos = UsuarioSchema.atualizarUsuario.parse(parametros);
-  console.log("Aqui", parametrosValidos);
   const { id,nome, matricula, active, senha, grupo_id } = parametrosValidos;
   const usuarioExist = await usuarioRepository.buscarId(id);
 
