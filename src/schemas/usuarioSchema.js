@@ -14,13 +14,21 @@ class UsuarioSchema {
 
 
     static criarUsuario = z.object({
-        nome: z.string().min(1, "O nome é obrigatório"),
-        matricula: z.string().min(9, "A matrícula deve ter pelo menos 9 dígitos"),
+        nome: z.string().min(1),
+        matricula: z.string().min(13),
         active: z.boolean(),
-        senha: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
+        senha: z.string().min(6),
         grupo_id: z.number().int().positive("ID deve ser um numero positivo")
     });
 
+    static atualizarUsuario = z.object({
+        id: z.number().int().positive(),
+        nome: z.string().trim().min(1).max(80).optional(),
+        matricula: z.string().trim().min(13).optional(),
+        active: z.boolean().optional(),
+        senha: z.string().trim().min(6).optional(),
+        grupo_id: z.number().int().positive("ID deve ser um número positivo").optional(),
+    });
 }
 
 export default UsuarioSchema;

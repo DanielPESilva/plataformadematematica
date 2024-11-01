@@ -47,6 +47,43 @@ static async criarUsuario(data) {
   return filtroRepository;
 };
 
+static async atualizar (parametros){
+  const parametrosValidos = UsuarioSchema.atualizarUsuario.parse(parametros);
+  console.log("Aqui", parametrosValidos);
+  const { id,nome, matricula, active, senha, grupo_id } = parametrosValidos;
+  const usuarioExist = await usuarioRepository.buscarId(id);
+
+  if (usuarioExist.matricula){
+    throw new Error("ja existe um usuario com essa matricula")
+  }
+ 
+
+  if(!usuarioExist){
+    throw new Error("O recurso solicitado não foi encontrado no servidor.")
+  }
+
+  const filtro ={
+    where:{ id:id},
+    data:{
+      nome:nome,
+      matricula:matricula,
+      active:active,
+      senha:senha,
+      grupo_id:grupo_id
+    },
+    select:{
+      id:true,
+      nome:true,
+      matricula:true,
+      active:true,
+      senha :true,
+      grupo_id:true
+    }
+  };
+  
+  return await usuarioRepository.atualizarUsuario(filtro);
+}
+
 
   static async inserir_csv(arquivo) {
     if (arquivo.mimetype != "text/csv") {
