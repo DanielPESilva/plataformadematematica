@@ -57,25 +57,10 @@ static async buscarGrupoPorId(id) {
 };
 
 
-static async removerDependencias(Valorid) {
+static async removerDependencias(idAluno) {
 
-// fazer sistema quew valida se existe dados dentro tabela FEITO, se não existe dados vai
-//passando para as tabelas a baixo validando e verificando
+  return await prisma.aluno.delete({ where: { id: parseInt(idAluno)} });
 
-  // return await prisma.feito.delete({ where: { id: parseInt(Valorid)} });
-  return await prisma.aluno.delete({ where: { id: parseInt(Valorid)} });
-
-  // // Deletar todos os alunos relacionados ao usuário usando o nome correto da chave estrangeira
-  // await prisma.aluno.deleteMany({
-
-  // });
-
-  // // Deletar o usuário
-  // await prisma.usuario.delete({
-  //     where: {
-  //         id: usuarioId,
-  //     },
-  // });
 }
 
 
