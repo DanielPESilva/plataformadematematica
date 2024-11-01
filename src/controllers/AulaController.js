@@ -78,8 +78,8 @@ class AulaController {
       if (err instanceof ZodError) {
         return sendError(res, 400, err.errors[0].message);
 
-      } else if (err.message == "O recurso solicitado não foi encontrado no servidor.") {
-        return sendError(res, 404, ["O recurso solicitado não foi encontrado no servidor."]);
+      } else if (err.message == "Nenhuma aula encontrada.") {
+        return sendError(res, 404, ["Nenhuma aula encontrada."]);
 
       } else {
         return sendError(res, 500, "Ocorreu um erro interno no servidor!");

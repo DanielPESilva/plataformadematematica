@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "prisma": "npx prisma db pull",
+    "prisma": "npx prisma db pull && npx prisma generate",
     "test": "jest",
     "test:watch": "jest --watchAll",
     "coverage": "jest --coverage",

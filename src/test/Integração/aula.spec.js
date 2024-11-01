@@ -123,7 +123,64 @@ describe('GET /aula/:id - Listar todas as aulas pelo ID.', () => {
         expect(res.body.message).toBe("Requisição com sintaxe incorreta ou outros problemas.");
         expect(res.body.errors[0].message).toBe("ID informado não é do tipo number");
     });
-})
+});
+
+describe('PATCH /aula/:id - Atualizar uma aula.', () => {
+    it('1- Aula deve ser atualizada e deverá retornar uma respota positiva.', async () => {
+        const updatedData = {
+            titulo: faker.commerce.productName(), 
+            modulo_id: 2,
+            video: faker.internet.url(), 
+            descricao: faker.commerce.productMaterial(), 
+            pdf_questoes: "questoes1.pdf", 
+            pdf_resolucao: "gabarito1.pdf"
+        }
+        const res = await request(app)
+            .patch('/aula/1')
+            .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${token}`)
+            .send(updatedData)
+
+        expect(res.status).toBe(200);
+        expect(res.body.code).toBe(200);
+        expect(res.body.error).toBe(false);
+        expect(res.body).toHaveProperty('data');
+        expect(res.body.message).toBe("Requisição bem sucedida.");
+    });
+    it('2- Deve retornar erro 404 quando não encontrar uma aula', async () => {
+
+        const res = await request(app)
+            .get('/aula/999')
+            .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${token}`)
+
+        expect(res.status).toBe(404);
+        expect(res.body.code).toBe(404);
+        expect(res.body.message).toBe("O recurso solicitado não foi encontrado no servidor.");
+        expect(res.body.errors[0]).toBe("Nenhuma aula encontrada.");
+    });
+    
+    it('3- Deve retornar erro 400 quando houver um bad request', async () => {
+        const updatedData = {
+            titulo: faker.commerce.productName(), 
+            modulo_id: "teste",
+            video: faker.internet.url(), 
+            descricao: faker.commerce.productMaterial(), 
+            pdf_questoes: "questoes1.pdf", 
+            pdf_resolucao: "gabarito1.pdf"
+        }
+        const res = await request(app)
+            .patch('/aula/1')
+            .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${token}`)
+            .send(updatedData)
+
+        expect(res.body.error).toBe(true);
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe("Requisição com sintaxe incorreta ou outros problemas.");
+        expect(res.body.errors[0].message).toBe("ID informado não é do tipo number");
+    });
+});
 
 describe.skip('POST /aula - Cria aulas e salva arquivos pdf.', () => {
     const filePath = path.resolve(process.cwd(), './src/test/arquivos/pdf.pdf');
