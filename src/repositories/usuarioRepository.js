@@ -1,6 +1,7 @@
 import {prisma} from "../configs/prismaClient.js";
 import bcrypt from 'bcrypt';
 
+
 class usuarioRepository {
   
   static async listarUsuarios(filtros) {
@@ -54,9 +55,23 @@ static async buscarGrupoPorId(id) {
   });
 };
 
-static async deletarUsuario(id){
-  return await prisma.usuario.delete(id);
-};
+static async removerDependencias(usuarioId) {
+  // Deletar todos os alunos relacionados ao usuário usando o nome correto da chave estrangeira
+  await prisma.aluno.deleteMany({
+      where: {
+          usuario_id: usuarioId, // Aqui você está passando diretamente o valor do usuarioId
+      },
+  });
+
+  // Deletar o usuário
+  await prisma.usuario.delete({
+      where: {
+          id: usuarioId,
+      },
+  });
+}
+
+
 
 
 

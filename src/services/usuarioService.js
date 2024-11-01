@@ -47,21 +47,12 @@ static async criarUsuario(data) {
   return filtroRepository;
 };
 
-static async deletarUsuario(idDoParam){
-  const IdValidado = UsuarioSchema.deletarUsuario.parse(idDoParam);
+static async deletarUsuario(usuarioId) {
 
-  const filtroDoRepository = usuarioRepository.createFilterUsuario({id: IdValidado.id});
-  const usuExists = await usuarioRepository.deletarUsuarioPorId(filtroDoRepository);
-  console.log(usuExists.id)
-
-  if(!usuExists){
-    throw new Error("Nenhum usuario encontrado");
-  };
-  const usuarioDeletado = await usuarioRepository.deletarUsuario(usuExists.id)
-
-  return usuarioDeletado;
-
+  await usuarioRepository.removerDependencias(usuarioId);
 }
+
+
 
 static async atualizar (parametros){
   const parametrosValidos = UsuarioSchema.atualizarUsuario.parse(parametros);
