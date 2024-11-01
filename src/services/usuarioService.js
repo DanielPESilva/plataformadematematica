@@ -47,9 +47,11 @@ static async criarUsuario(data) {
   return filtroRepository;
 };
 
-static async deletarUsuario(usuarioId) {
+static async deletarUsuario(id) {
 
-  await usuarioRepository.removerDependencias(usuarioId);
+  const UsuarioDeletado = await usuarioRepository.removerDependencias(id);
+  
+  return UsuarioDeletado;
 }
 
 

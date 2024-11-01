@@ -1,3 +1,4 @@
+import { number } from "zod";
 import {prisma} from "../configs/prismaClient.js";
 import bcrypt from 'bcrypt';
 
@@ -55,20 +56,26 @@ static async buscarGrupoPorId(id) {
   });
 };
 
-static async removerDependencias(usuarioId) {
-  // Deletar todos os alunos relacionados ao usuário usando o nome correto da chave estrangeira
-  await prisma.aluno.deleteMany({
-      where: {
-          usuario_id: usuarioId, // Aqui você está passando diretamente o valor do usuarioId
-      },
-  });
 
-  // Deletar o usuário
-  await prisma.usuario.delete({
-      where: {
-          id: usuarioId,
-      },
-  });
+static async removerDependencias(Valorid) {
+
+// fazer sistema quew valida se existe dados dentro tabela FEITO, se não existe dados vai
+//passando para as tabelas a baixo validando e verificando
+
+  // return await prisma.feito.delete({ where: { id: parseInt(Valorid)} });
+  return await prisma.aluno.delete({ where: { id: parseInt(Valorid)} });
+
+  // // Deletar todos os alunos relacionados ao usuário usando o nome correto da chave estrangeira
+  // await prisma.aluno.deleteMany({
+
+  // });
+
+  // // Deletar o usuário
+  // await prisma.usuario.delete({
+  //     where: {
+  //         id: usuarioId,
+  //     },
+  // });
 }
 
 
