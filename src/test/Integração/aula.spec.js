@@ -250,6 +250,67 @@ describe.skip('POST /aula - Cria aulas e salva arquivos pdf.', () => {
     })
 })
 
+describe('POST /aula/status - Coloca o status de feito para uma tarefa de um certo aluno.', () => {
+    
+    it.skip('1- Cria uma nova aula.', async () => {
+        const status = {
+            aluno_id: 2, 
+            aula_id: 3,
+            feito: true, 
+        }
+        const res = await request(app)
+            .post('/aula/status')
+            .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${token}`)
+            .send(status)
+        
+        expect(res.body.error).toEqual(false)
+        expect(res.status).toBe(201)
+        expect(res.body.message).toEqual("Requisição bem sucedida, recurso foi criado")
+        expect(res.body.data).toBeInstanceOf(Object)
+        expect(res.body.data.id).toBeDefined()
+
+    })
+
+    it('2- Gera erro se for uma bad request.', async () => {
+
+        const status = {
+            aluno_id: "abs", 
+            aula_id: 1,
+            feito: true, 
+        }
+        const res = await request(app)
+            .post('/aula/status')
+            .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${token}`)
+            .send(status)
+        
+        expect(res.body.error).toBe(true);
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe("Requisição com sintaxe incorreta ou outros problemas.");
+        expect(res.body.errors[0].message).toBe("ID informado não é do tipo number");
+    })
+
+    it('3-  Deve retornar erro 404 quando não encontrar uma aula.', async () => {
+
+        const status = {
+            aluno_id: 1, 
+            aula_id: 999,
+            feito: true, 
+        }
+            const res = await request(app)
+            .post('/aula/status')
+            .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${token}`)
+            .send(status)
+        
+            expect(res.status).toBe(404);
+            expect(res.body.code).toBe(404);
+            expect(res.body.message).toBe("O recurso solicitado não foi encontrado no servidor.");
+            expect(res.body.errors[0]).toBe("Nenhuma aula encontrada.");
+    })
+})
+
 describe('GET /aula/arquivo/ - busca arquivos.', () => {
     const filePath = path.resolve(process.cwd(), './src/test/arquivos/pdf.pdf');
     const filePathTypeErrado = path.resolve(process.cwd(), './src/test/arquivos/image.png');
@@ -279,7 +340,5 @@ describe('GET /aula/arquivo/ - busca arquivos.', () => {
         expect(res.body.error).toEqual(true)
         expect(res.status).toBe(404)
         expect(res.body.message).toEqual("O recurso solicitado não foi encontrado no servidor.")
-
-
     })
 })
