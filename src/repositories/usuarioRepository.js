@@ -17,7 +17,7 @@ class usuarioRepository {
 
 static async buscarUsuarioPorId(id) {
     return await prisma.usuario.findUnique({
-        where: { id },
+        where: { id:id },
         select: {
             id: true,
             nome: true,
@@ -26,6 +26,17 @@ static async buscarUsuarioPorId(id) {
         },
     });
 };
+
+static async buscarId(id) {
+  return await prisma.usuario.findUnique({
+      where: { id:id }
+  });
+};
+
+static async atualizarUsuario(filtro) {
+  return await prisma.usuario.update(filtro);
+};
+
 
 static async buscarGrupoPorId(id) {
   return await prisma.grupo.findUnique({
