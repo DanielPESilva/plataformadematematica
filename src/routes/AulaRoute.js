@@ -69,6 +69,7 @@ const upload = multer({
 router
     router.get("/aula", AulaController.listarAll)
     router.get("/aula/:id",AulaController.listarPorID)
+    router.patch('/aula/:id',AulaController.atualizar);
     router.post(
         '/aula',
         upload.fields([{ name: 'pdf_questoes' }, { name: 'pdf_resolucao' }]),
@@ -81,7 +82,6 @@ router
         AulaController.inserir
     );
     router.post('/aula/status', AulaController.feito_status)
-    router.patch('/aula/:id',AulaController.atualizar);
     router.delete('/aula/:id', AulaController.deletar)
     router.get('/aula/arquivo/:fileName', AulaController.buscar_arquivo);
 

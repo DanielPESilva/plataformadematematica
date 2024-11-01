@@ -71,13 +71,13 @@ class AulaSchema{
                 message: "ID informado não é positivo",
             }),
             // MODULO_ID
-            modulo_id: z.number({
-                invalid_type_error: "ID do módulo informado não é do tipo number",
+            modulo_id: z.preprocess((val) => Number(val), z.number({
+                invalid_type_error: "ID informado não é do tipo number",
             }).int({
-                message: "ID do módulo informado não é um número inteiro",
+                message: "ID informado não é um número inteiro"
             }).positive({
-                message: "ID do módulo informado não é positivo",
-            }),
+                message: "ID informado não é positivo"
+            })),
             // TITULO
             titulo: z.string({
                 invalid_type_error: "Título precisa ser uma String",

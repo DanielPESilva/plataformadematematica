@@ -1,9 +1,8 @@
 import env from "dotenv";
 import AulaService from "../services/AulaService.js";
-import CommonResponse from "../utils/commonResponse.js";
 import path from "path";
 import messages, { sendError, sendResponse } from "../utils/messages.js";
-import { boolean, ZodError } from 'zod';
+import { ZodError } from 'zod';
 
 env.config();
 
@@ -17,51 +16,50 @@ class AulaController {
    */
   static listarAll = async (req, res) => {
     try {
-      const { titulo, aluno_id, modulo_id } = req.query;     
+      const { titulo, aluno_id, modulo_id } = req.query;
 
       const parametros = {
         titulo: titulo,
         modulo_id: modulo_id ? parseInt(modulo_id) : undefined,
-        aluno_id: aluno_id ? parseInt(aluno_id) : undefined 
-    }
+        aluno_id: aluno_id ? parseInt(aluno_id) : undefined
+      }
 
       const aulaExist = await AulaService.listar(parametros);
 
-      return sendResponse(res,200,{data:aulaExist});
+      return sendResponse(res, 200, { data: aulaExist });
 
     } catch (err) {
-      console.error(err);
-      if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
+      if (err instanceof ZodError) {
+        return sendError(res, 400, err.errors[0].message);
 
-      }else if(err.message == "Nenhuma aula encontrada." ){
-        return sendError(res,404,["Nenhuma aula encontrada."]);
+      } else if (err.message == "Nenhuma aula encontrada.") {
+        return sendError(res, 404, ["Nenhuma aula encontrada."]);
 
-      }else{
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      } else {
+        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
       }
-     }
+    }
   };
-  
+
   static listarPorID = async (req, res) => {
     try {
       const parametros = { id: parseInt(req.params.id) };
       const aulaExists = await AulaService.listarPorID(parametros);
 
       return sendResponse(res, 200, { data: aulaExists });
-    
+
     } catch (err) {
 
-      if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
+      if (err instanceof ZodError) {
+        return sendError(res, 400, err.errors[0].message);
 
-      }else if(err.message == "Nenhuma aula encontrada." ){
-        return sendError(res,404,["Nenhuma aula encontrada."]);
+      } else if (err.message == "Nenhuma aula encontrada.") {
+        return sendError(res, 404, ["Nenhuma aula encontrada."]);
 
-      }else{
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      } else {
+        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
       }
-     }
+    }
   };
 
   static atualizar = async (req, res) => {
@@ -71,58 +69,58 @@ class AulaController {
         id: parseInt(id),
         ...req.body
       }
-      
+
       const aula = await AulaService.atualizar(parametros)
 
-        return sendResponse(res,200, {data:aula});
-  
-      } catch (err) {
-        if(err instanceof ZodError){
-          return sendError(res,400,err.errors[0].message);
+      return sendResponse(res, 200, { data: aula });
 
-        }else if(err.message == "O recurso solicitado não foi encontrado no servidor."){
-          return sendError(res,404,["O recurso solicitado não foi encontrado no servidor."]);
-  
-        }else{
-          return sendError(res,500,"Ocorreu um erro interno no servidor!");
-        }
+    } catch (err) {
+      if (err instanceof ZodError) {
+        return sendError(res, 400, err.errors[0].message);
+
+      } else if (err.message == "Nenhuma aula encontrada.") {
+        return sendError(res, 404, ["Nenhuma aula encontrada."]);
+
+      } else {
+        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
       }
+    }
   }
 
-  static inserir = async(req, res) => {
-    try{
-        const files = req.files;
+  static inserir = async (req, res) => {
+    try {
+      const files = req.files;
 
-        const parametros = {
-          modulo_id: req.body.modulo_id,
-          titulo: req.body.titulo == '' ? undefined : req.body.titulo,
-          video: req.body.video,
-          descricao: req.body.descricao == '' ? undefined : req.body.descricao,
-          pdf_questoes: files.pdf_questoes ? files.pdf_questoes[0].filename : undefined,
-          pdf_resolucao: files.pdf_resolucao ? files.pdf_resolucao[0].filename : undefined
-        };
-      
+      const parametros = {
+        modulo_id: req.body.modulo_id,
+        titulo: req.body.titulo == '' ? undefined : req.body.titulo,
+        video: req.body.video,
+        descricao: req.body.descricao == '' ? undefined : req.body.descricao,
+        pdf_questoes: files.pdf_questoes ? files.pdf_questoes[0].filename : undefined,
+        pdf_resolucao: files.pdf_resolucao ? files.pdf_resolucao[0].filename : undefined
+      };
+
       const questaoCreate = await AulaService.create(parametros)
 
-      return sendResponse(res,201, {data:questaoCreate});
+      return sendResponse(res, 201, { data: questaoCreate });
 
     } catch (err) {
 
-      if(err instanceof ZodError){
-        return sendError(res,400,[err.errors[0].message, err.errors[0].path]);
+      if (err instanceof ZodError) {
+        return sendError(res, 400, [err.errors[0].message, err.errors[0].path]);
 
-      }else if(err.message == "O modulo informado não existe." ){
-        return sendError(res,404,[err.message]);
+      } else if (err.message == "O modulo informado não existe.") {
+        return sendError(res, 404, [err.message]);
 
-      }else {
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      } else {
+        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
       }
     }
   }
 
   static feito_status = async (req, res) => {
     try {
-      const { aluno_id,aula_id, feito  } = req.body
+      const { aluno_id, aula_id, feito } = req.body
       const parametros = {
         aluno_id: parseInt(aluno_id),
         aula_id: parseInt(aula_id),
@@ -131,23 +129,23 @@ class AulaController {
 
       const feitoDone = await AulaService.feito_status(parametros)
 
-      return sendResponse(res,201, {data:feitoDone});
+      return sendResponse(res, 201, { data: feitoDone });
 
     } catch (err) {
 
-      if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
+      if (err instanceof ZodError) {
+        return sendError(res, 400, err.errors[0].message);
 
-      }else if(err.message == "A aula já foi assistida." ){
-        return sendError(res,404,["A aula já foi assistida."]);
+      } else if (err.message == "A aula já foi assistida.") {
+        return sendError(res, 404, ["A aula já foi assistida."]);
 
-      }else{
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      } else {
+        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
       }
-     }
+    }
   };
 
-  
+
   static buscar_arquivo = async (req, res) => {
     try {
       const fileName = req.params.fileName;
@@ -155,36 +153,36 @@ class AulaController {
 
       res.sendFile(filePath, (err) => {
         if (err) {
-          return sendError(res,404,['Arquivo não foi encontrado']);
+          return sendError(res, 404, ['Arquivo não foi encontrado']);
         }
       });
-      
+
     } catch (err) {
-      return sendError(res,500,"Ocorreu um erro interno no servidor!");
-      
+      return sendError(res, 500, "Ocorreu um erro interno no servidor!");
+
     }
   };
   static deletar = async (req, res) => {
     try {
-  
+
       const id = { id: parseInt(req.params.id) };
 
       const aulaDeletada = await AulaService.deletar(id);
-  
-      return sendResponse(res,204,messages.httpCodes, {data:aulaDeletada});
-  
+
+      return sendResponse(res, 204, messages.httpCodes, { data: aulaDeletada });
+
     } catch (err) {
-  
-      if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
-  
-      }else if(err.message == "Nenhuma aula encontrada." ){
-        return sendError(res,404,["Nenhuma aula encontrada."]);
-  
-      }else{
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+
+      if (err instanceof ZodError) {
+        return sendError(res, 400, err.errors[0].message);
+
+      } else if (err.message == "Nenhuma aula encontrada.") {
+        return sendError(res, 404, ["Nenhuma aula encontrada."]);
+
+      } else {
+        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
       }
-     }
+    }
   };
 }
 

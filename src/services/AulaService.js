@@ -52,7 +52,7 @@ class AulaService {
     const aulaExist = await AulaRepository.buscarPorId(id);
 
     if (!aulaExist) {
-      throw new Error("O recurso solicitado não foi encontrado no servidor.");
+      throw new Error("Nenhuma aula encontrada.");
     }
 
     const filtro = {
