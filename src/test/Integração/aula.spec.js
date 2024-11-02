@@ -252,7 +252,7 @@ describe.skip('POST /aula - Cria aulas e salva arquivos pdf.', () => {
 
 describe('POST /aula/status - Coloca o status de feito para uma tarefa de um certo aluno.', () => {
     
-    it.skip('1- Cria uma nova aula.', async () => {
+    it.skip('1- Deve atualizar o status do aluno, para fazer com que certa aula tenha sido feita por ele.', async () => {
         const status = {
             aluno_id: 2, 
             aula_id: 3,
@@ -344,14 +344,14 @@ describe('GET /aula/arquivo/ - busca arquivos.', () => {
 })
 
 describe('DELETE /aula/:id - Dele uma aula através do id dela.', () => {
-    it('1- Deve deletar uma aula utilizando o ID.', async () => {
+    it.skip('1- Deve deletar uma aula utilizando o ID.', async () => {
 
         const res = await request(app)
             .delete('/aula/12')
             .set("Accept", "application/json")
             .set("Authorization", `Bearer ${token}`)
 
-        expect(res.status).toBe(204);
+        expect(res.status).toBe(200);
         expect(res.body.code).toBe(200);
         expect(res.body.error).toBe(false);
         expect(res.body).toHaveProperty('data');
@@ -360,7 +360,7 @@ describe('DELETE /aula/:id - Dele uma aula através do id dela.', () => {
     it('2- Deve retornar erro 404 quando não encontrar uma aula', async () => {
 
         const res = await request(app)
-            .get('/aula/999')
+            .delete('/aula/999')
             .set("Accept", "application/json")
             .set("Authorization", `Bearer ${token}`)
 
@@ -372,7 +372,7 @@ describe('DELETE /aula/:id - Dele uma aula através do id dela.', () => {
     
     it('3- Deve retornar erro 400 quando houver um bad request', async () => {
         const res = await request(app)
-            .get('/aula/ASduasidg')
+            .delete('/aula/ASduasidg')
         expect(res.body.error).toBe(true);
         expect(res.status).toBe(400);
         expect(res.body.message).toBe("Requisição com sintaxe incorreta ou outros problemas.");

@@ -169,7 +169,7 @@ class AulaController {
 
       const aulaDeletada = await AulaService.deletar(id);
 
-      return sendResponse(res, 204, messages.httpCodes, { data: aulaDeletada });
+      return sendResponse(res, 200, { data: aulaDeletada } );
 
     } catch (err) {
 
