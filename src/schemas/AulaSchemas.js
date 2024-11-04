@@ -17,6 +17,8 @@ class AulaSchema{
             }).positive({
                 message: "ID do módulo deve ser um número positivo"
             }).optional().nullable(),
+            page: z.number().min(1),  
+            perPage: z.number().min(1)
         });
     
     static listarPorIdSchema = z.object({
