@@ -57,17 +57,14 @@ const aulaSchema = {
         type: "object",
         example: {
             "error": false,
-            "code": 200,
+            "code": 201,
             "message": "Aula assistida.",
             "errors": [],
             "data": {
               "id": 1,
-              "modulo_id": 1,
-              "titulo": "string",
-              "video": "https://www.youtube.com/watch?v=glcIXLQ7SAI",
-              "pdf_questoes": "597_E-book.pdf",
-              "pdf_resolucao": "45_dados.pdf",
-              "descricao": "string"
+              "aluno_id": 1,
+              "aula_id":4,
+              "feito":true
             }
           }
     },

@@ -394,20 +394,40 @@ const aulaRoutes = {
                         schema: {
                             type: "object",
                             properties: {
-                                aula_id: {
-                                    type: "integer",
-                                    description: "id da aula."
-                                },
                                 aluno_id: {
                                     type: "integer",
                                     description: "Id do aluno."
+                                },
+                                aula_id: {
+                                    type: "integer",
+                                    description: "id da aula."
                                 },
                                 feito: {
                                     type: "boolean",
                                     description: "status da aula."
                                 }
                             },
-                            required: ["aula_id", "aluno_id", "feito"]
+                            required: ["aluno_id", "aula_id", "feito"]
+                        }
+                    },
+                    "application/json": {
+                        schema: {
+                            type: "object",
+                            properties: {
+                                aluno_id: {
+                                    type: "integer",
+                                    description: "Id do aluno."
+                                },
+                                aula_id: {
+                                    type: "integer",
+                                    description: "id da aula."
+                                },
+                                feito: {
+                                    type: "boolean",
+                                    description: "status da aula."
+                                }
+                            },
+                            required: ["aluno_id", "aula_id", "feito"]
                         }
                     }
                 },
@@ -431,7 +451,7 @@ const aulaRoutes = {
                     }                
                 },
                 "404": {
-                    description: "módulo não existe.",
+                    description: "Nenhuma aula encontrada.",
                     content: {
                         $ref: "#/components/schemas/erro404aula"
                     }                

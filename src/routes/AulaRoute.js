@@ -82,7 +82,7 @@ router
         AulaController.inserir
     );
     router.post('/aula/status', AulaController.feito_status)//Falta documentar esse
-    router.delete('/aula/:id', AulaController.deletar)//Falta documentar esse
+    router.delete('/aula/:id', AulaController.deletar)
     router.get('/aula/arquivo/:fileName', AulaController.buscar_arquivo);
 
     export default router;

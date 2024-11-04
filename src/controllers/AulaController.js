@@ -128,7 +128,7 @@ class AulaController {
         aula_id: parseInt(aula_id),
         feito: Boolean(feito),
       };
-
+      
       const feitoDone = await AulaService.feito_status(parametros)
 
       return sendResponse(res, 201, { data: feitoDone });
