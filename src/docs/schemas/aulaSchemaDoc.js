@@ -1,4 +1,76 @@
 const aulaSchema = {
+    getAllAulaRes: {
+        type: "object",
+        example: {
+            "error": false,
+            "code": 200,
+            "message": "Requisição bem sucedida.",
+            "errors": [],
+            "data": {
+              "id": 1,
+              "modulo_id": 1,
+              "titulo": "string",
+              "video": "https://www.youtube.com/watch?v=glcIXLQ7SAI",
+              "pdf_questoes": "597_E-book.pdf",
+              "pdf_resolucao": "45_dados.pdf",
+              "descricao": "string"
+            }
+          }
+    },
+    updateAulaRes: {
+        type: "object",
+        example: {
+            "error": false,
+            "code": 200,
+            "message": "Aula atualizada com sucesso.",
+            "errors": [],
+            "data": {
+              "id": 1,
+              "modulo_id": 1,
+              "titulo": "string",
+              "video": "https://www.youtube.com/watch?v=glcIXLQ7SAI",
+              "pdf_questoes": "597_E-book.pdf",
+              "pdf_resolucao": "45_dados.pdf",
+              "descricao": "string"
+            }
+          }
+    },
+    deleteAulaRes: {
+        type: "object",
+        example: {
+            "error": false,
+            "code": 200,
+            "message": "Aula deletada com sucesso.",
+            "errors": [],
+            "data": {
+              "id": 1,
+              "modulo_id": 1,
+              "titulo": "string",
+              "video": "https://www.youtube.com/watch?v=glcIXLQ7SAI",
+              "pdf_questoes": "597_E-book.pdf",
+              "pdf_resolucao": "45_dados.pdf",
+              "descricao": "string"
+            }
+          }
+    },
+    statusAulaRes: {
+        type: "object",
+        example: {
+            "error": false,
+            "code": 200,
+            "message": "Aula assistida.",
+            "errors": [],
+            "data": {
+              "id": 1,
+              "modulo_id": 1,
+              "titulo": "string",
+              "video": "https://www.youtube.com/watch?v=glcIXLQ7SAI",
+              "pdf_questoes": "597_E-book.pdf",
+              "pdf_resolucao": "45_dados.pdf",
+              "descricao": "string"
+            }
+          }
+    },
     createAulaRes: {
         type: "object",
         example: {
@@ -54,7 +126,7 @@ const aulaSchema = {
                     error: true,
                     code: 404,
                     message: "O recurso solicitado não foi encontrado no servidor.",
-                    errors: ["O modulo informado não existe.", 'Arquivo não foi encontrado'],
+                    errors: ["O modulo informado não existe.", 'Arquivo não foi encontrado','Nenhuma aula encontrada.'],
                     data: []
                 }
             }

@@ -1,7 +1,7 @@
 import env from "dotenv";
 import AulaService from "../services/AulaService.js";
 import path from "path";
-import messages, { sendError, sendResponse } from "../utils/messages.js";
+import { sendError, sendResponse } from "../utils/messages.js";
 import { ZodError } from 'zod';
 
 env.config();
@@ -16,12 +16,14 @@ class AulaController {
    */
   static listarAll = async (req, res) => {
     try {
-      const { titulo, aluno_id, modulo_id } = req.query;
+      const { titulo, aluno_id, modulo_id, page = 1, perPage = 5 } = req.query;
 
       const parametros = {
         titulo: titulo,
         modulo_id: modulo_id ? parseInt(modulo_id) : undefined,
-        aluno_id: aluno_id ? parseInt(aluno_id) : undefined
+        aluno_id: aluno_id ? parseInt(aluno_id) : undefined,
+        page: parseInt(page),
+        perPage: parseInt(perPage)
       }
 
       const aulaExist = await AulaService.listar(parametros);
