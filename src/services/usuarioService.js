@@ -24,6 +24,9 @@ static async buscarUsuarioPorId(id) {
     if (!usuario) {
         throw new Error("Usuário não encontrado.");
     }
+    if (!usuario.id) {
+      throw new Error("Houve um problema ao buscar o usuário. Verifique a sintaxe ou outros problemas.");
+  }
     
     return usuario;
 }
@@ -41,7 +44,7 @@ static async criarUsuario(data) {
   const matriculaExist  = await usuarioRepository.buscarUsuarioPorMatricula(filtro)
     console.log(matriculaExist)
   if (matriculaExist) {
-    throw new Error("usuario já existe.");
+    throw new Error("A matrícula já está em uso");
   }
   const filtroRepository = await usuarioRepository.criarUsuario(validatedData)
   return filtroRepository;
@@ -52,16 +55,15 @@ static async deletarUsuario(id) {
   const UsuarioDeletado = await usuarioRepository.removerDependencias(id);
   
   return UsuarioDeletado;
+  
 }
-
-
 
 static async atualizar (parametros){
   const parametrosValidos = UsuarioSchema.atualizarUsuario.parse(parametros);
   const { id,nome, matricula, active, senha, grupo_id } = parametrosValidos;
   const usuarioExist = await usuarioRepository.buscarId(id);
 
-  if (usuarioExist.matricula){
+  if (!usuarioExist.matricula){
     throw new Error("ja existe um usuario com essa matricula")
   }
  

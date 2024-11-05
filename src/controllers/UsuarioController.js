@@ -19,25 +19,40 @@ class systemUsuarioController {
         return sendResponse(res, 200, { data: usuarios });
     } catch (err) {
       console.log(err)
-        return sendError(res, 400, err.message);
-    }
-};
-
-static buscarPorId = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const usuario = await UsuarioService.buscarUsuarioPorId(parseInt(id));
-        return sendResponse(res, 200, { data: usuario });
-    } catch (err) {
-      console.log(err)
         return sendError(res, 404, err.message);
     }
 };
 
+static buscarPorId = async (req, res) => {
+  try {
+      const id = parseInt(req.params.id);
+
+      // Validação do ID
+      if (isNaN(id)) {
+          return sendError(res, 400, "Requisição com sintaxe incorreta ou outros problemas.");
+      }
+
+      const usuario = await UsuarioService.buscarUsuarioPorId(id);
+
+      return sendResponse(res, 200, { data: usuario });
+
+  } catch (err) {
+      console.error(err);
+      if (err instanceof ZodError) {
+          return sendError(res, 400, err.errors[0].message);
+      } else if (err.message === "Usuário não encontrado.") {
+          return sendError(res, 404, err.message);
+      } else {
+          return sendError(res, 500, "Ocorreu um erro interno no servidor!");
+      }
+  }
+};
+
+
 static criarUsuario = async (req, res) => {
   try {
 
-    console.log("cg")
+  
     const usuarioData = {
       ...req.body,
       matricula: String(req.body.matricula),
@@ -55,47 +70,57 @@ static criarUsuario = async (req, res) => {
     };
 
     const usuario = await UsuarioService.criarUsuario(parametros);
-    return sendResponse(res, 201, { data: usuario });
+    return sendResponse(res, 201, {
+      error: false,
+      message: "Requisição bem sucedida, recurso foi criado",
+      data: usuario,
+    });
 
   } catch (error) {
-    console.error(error);
+    console.error("Erro ao criar usuário:", error); // Log para verificar o erro
+    if (error.message === "grupo não encontrado.") {
+      return sendError(res, 400, "O grupo informado não foi encontrado.");
+    }
     if (error instanceof ZodError) {
-      return sendError(res, 400, error.errors[0].message);
-    } else if (error.message === "usuario já existe.") {
-      return sendError(res, 404, ["usuario já existe."]);
+        return sendError(res, 400, error.errors[0].message);
+    } else if (error.message === "A matrícula já está em uso") {
+        return sendError(res, 400, ["A matrícula já está em uso."]);
+    } else {
+        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
+    }
+}
+};
+
+static atualizar = async (req, res) => {
+  try {
+    let id = req.params.id;
+    let parametros = {
+      id: parseInt(id),
+      ...req.body
+    };
+    
+    const usuario = await UsuarioService.atualizar(parametros);
+
+    return sendResponse(res, 200, { 
+      error: false, 
+      message: "Requisição bem sucedida, recurso foi atualizado", 
+      data: usuario 
+    });
+
+  } catch (err) {
+    console.error(err);
+    if (err instanceof ZodError) {
+      return sendError(res, 400, err.errors[0].message);
+    } else if (err.message === "O recurso solicitado não foi encontrado no servidor.") {
+      return sendError(res, 404, ["O recurso solicitado não foi encontrado no servidor."]);
+    } else if (err.message === "já existe um usuário com essa matrícula") {
+      return sendError(res, 400, ["Já existe um usuário com essa matrícula."]);
     } else {
       return sendError(res, 500, "Ocorreu um erro interno no servidor!");
     }
   }
 };
 
-static atualizar = async (req, res) => {
-  try {
-    let id = req.params.id
-    let parametros = {
-      id: parseInt(id),
-      ...req.body
-    }
-    
-    const usuario = await UsuarioService.atualizar(parametros)
-
-      return sendResponse(res,200, {data:usuario});
-
-    } catch (err) {
-     console.error(err)
-      if(err instanceof ZodError){
-        return sendError(res,400,err.errors[0].message);
-
-      }else if(err.message == "O recurso solicitado não foi encontrado no servidor."){
-        return sendError(res,404,["O recurso solicitado não foi encontrado no servidor."]);
-
-      }else if(err.message == "ja existe um usuario com essa matricula"){
-        return sendError(res,404,["ja existe um usuario com essa matricula"]);
-      }else{
-        return sendError(res,500,"Ocorreu um erro interno no servidor!");
-      }
-    }
-}
 
 // Controller
 static deletarUsuario = async (req, res) => {
