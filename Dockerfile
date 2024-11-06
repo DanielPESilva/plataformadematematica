@@ -3,5 +3,5 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY . .
 RUN npm ci
-RUN npx prisma generate
+RUN npm run prisma
 ENTRYPOINT [ 'node', 'server.js']

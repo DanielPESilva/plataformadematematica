@@ -1,6 +1,8 @@
 # Plataforma Matemática
 # http://edurondon.tplinkdns.com:8031/
 #teste
+
+# Construir os serviços da api no docker-compose
 version: '3.8'
 
 services:
