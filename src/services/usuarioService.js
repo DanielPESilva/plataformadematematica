@@ -32,23 +32,33 @@ static async buscarUsuarioPorId(id) {
 }
 
 static async criarUsuario(data) {
-
+  // Validação dos dados usando o Zod
   const validatedData = UsuarioSchema.criarUsuario.parse(data);
-  const grupoExiste = usuarioRepository.buscarGrupoPorId(validatedData.grupo_id)
 
+  // Verifica se o grupo existe, garantindo que seja assíncrono
+  const grupoExiste = await usuarioRepository.buscarGrupoPorId(validatedData.grupo_id);
   if (!grupoExiste) {
     throw new Error("grupo não encontrado.");
   }
 
-  const filtro = usuarioRepository.createFilterUsuario(validatedData)
-  const matriculaExist  = await usuarioRepository.buscarUsuarioPorMatricula(filtro)
-    console.log(matriculaExist)
+  // Cria o filtro para buscar a matrícula
+  const filtro = usuarioRepository.createFilterUsuario(validatedData);
+
+  // Verifica se a matrícula já está em uso (verificação assíncrona)
+  const matriculaExist = await usuarioRepository.buscarUsuarioPorMatricula(filtro);
+  console.log(matriculaExist);  // Log da consulta para debug
+
+  // Se a matrícula já existe, lança o erro
   if (matriculaExist) {
     throw new Error("A matrícula já está em uso");
   }
-  const filtroRepository = await usuarioRepository.criarUsuario(validatedData)
-  return filtroRepository;
+
+  // Criação do usuário no repositório
+  const usuarioCriado = await usuarioRepository.criarUsuario(validatedData);
+  return usuarioCriado;
 };
+
+
 
 static async deletarUsuario(id) {
 

@@ -3,7 +3,6 @@ import env from "dotenv";
 import messages, { sendError, sendResponse } from "../utils/messages.js";
 import UsuarioService from '../services/usuarioService.js';
 
-
 import { boolean, ZodError } from "zod";
 import UsuarioSchema from "../schemas/usuarioSchema.js";
 
@@ -51,13 +50,10 @@ static buscarPorId = async (req, res) => {
 
 static criarUsuario = async (req, res) => {
   try {
-
-  
     const usuarioData = {
       ...req.body,
       matricula: String(req.body.matricula),
     };
-
 
     const { nome, matricula, senha, active, grupo_id } = UsuarioSchema.criarUsuario.parse(usuarioData);
 
@@ -69,27 +65,32 @@ static criarUsuario = async (req, res) => {
       grupo_id: parseInt(grupo_id),
     };
 
+    // Chama o serviço para criar o usuário
     const usuario = await UsuarioService.criarUsuario(parametros);
+
     return sendResponse(res, 201, {
       error: false,
-      message: "Requisição bem sucedida, recurso foi criado",
+      message: "Requisição bem sucedida",
       data: usuario,
     });
-
   } catch (error) {
-    console.error("Erro ao criar usuário:", error); // Log para verificar o erro
+    console.error(error);
+    
+    if (error.message === "A matrícula já está em uso") {
+      return sendError(res, 400, "A matrícula já está em uso");
+    }
+
     if (error.message === "grupo não encontrado.") {
-      return sendError(res, 400, "O grupo informado não foi encontrado.");
-    }
-    if (error instanceof ZodError) {
-        return sendError(res, 400, error.errors[0].message);
-    } else if (error.message === "A matrícula já está em uso") {
-        return sendError(res, 400, ["A matrícula já está em uso."]);
+      return sendError(res, 404, "O grupo informado não foi encontrado.");
+    } else if (error instanceof ZodError) {
+      return sendError(res, 400, error.errors[0].message);
     } else {
-        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
+      return sendError(res, 500, "Ocorreu um erro interno no servidor!");
     }
-}
+  }
 };
+
+
 
 static atualizar = async (req, res) => {
   try {
