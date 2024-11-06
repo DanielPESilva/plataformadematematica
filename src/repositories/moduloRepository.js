@@ -35,8 +35,6 @@ class ModuloRepository {
     });
   }
 
-
-
   static constructFilters(parametros) {
     let filtro = {
         where: {
