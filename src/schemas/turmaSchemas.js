@@ -1,10 +1,45 @@
 import { z } from 'zod';
 
-export const TurmaSchema = z.object({
-  id: z.number().int().optional(), // Campo auto-incremento, será opcional ao criar uma nova turma
-  titulo: z.string().min(1, 'Título é obrigatório'), // Campo obrigatório, não permite valor vazio
-  usuario_has_turma:z.number().int().optional()
+class TurmaSchema{
+
+  static listarPoIdSchema = z.object({
+    id: z.preprocess((val) => Number(val), z.number({
+        invalid_type_error: "Id informado não é do tipo number.",
+    }).int({
+        message: "Id informado não é um número inteiro."
+    }).positive({
+        message: "Id informado não é positivo."
+    }))
 });
 
-// Esquema para atualizações, permitindo campos parciais
-export const updateTurmaSchema = TurmaSchema.partial();
+static listarSchema = z.object({
+  id: z.preprocess((val) => Number(val), z.number({
+      invalid_type_error: "Id informado não é do tipo number.",
+  }).int({
+      message: "Id informado não é um número inteiro."
+  }).positive({
+      message: "Id informado não é positivo."
+  })).optional(),
+  nome: z.string({
+      invalid_type_error:'O nome informado não é do tipo string.'
+  }).optional(),
+
+});
+
+static atualizarSchema = z.object({
+  id: z.preprocess((val) => Number(val), z.number({
+      invalid_type_error: "Id informado não é do tipo number.",
+  }).int({
+      message: "Id informado não é um número inteiro."
+  }).positive({
+      message: "Id informado não é positivo."
+  })).optional(),
+  nome: z.string({
+      invalid_type_error:'O nome informado não é do tipo string.'
+  }).optional(),
+
+});
+
+}
+
+export default TurmaSchema;

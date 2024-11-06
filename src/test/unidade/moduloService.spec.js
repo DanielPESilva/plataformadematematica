@@ -12,7 +12,7 @@ jest.mock('../../repositories/AulaRepository.js', () => ({
 beforeEach(() => {
     jest.clearAllMocks();
 });
-/*
+
 describe("listarSchema validação", () => {
 const { z } = require('zod');
 const listarSchema = z.object({
@@ -341,7 +341,7 @@ const atualizarSchema = z.object({
         expect(result.success).toBe(false);
         expect(result.error.issues[0].message).toBe("A imagem informada deve ser do tipo string.");
     });
-});*/
+});
 
 describe("deletarSchema", () => {
 const deletarSchema = z.object({
