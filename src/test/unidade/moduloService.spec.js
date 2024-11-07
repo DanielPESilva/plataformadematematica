@@ -1,7 +1,4 @@
 import { describe, expect, test } from '@jest/globals';
-import AulaRepository from '../../repositories/AulaRepository.js';
-import AulaService from '../../services/AulaService.js';
-import faker from 'faker-br';
 import { z } from "zod";
 
 jest.mock('../../repositories/AulaRepository.js', () => ({
