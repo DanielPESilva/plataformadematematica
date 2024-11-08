@@ -14,7 +14,7 @@ const loginSchema = {
                             "id": 1,
                             "nome": "professor",
                             "grupo_id": 2,
-                            "matricula": 12345,
+                            "matricula": "12345",
                             "active": true
                         },
                         "permissoes": [

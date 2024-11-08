@@ -56,6 +56,18 @@ static async buscarGrupoPorId(id) {
   });
 };
 
+//lucas que fez
+static async buscarSenha(id){
+  return await prisma.usuario.findUnique({
+    where: { id:id },
+    select: {
+        id: true,
+        matricula: true,
+        senha:true
+    },
+})
+}
+
 
 static async removerDependencias(idAluno) {
 

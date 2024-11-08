@@ -14,7 +14,6 @@ class loginService {
   static async login(login){
    
     const {matricula, senha} = LoginSchema.login.parse(login);
-    console.log(typeof(matricula))
     const JWT = process.env.PRIVATE_KEY;
 
     const flitros = {
