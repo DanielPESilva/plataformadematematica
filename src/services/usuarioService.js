@@ -100,8 +100,8 @@ static async atualizar (parametros){
 
     const usuarioExist = await usuarioRepository.buscarId(id);
 
-    if (!usuarioExist.matricula){
-      throw new Error("Usuário não existe")
+    if (!usuarioExist){
+      throw new Error("Usuário não existe.")
     }
 
     const usuario = await usuarioRepository.buscarSenha(id);

@@ -13,7 +13,7 @@ class UsuarioSchema {
 
 
     static atualizarSenha = z.object({
-        id: z.number().int().positive(),
+        id: z.coerce.number().int().positive(),
         senhaNova: z.string().min(6),
         senhaAntiga: z.string().min(6)
     });

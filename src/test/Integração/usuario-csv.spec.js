@@ -90,7 +90,7 @@ describe('PETCCH /usuario/senha - Altera a senha do usuário.', () => {
         .patch('/usuario/senha/4')
         .set("Authorization", `Bearer ${token}`)
         .set("Accept", "aplication/json")
-        .query({
+        .send({
             senhaNova: "senhatest",
             senhaAntiga: "senhatest"
         })
@@ -104,7 +104,7 @@ describe('PETCCH /usuario/senha - Altera a senha do usuário.', () => {
         .patch('/usuario/senha/4')
         .set("Authorization", `Bearer ${token}`)
         .set("Accept", "aplication/json")
-        .query({
+        .send({
             senhaNova: "sen",
             senhaAntiga: "senhatest"
         })
@@ -118,7 +118,7 @@ describe('PETCCH /usuario/senha - Altera a senha do usuário.', () => {
         .patch('/usuario/senha/4456565')
         .set("Authorization", `Bearer ${token}`)
         .set("Accept", "aplication/json")
-        .query({
+        .send({
             senhaAntiga:"senhatest",
             senhaNova:"senhatest"
         })
@@ -133,9 +133,9 @@ describe('PETCCH /usuario/senha - Altera a senha do usuário.', () => {
         .patch('/usuario/senha/4')
         .set("Authorization", `Bearer ${token}`)
         .set("Accept", "aplication/json")
-        .query({
+        .send({
             senhaNova: "senhatest",
-            senhaAntiga: "senhatest"
+            senhaAntiga: "senhaincorreta"
         })
         console.log(res.body)
         expect(res.body.error).toEqual(true)
