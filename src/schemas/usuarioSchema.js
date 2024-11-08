@@ -12,6 +12,12 @@ class UsuarioSchema {
     });
 
 
+    static atualizarSenha = z.object({
+        id: z.number().int().positive(),
+        senhaNova: z.string().min(6),
+        senhaAntiga: z.string().min(6)
+    });
+
 
     static criarUsuario = z.object({
         nome: z.string().min(1),

@@ -97,6 +97,33 @@ static atualizar = async (req, res) => {
     }
 }
 
+
+static atualizarSenha = async (req, res) => {
+  try {
+    let id = parseInt(req.params.id)
+    const {senhaNova, senhaAntiga} = req.body
+    
+    const usuario = await UsuarioService.atualizarSenha({id, senhaAntiga, senhaNova })
+
+      return sendResponse(res,201, {data:usuario});
+
+    } catch (err) {
+     console.error(err)
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Usuário não existe"){
+        return sendError(res,404,[err.message]);
+
+      }else if(err.message == "Senha Antiga informada esta incorreta."){
+        return sendError(res,403,[err.message]);
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+    }
+}
+
+
 // Controller
 static deletarUsuario = async (req, res) => {
   try {
