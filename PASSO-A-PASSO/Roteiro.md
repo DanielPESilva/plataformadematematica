@@ -9,6 +9,13 @@ na parte de __Sharp Problem__
 - `git pull --no-commit --no-ff origin branch` Faz pull sem criar um commit automático ou fast-forward;
 - `git config -e --config` COnfigurar o email e o usuário no vscode
 
+# Dockerfile
+
+- `docker build -t plataforma-matematica-img .`;
+- `docker build -t plataforma-matematica-img .`;
+- `docker images`;
+- `docker run -d -p 8080:8080 --name plantaforma-matematica-cont plataforma-matematica-img`
+
 # Comandos Diversos
 
 - `sudo kill -9 $(sudo lsof -t -i:3051)` &rarr; Derruba uma porta

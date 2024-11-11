@@ -1,6 +1,4 @@
 # Plataforma Matemática
-# http://edurondon.tplinkdns.com:8031/
-#teste
 
 # Construir os serviços da api no docker-compose
 version: '3.8'
@@ -11,8 +9,25 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       SECRET_KEY: ${SECRET_KEY}
       PORT: 3000
       DATABASE_URL: ${DATABASE_URL}
     ports:
       - "3000:3000"
+    depends_on:
+      - db
+    volumes:
+      - .:/usr/src/app
+    command: npm run dev
+
+  db:
+    image: mysql:latest
+    restart: always
+    volumes:
+      - vol-db:/var/lib/mysql
+
+volumes:
+  vol-db:
+
+
