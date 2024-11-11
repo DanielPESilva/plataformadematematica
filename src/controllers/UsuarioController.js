@@ -102,12 +102,18 @@ static criarUsuario = async (req, res) => {
 
 static atualizar = async (req, res) => {
   try {
-    let id = req.params.id;
+    let id = parseInt(req.params.id);
+
+    // Validação do ID
+    if (isNaN(id)) {
+      return sendError(res, 400, "Requisição com sintaxe incorreta ou outros problemas.");
+    }
+
     let parametros = {
-      id: parseInt(id),
+      id: id,
       ...req.body
     };
-    
+
     const usuario = await UsuarioService.atualizar(parametros);
 
     return sendResponse(res, 200, { 
@@ -129,6 +135,7 @@ static atualizar = async (req, res) => {
     }
   }
 };
+
 
 
 // Controller

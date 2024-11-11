@@ -129,25 +129,30 @@ describe('create usuários', () => {
 //nao funciona
 describe('PATCH /usuario - Atualizar usuário', () => {
     it("1-Deve atualizar os dados de um usuário.", async () => {
-        const res = await request(app)
-            .patch(`/usuario/${usuarioCriado}`)
-            .set("Authorization", `Bearer ${token}`)
-            .set("Accept", "application/json")
-            .send({
-                nome: faker.name.findName(),
-                grupo_id: 1,
-                active: false 
-            });
-
-        // Certifique-se que a resposta está conforme esperado
-        expect(res.body.error).toEqual(false);
-        expect(res.status).toBe(200);
-        expect(res.body.message).toEqual("Requisição bem sucedida, recurso foi atualizado");
-        expect(res.body.data).toBeInstanceOf(Object);
-        expect(res.body.data.id).toBeDefined();
-        expect(res.body.data.nome).toBeDefined();
-        expect(res.body.data.active).toEqual(false);
+      const res = await request(app)
+        .patch(`/usuario/${usuarioCriado}`) // Verifique se `usuarioCriado` é um número válido
+        .set("Authorization", `Bearer ${token}`)
+        .set("Accept", "application/json")
+        .send({
+          nome: "Salvio",
+          grupo_id: 1,
+          active: false ,
+          "matricula": "1234567891012"
+        });
+  
+      // Verificando a resposta da API
+      console.log(res.body);
+  
+      expect(res.body.error).toEqual(false);
+      expect(res.status).toBe(200);
+      expect(res.body.message).toEqual("Requisição bem sucedida, recurso foi atualizado");
+      expect(res.body.data).toBeInstanceOf(Object);
+      expect(res.body.data.id).toBeDefined();
+      expect(res.body.data.nome).toBeDefined();
+      expect(res.body.data.active).toEqual(false);
     });
+  
+   
     {/*
 //nao funciona
     it("2-Deve retornar um erro caso o usuário não exista.", async () => {
