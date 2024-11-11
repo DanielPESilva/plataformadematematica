@@ -14,13 +14,21 @@ class systemUsuarioController {
   static listar = async (req, res) => {
     try {
         const filtros = req.query;
+
         const usuarios = await UsuarioService.listarUsuarios(filtros);
         return sendResponse(res, 200, { data: usuarios });
     } catch (err) {
-      console.log(err)
-        return sendError(res, 404, err.message);
+        console.error(err);
+
+        if (err instanceof ZodError) {
+
+            return sendError(res, 400, err.errors[0].message);
+        } else {
+            return sendError(res, 500, "Ocorreu um erro interno no servidor!");
+        }
     }
 };
+
 
 static buscarPorId = async (req, res) => {
   try {

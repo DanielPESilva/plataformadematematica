@@ -123,47 +123,6 @@ return await prisma.usuario.create({data});
     });
   }
 
-  async findByMatricula(matricula) {
-    const filtros = this.constructFilters();
-    const user = await prisma.usuario.findUnique({
-      where: { matricula },
-      select: filtros.select,
-    });
-    return user;
-  }
-
-  async findByEmail(email) {
-    const filtros = this.constructFilters();
-    const user = await prisma.usuario.findUnique({
-      where: { email },
-      select: filtros.select,
-    });
-    return user;
-  }
-
-  async findById(id) {
-    const filtros = this.constructFilters();
-    const user = await prisma.usuario.findUnique({
-      where: { id },
-      select: filtros.select,
-    });
-    return user;
-  }
-
-  async findAll(filtros, page, perPage) {
-    const skip = (page - 1) * perPage;
-    const take = perPage;
-
-    const [users, total] = await Promise.all([
-      prisma.usuario.findMany({
-        ...filtros,
-        skip,
-        take,
-      }),
-      prisma.usuario.count({ where: filtros.where }),
-    ]);
-    return { users, total, page, perPage };
-  }
   static createFilterUsuario(parametros) {
     let filtro = {
       where: {

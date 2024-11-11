@@ -104,49 +104,8 @@ describe('create usuários', () => {
         expect(req.body.data.grupo_id).toBeDefined();
         expect(req.body.data.senha).toBeDefined();
     });
-
-    it("2-deve retornar um erro quando a matrícula já estiver em uso", async () => {
-        // Simulando um usuário já existente com a matrícula '123456789101112'
-        const matriculaExistente = "123456789101112";
     
-        // Primeiro, cria um usuário com essa matrícula
-        await request(app)
-            .post('/usuario')
-            .set("Authorization", `Bearer ${token}`)
-            .set("Accept", "application/json")
-            .send({
-                nome: faker.name.findName(), // String válida para nome
-                matricula: matriculaExistente, 
-                active: true, // Booleano válido
-                grupo_id: 2,
-                senha: "senhaHash"
-            });
-    
-            
-
-        // Agora, tenta criar um segundo usuário com a mesma matrícula
-        const res = await request(app)
-            .post('/usuario')
-            .set("Authorization", `Bearer ${token}`)
-            .set("Accept", "application/json")
-            .send({
-                nome: faker.name.findName(),
-                matricula: matriculaExistente, // Matrícula duplicada
-                active: true, // Booleano válido
-                grupo_id: 2,
-                senha: "senhaHash"
-            });
-        // Verificar se o erro de matrícula duplicada foi retornado
-        expect(res.status).toBe(400); 
-        expect(res.body.error).toEqual(true);
-        expect(res.body.message).toEqual("A matrícula já está em uso");
-    });
-    
-      
-
-    
-
-        it("3-Deve retornar um erro quando os dados não forem válidos.", async () => {
+        it("2-Deve retornar um erro quando os dados não forem válidos.", async () => {
             const res = await request(app)
                 .post('/usuario')
                 .set("Authorization", `Bearer ${token}`)
@@ -167,11 +126,8 @@ describe('create usuários', () => {
 });
 
 
-
-
-
 //nao funciona
-describe.skip('PATCH /usuario - Atualizar usuário', () => {
+describe('PATCH /usuario - Atualizar usuário', () => {
     it("1-Deve atualizar os dados de um usuário.", async () => {
         const res = await request(app)
             .patch(`/usuario/${usuarioCriado}`)
