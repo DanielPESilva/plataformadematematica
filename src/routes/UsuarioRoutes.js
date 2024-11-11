@@ -24,6 +24,7 @@ router
   .post("/usuario", systemUsuarioController.criarUsuario)
   .post("/usuario/csv", upload.single('file-csv'), systemUsuarioController.inserir_csv)
   .patch("/usuario/:id", systemUsuarioController.atualizar)
+  .patch("/usuario/senha/:id", systemUsuarioController.atualizarSenha)
   .delete("/usuario/:id", systemUsuarioController.deletarUsuario);
 
  

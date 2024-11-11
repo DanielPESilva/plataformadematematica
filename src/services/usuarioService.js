@@ -93,6 +93,38 @@ static async atualizar (parametros){
 }
 
 
+  static async atualizarSenha (parametros){
+    const parametrosValidos = UsuarioSchema.atualizarSenha.parse(parametros);
+
+    const { id, senhaAntiga, senhaNova } = parametrosValidos;
+
+    const usuarioExist = await usuarioRepository.buscarId(id);
+
+    if (!usuarioExist){
+      throw new Error("Usuário não existe.")
+    }
+
+    const usuario = await usuarioRepository.buscarSenha(id);
+    
+    const senhaValida = await bcrypt.compare(senhaAntiga, usuario.senha);
+
+    if(!senhaValida){
+      throw new Error("Senha Antiga informada está incorreta.")
+    }
+
+    const senhaHashed = await bcrypt.hash(senhaNova, parseInt(process.env.SALT));
+
+    const filtro ={
+      where:{ id:id},
+      data:{  
+        senha:senhaHashed,
+      }
+    };
+  
+    return await usuarioRepository.atualizarUsuario(filtro);
+  }
+
+
   static async inserir_csv(arquivo) {
     if (arquivo.mimetype != "text/csv") {
       throw new Error("Arquivo do tipo errado.");
