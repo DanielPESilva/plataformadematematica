@@ -30,10 +30,6 @@ static async buscarUsuarioPorId(id) {
     });
 };
 
-static async deletarUsuarioPorId(){
-    return await prisma.usuario.findUnique
-
-}
 
 
 static async buscarId(id) {
@@ -69,19 +65,22 @@ static async buscarSenha(id){
 }
 
 
-static async removerDependencias(idAluno) {
-
-  return await prisma.aluno.delete({ where: { id: parseInt(idAluno)} });
-
+static async buscarUsuarioPorMatricula(matricula) {
+  return await prisma.usuario.findFirst({
+    where: {
+      matricula: matricula
+    },
+    select: {
+      id: true,
+      nome: true,
+      senha: true,
+      matricula: true,
+      active: true
+    }
+  });
 }
 
 
-
-
-
-static async buscarUsuarioPorMatricula(filtro){
-  return await prisma.usuario.findFirst(filtro)
-}
 
 
   static async criarUsuario(data) {
@@ -135,47 +134,6 @@ return await prisma.usuario.create({data});
     });
   }
 
-  async findByMatricula(matricula) {
-    const filtros = this.constructFilters();
-    const user = await prisma.usuario.findUnique({
-      where: { matricula },
-      select: filtros.select,
-    });
-    return user;
-  }
-
-  async findByEmail(email) {
-    const filtros = this.constructFilters();
-    const user = await prisma.usuario.findUnique({
-      where: { email },
-      select: filtros.select,
-    });
-    return user;
-  }
-
-  async findById(id) {
-    const filtros = this.constructFilters();
-    const user = await prisma.usuario.findUnique({
-      where: { id },
-      select: filtros.select,
-    });
-    return user;
-  }
-
-  async findAll(filtros, page, perPage) {
-    const skip = (page - 1) * perPage;
-    const take = perPage;
-
-    const [users, total] = await Promise.all([
-      prisma.usuario.findMany({
-        ...filtros,
-        skip,
-        take,
-      }),
-      prisma.usuario.count({ where: filtros.where }),
-    ]);
-    return { users, total, page, perPage };
-  }
   static createFilterUsuario(parametros) {
     let filtro = {
       where: {

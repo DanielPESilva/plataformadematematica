@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import usuarioRepository from "../repositories/usuarioRepository.js";
 import UsuarioSchema from "../schemas/usuarioSchema.js";
 import Stream from "stream";
@@ -5,7 +6,6 @@ import csvParser from "csv-parser";
 import bcrypt from "bcryptjs";
 import dotenv from 'dotenv';
 import CSVFileValidator from 'csv-file-validator'
-import 'dotenv/config'
 
 dotenv.config();
 
@@ -17,13 +17,17 @@ class UsuarioService {
     return await usuarioRepository.listarUsuarios(validFiltros);
 }
 
-static async buscarUsuarioPorId(id) {
-    UsuarioSchema.buscarUsuarioPorId.parse({ id });
+static async buscarUsuarioPorId(filtro) {
+  const {id} = UsuarioSchema.buscarUsuarioPorId.parse(filtro)
+    // UsuarioSchema.buscarUsuarioPorId.parse({ });
     const usuario = await usuarioRepository.buscarUsuarioPorId(id);
     
     if (!usuario) {
         throw new Error("Usuário não encontrado.");
     }
+    if (!usuario.id) {
+      throw new Error("Houve um problema ao buscar o usuário. Verifique a sintaxe ou outros problemas.");
+  }
     
     return usuario;
 }
@@ -31,67 +35,68 @@ static async buscarUsuarioPorId(id) {
 static async criarUsuario(data) {
 
   const validatedData = UsuarioSchema.criarUsuario.parse(data);
-  const grupoExiste = usuarioRepository.buscarGrupoPorId(validatedData.grupo_id)
 
+
+  const grupoExiste = await usuarioRepository.buscarGrupoPorId(validatedData.grupo_id);
   if (!grupoExiste) {
     throw new Error("grupo não encontrado.");
   }
 
-  const filtro = usuarioRepository.createFilterUsuario(validatedData)
-  const matriculaExist  = await usuarioRepository.buscarUsuarioPorMatricula(filtro)
-    console.log(matriculaExist)
+  const matriculaExist = await usuarioRepository.buscarUsuarioPorMatricula(validatedData.matricula);
+  console.log(matriculaExist);
+
   if (matriculaExist) {
-    throw new Error("usuario já existe.");
+    throw new Error("A matrícula já está em uso");
   }
   const filtroRepository = await usuarioRepository.criarUsuario(validatedData)
   return filtroRepository;
 };
 
-static async deletarUsuario(id) {
-
-  const UsuarioDeletado = await usuarioRepository.removerDependencias(id);
-  
-  return UsuarioDeletado;
-}
 
 
 
 static async atualizar (parametros){
   const parametrosValidos = UsuarioSchema.atualizarUsuario.parse(parametros);
-  const { id,nome, matricula, active, senha, grupo_id } = parametrosValidos;
+  const { id, nome, matricula, active, senha, grupo_id } = parametrosValidos;
+
+
   const usuarioExist = await usuarioRepository.buscarId(id);
 
-  if (usuarioExist.matricula){
-    throw new Error("ja existe um usuario com essa matricula")
-  }
- 
 
-  if(!usuarioExist){
-    throw new Error("O recurso solicitado não foi encontrado no servidor.")
+  if (!usuarioExist) {
+    throw new Error("O recurso solicitado não foi encontrado no servidor.");
   }
 
-  const filtro ={
-    where:{ id:id},
-    data:{
-      nome:nome,
-      matricula:matricula,
-      active:active,
-      senha:senha,
-      grupo_id:grupo_id
+  const usuarioComMesmaMatricula = await usuarioRepository.buscarUsuarioPorMatricula(matricula);
+
+
+  if (usuarioComMesmaMatricula && usuarioComMesmaMatricula.id !== id) {
+    throw new Error("já existe um usuário com essa matrícula");
+  }
+
+  const filtro = {
+    where: { id: id },
+    data: {
+      nome: nome,
+      matricula: matricula,
+      active: active,
+      senha: senha,
+      grupo_id: grupo_id,
     },
-    select:{
-      id:true,
-      nome:true,
-      matricula:true,
-      active:true,
-      senha :true,
-      grupo_id:true
-    }
+    select: {
+      id: true,
+      nome: true,
+      matricula: true,
+      active: true,
+      senha: true,
+      grupo_id: true,
+    },
   };
-  
-  return await usuarioRepository.atualizarUsuario(filtro);
-}
 
+  const usuarioAtualizado = await usuarioRepository.atualizarUsuario(filtro);
+ 
+  return usuarioAtualizado;
+}
 
   static async atualizarSenha (parametros){
     const parametrosValidos = UsuarioSchema.atualizarSenha.parse(parametros);

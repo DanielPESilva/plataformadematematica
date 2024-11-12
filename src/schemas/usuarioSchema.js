@@ -9,13 +9,12 @@ class UsuarioSchema {
 
     static buscarUsuarioPorId = z.object({
         id: z.number().int().positive("ID deve ser um número positivo."),
-    });
-
-
-    static atualizarSenha = z.object({
-        id: z.coerce.number().int().positive(),
-        senhaNova: z.string().min(6),
-        senhaAntiga: z.string().min(6)
+        id: z.preprocess((val)=>{
+            if(parseInt(val)){
+                return parseInt(val)
+            }
+            return null
+        }, z.number().positive())
     });
 
 
@@ -34,11 +33,6 @@ class UsuarioSchema {
         active: z.boolean().optional(),
         senha: z.string().trim().min(6).optional(),
         grupo_id: z.number().int().positive("ID deve ser um número positivo").optional(),
-    });
-
-
-    static deletarUsuario =z.object({
-        id: z.number().min(1)
     });
 
 }
