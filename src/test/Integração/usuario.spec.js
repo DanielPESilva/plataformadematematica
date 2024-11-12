@@ -6,6 +6,7 @@ import fs from "fs";
 import faker from 'faker-br';
 import exp from "constants";
 import { array, object } from "zod";
+import { console } from "inspector";
 
 let token = null;
 let usuarioCriado = null;
@@ -80,31 +81,33 @@ describe('GET /usuario - Listar usuários por ID', () => {
 });
 
 
-describe('create usuários', () => {
-    it("1-deve retornar um usuario.", async () => {
-        const req = await request(app)
-            .post('/usuario')
-            .set("Authorization", `Bearer ${token}`)
-            .set("Accept", "application/json")
-            .send({
-                nome: "professor",
-                matricula: Date.now().toString(), 
-                active: true,
-                grupo_id: 2,
-                senha: "senhaHash"
-            });
-        
-        expect(req.body.error).toEqual(false);
-        expect(req.status).toBe(201);
-        expect(req.body.message).toEqual("Requisição bem sucedida");
-        expect(req.body.data).toBeInstanceOf(Object);
-        expect(req.body.data.id).toBeDefined();
-        expect(req.body.data.nome).toBeDefined();
-        expect(req.body.data.matricula).toBeDefined();
-        expect(req.body.data.grupo_id).toBeDefined();
-        expect(req.body.data.senha).toBeDefined();
-    });
-    
+it("1-deve retornar um usuario.", async () => {
+    const req = await request(app)
+      .post('/usuario')
+      .set("Authorization", `Bearer ${token}`)
+      .set("Accept", "application/json")
+      .send({
+        nome: "professor",
+        matricula: Date.now().toString(),  // Gera uma matrícula única
+        active: true,
+        grupo_id: 2,
+        senha: "senhaHash"  // Esta senha será processada antes de ser armazenada
+      });
+  
+    console.log(req.body);
+  
+    expect(req.body.error).toEqual(false);
+    expect(req.status).toBe(201);
+    expect(req.body.message).toEqual("Requisição bem sucedida");
+    expect(req.body.data).toBeInstanceOf(Object);
+    expect(req.body.data.id).toBeDefined();
+    expect(req.body.data.nome).toBeDefined();
+    expect(req.body.data.matricula).toBeDefined();
+    expect(req.body.data.grupo_id).toBeDefined();
+    expect(req.body.data.senha).toBeDefined();
+
+});
+
         it("2-Deve retornar um erro quando os dados não forem válidos.", async () => {
             const res = await request(app)
                 .post('/usuario')
@@ -123,7 +126,6 @@ describe('create usuários', () => {
             expect(res.body.message).toEqual("Requisição com sintaxe incorreta ou outros problemas.");
         });
     
-});
 
 
 //nao funciona
@@ -192,7 +194,7 @@ describe('PATCH /usuario - Atualizar usuário', () => {
     });
 
 
-describe.skip('DELETE /usuario - Deletar usuário', () => {
+describe('DELETE /usuario - Deletar usuário', () => {
     it("1-Deve deletar um usuário.", async () => {
         const res = await request(app)
             .delete(`/usuario/${usuarioCriado}`)

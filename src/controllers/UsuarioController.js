@@ -50,6 +50,8 @@ static buscarPorId = async (req, res) => {
 };
 
 
+// UsuarioController.js
+
 static criarUsuario = async (req, res) => {
   try {
     const usuarioData = {
@@ -57,6 +59,7 @@ static criarUsuario = async (req, res) => {
       matricula: String(req.body.matricula),
     };
 
+    // Valida os dados usando o schema
     const { nome, matricula, senha, active, grupo_id } = UsuarioSchema.criarUsuario.parse(usuarioData);
 
     const parametros = {
@@ -67,6 +70,7 @@ static criarUsuario = async (req, res) => {
       grupo_id: parseInt(grupo_id),
     };
 
+    // Chama o serviço para criar o usuário
     const usuario = await UsuarioService.criarUsuario(parametros);
 
     return sendResponse(res, 201, {
@@ -76,7 +80,8 @@ static criarUsuario = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    
+
+    // Tratamento específico dos erros
     if (error.message === "A matrícula já está em uso") {
       return sendError(res, 400, "A matrícula já está em uso");
     }
@@ -90,6 +95,7 @@ static criarUsuario = async (req, res) => {
     }
   }
 };
+
 
 
 

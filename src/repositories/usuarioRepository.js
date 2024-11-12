@@ -65,21 +65,21 @@ static async buscarGrupoPorId(id) {
 };
 
 
-// static async removerDependencias(idAluno) {
-
-//   return await prisma.aluno.delete({ where: { id: parseInt(idAluno)} });
-
-// }
-
-
-
-
-
-static async buscarUsuarioPorMatricula(matricula){
+static async buscarUsuarioPorMatricula(matricula) {
   return await prisma.usuario.findFirst({
-    where: { matricula: matricula }
+    where: {
+      matricula: matricula
+    },
+    select: {
+      id: true,
+      nome: true,
+      senha: true,
+      matricula: true,
+      active: true
+    }
   });
 }
+
 
 
 
