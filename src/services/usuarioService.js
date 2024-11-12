@@ -60,14 +60,12 @@ static async criarUsuario(data) {
 
 
 static async deletarUsuario(filtro) {
-  
-  const { id } = UsuarioSchema.deletarUsuario.parse(filtro)
+  const { id } = UsuarioSchema.deletarUsuario.parse(filtro);
 
-  const UsuarioDeletado = await usuarioRepository.deletarUsuarioPorId(id);
-  
-  return UsuarioDeletado;
-  
+  const usuarioDeletado = await usuarioRepository.deletarUsuarioPorId(id);
+  return usuarioDeletado;
 }
+  
 
 static async atualizar(parametros) {
 
@@ -110,18 +108,11 @@ static async atualizar(parametros) {
     },
   };
 
-  console.log("Filtro de atualização:", filtro);  // Log para verificar o filtro de atualização
-
   // Atualiza o usuário no repositório e retorna o resultado
   const usuarioAtualizado = await usuarioRepository.atualizarUsuario(filtro);
-  console.log("Usuário atualizado:", usuarioAtualizado); // Log para verificar o usuário atualizado
-
+ 
   return usuarioAtualizado;
 }
-
-
-
-
 
   static async inserir_csv(arquivo) {
     if (arquivo.mimetype != "text/csv") {

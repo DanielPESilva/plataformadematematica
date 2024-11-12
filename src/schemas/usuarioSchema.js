@@ -16,15 +16,18 @@ class UsuarioSchema {
             return null
         }, z.number().positive())
     });
-    static deletarUsuario =z.object({
-        id: z.preprocess((val)=>{
-            if(parseInt(val)){
-                return parseInt(val)
-            }
-            return null
-        }, z.number().positive())
-    });
-
+// Ajuste o schema se necessário
+static deletarUsuario = z.object({
+    id: z.preprocess((val) => {
+      if (parseInt(val)) {
+        return parseInt(val);
+      }
+      return null;
+    }, z.number().positive()),
+    active: z.boolean(), // Certifique-se de que o active é aceito como booleano
+  });
+  
+  
 
 
     static criarUsuario = z.object({
