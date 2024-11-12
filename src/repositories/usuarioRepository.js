@@ -30,8 +30,16 @@ static async buscarUsuarioPorId(id) {
     });
 };
 
-static async deletarUsuarioPorId(){
-    return await prisma.usuario.findUnique
+static async deletarUsuarioPorId(id){
+    return await prisma.usuario.update(
+      {
+        where:{ id:id},
+        data: {
+          active: false
+        }
+      }
+      
+    );
 
 }
 
@@ -57,19 +65,22 @@ static async buscarGrupoPorId(id) {
 };
 
 
-static async removerDependencias(idAluno) {
+// static async removerDependencias(idAluno) {
 
-  return await prisma.aluno.delete({ where: { id: parseInt(idAluno)} });
+//   return await prisma.aluno.delete({ where: { id: parseInt(idAluno)} });
 
+// }
+
+
+
+
+
+static async buscarUsuarioPorMatricula(matricula){
+  return await prisma.usuario.findFirst({
+    where: { matricula: matricula }
+  });
 }
 
-
-
-
-
-static async buscarUsuarioPorMatricula(filtro){
-  return await prisma.usuario.findFirst(filtro)
-}
 
 
   static async criarUsuario(data) {

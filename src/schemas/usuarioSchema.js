@@ -9,6 +9,20 @@ class UsuarioSchema {
 
     static buscarUsuarioPorId = z.object({
         id: z.number().int().positive("ID deve ser um número positivo."),
+        id: z.preprocess((val)=>{
+            if(parseInt(val)){
+                return parseInt(val)
+            }
+            return null
+        }, z.number().positive())
+    });
+    static deletarUsuario =z.object({
+        id: z.preprocess((val)=>{
+            if(parseInt(val)){
+                return parseInt(val)
+            }
+            return null
+        }, z.number().positive())
     });
 
 
@@ -31,9 +45,6 @@ class UsuarioSchema {
     });
 
 
-    static deletarUsuario =z.object({
-        id: z.number().min(1)
-    });
 
 }
 

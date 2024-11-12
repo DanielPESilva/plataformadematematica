@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import usuarioRepository from "../repositories/usuarioRepository.js";
 import UsuarioSchema from "../schemas/usuarioSchema.js";
 import Stream from "stream";
@@ -5,7 +6,6 @@ import csvParser from "csv-parser";
 import bcrypt from "bcryptjs";
 import dotenv from 'dotenv';
 import CSVFileValidator from 'csv-file-validator'
-import 'dotenv/config'
 
 dotenv.config();
 
@@ -17,8 +17,9 @@ class UsuarioService {
     return await usuarioRepository.listarUsuarios(validFiltros);
 }
 
-static async buscarUsuarioPorId(id) {
-    UsuarioSchema.buscarUsuarioPorId.parse({ id });
+static async buscarUsuarioPorId(filtro) {
+  const {id} = UsuarioSchema.buscarUsuarioPorId.parse(filtro)
+    // UsuarioSchema.buscarUsuarioPorId.parse({ });
     const usuario = await usuarioRepository.buscarUsuarioPorId(id);
     
     if (!usuario) {
@@ -60,49 +61,70 @@ static async criarUsuario(data) {
 
 
 
-static async deletarUsuario(id) {
+static async deletarUsuario(filtro) {
+  
+  const { id } = UsuarioSchema.deletarUsuario.parse(filtro)
 
-  const UsuarioDeletado = await usuarioRepository.removerDependencias(id);
+  const UsuarioDeletado = await usuarioRepository.deletarUsuarioPorId(id);
   
   return UsuarioDeletado;
   
 }
 
-static async atualizar (parametros){
+static async atualizar(parametros) {
+
   const parametrosValidos = UsuarioSchema.atualizarUsuario.parse(parametros);
-  const { id,nome, matricula, active, senha, grupo_id } = parametrosValidos;
+  const { id, nome, matricula, active, senha, grupo_id } = parametrosValidos;
+
+
+
+
   const usuarioExist = await usuarioRepository.buscarId(id);
 
-  if (!usuarioExist.matricula){
-    throw new Error("ja existe um usuario com essa matricula")
-  }
- 
 
-  if(!usuarioExist){
-    throw new Error("O recurso solicitado não foi encontrado no servidor.")
+  if (!usuarioExist) {
+    throw new Error("O recurso solicitado não foi encontrado no servidor.");
   }
 
-  const filtro ={
-    where:{ id:id},
-    data:{
-      nome:nome,
-      matricula:matricula,
-      active:active,
-      senha:senha,
-      grupo_id:grupo_id
+  // Verifica se a matrícula fornecida já está em uso por outro usuário
+  const usuarioComMesmaMatricula = await usuarioRepository.buscarUsuarioPorMatricula(matricula);
+
+
+  if (usuarioComMesmaMatricula && usuarioComMesmaMatricula.id !== id) {
+    throw new Error("já existe um usuário com essa matrícula");
+  }
+
+  // Configura o filtro para atualização
+  const filtro = {
+    where: { id: id },
+    data: {
+      nome: nome,
+      matricula: matricula,
+      active: active,
+      senha: senha,
+      grupo_id: grupo_id,
     },
-    select:{
-      id:true,
-      nome:true,
-      matricula:true,
-      active:true,
-      senha :true,
-      grupo_id:true
-    }
+    select: {
+      id: true,
+      nome: true,
+      matricula: true,
+      active: true,
+      senha: true,
+      grupo_id: true,
+    },
   };
-  
-  return await usuarioRepository.atualizarUsuario(filtro);
+
+  console.log("Filtro de atualização:", filtro);  // Log para verificar o filtro de atualização
+
+  // Atualiza o usuário no repositório e retorna o resultado
+  const usuarioAtualizado = await usuarioRepository.atualizarUsuario(filtro);
+  console.log("Usuário atualizado:", usuarioAtualizado); // Log para verificar o usuário atualizado
+
+  return usuarioAtualizado;
 }
+
+
+
 
 
   static async inserir_csv(arquivo) {

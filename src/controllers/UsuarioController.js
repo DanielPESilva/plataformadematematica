@@ -32,14 +32,8 @@ class systemUsuarioController {
 
 static buscarPorId = async (req, res) => {
   try {
-      const id = parseInt(req.params.id);
 
-      // Validação do ID
-      if (isNaN(id)) {
-          return sendError(res, 400, "Requisição com sintaxe incorreta ou outros problemas.");
-      }
-
-      const usuario = await UsuarioService.buscarUsuarioPorId(id);
+      const usuario = await UsuarioService.buscarUsuarioPorId(req.params);
 
       return sendResponse(res, 200, { data: usuario });
 
@@ -73,7 +67,6 @@ static criarUsuario = async (req, res) => {
       grupo_id: parseInt(grupo_id),
     };
 
-    // Chama o serviço para criar o usuário
     const usuario = await UsuarioService.criarUsuario(parametros);
 
     return sendResponse(res, 201, {
@@ -104,7 +97,6 @@ static atualizar = async (req, res) => {
   try {
     let id = parseInt(req.params.id);
 
-    // Validação do ID
     if (isNaN(id)) {
       return sendError(res, 400, "Requisição com sintaxe incorreta ou outros problemas.");
     }
@@ -142,15 +134,9 @@ static atualizar = async (req, res) => {
 static deletarUsuario = async (req, res) => {
   try {
 
-    const id = parseInt(req.params.id);
-    console.log(typeof id);
-
-    if (isNaN(id)) {
-      return sendError(res, 400, "ID inválido. Deve ser um número.");
-    }
-
-    const usuarioDeletado = await UsuarioService.deletarUsuario(id);
-
+    const usuarioDeletado = await UsuarioService.deletarUsuario(req.params);
+    console.log(usuarioDeletado);
+    
     return sendResponse(res, 204, messages.httpCodes, { data: usuarioDeletado });
 
   } catch (err) {
