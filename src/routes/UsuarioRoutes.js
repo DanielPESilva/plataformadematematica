@@ -24,7 +24,7 @@ router
   .post("/usuario", systemUsuarioController.criarUsuario)
   .post("/usuario/csv", upload.single('file-csv'), systemUsuarioController.inserir_csv)
   .patch("/usuario/:id", systemUsuarioController.atualizar)
-  .delete("/usuario/:id", systemUsuarioController.deletarUsuario);
+
 
  
   export default router;

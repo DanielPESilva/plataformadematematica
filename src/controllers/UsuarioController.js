@@ -91,8 +91,6 @@ static criarUsuario = async (req, res) => {
   }
 };
 
-
-
 static atualizar = async (req, res) => {
   try {
     let id = parseInt(req.params.id);
@@ -127,30 +125,6 @@ static atualizar = async (req, res) => {
     }
   }
 };
-
-
-
-// Controller
-static deletarUsuario = async (req, res) => {
-  try {
-
-    const usuarioDeletado = await UsuarioService.deletarUsuario(req.params);
-    console.log(usuarioDeletado);
-    
-    return sendResponse(res, 204, messages.httpCodes, { data: usuarioDeletado });
-
-  } catch (err) {
-    console.error(err);
-    if (err instanceof ZodError) {
-      return sendError(res, 400, err.errors[0].message);
-    } else if (err.message === "Nenhum usuario encontrado") {
-      return sendError(res, 404, ["Nenhum usuario encontrado"]);
-    } else {
-      return sendError(res, 500, "Ocorreu um erro interno no servidor! aquiiiii");
-    }
-  }
-};
-
 
   static inserir_csv = async (req, res) => {
     try {

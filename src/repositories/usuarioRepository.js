@@ -30,16 +30,6 @@ static async buscarUsuarioPorId(id) {
     });
 };
 
-static async deletarUsuarioPorId(id) {
-  return await prisma.usuario.update({
-    where: { id: id },
-    data: {
-      active: false, // Atualiza o status para false (inativo)
-    },
-  });
-}
-
-
 static async buscarId(id) {
   return await prisma.usuario.findUnique({
       where: { id:id }

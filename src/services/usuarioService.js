@@ -32,40 +32,26 @@ static async buscarUsuarioPorId(filtro) {
     return usuario;
 }
 
-// UsuarioService.js
-
 static async criarUsuario(data) {
-  // Valida os dados usando o schema Zod
+
   const validatedData = UsuarioSchema.criarUsuario.parse(data);
 
-  // Verifica se o grupo existe
+
   const grupoExiste = await usuarioRepository.buscarGrupoPorId(validatedData.grupo_id);
   if (!grupoExiste) {
     throw new Error("grupo não encontrado.");
   }
 
-  // Cria o filtro e verifica se a matrícula já está em uso
   const matriculaExist = await usuarioRepository.buscarUsuarioPorMatricula(validatedData.matricula);
-  console.log(matriculaExist); // Log para debug
+  console.log(matriculaExist);
 
   if (matriculaExist) {
     throw new Error("A matrícula já está em uso");
   }
 
-  // Cria o usuário e retorna
   const usuarioCriado = await usuarioRepository.criarUsuario(validatedData);
   return usuarioCriado;
 }
-
-
-
-static async deletarUsuario(filtro) {
-  const { id } = UsuarioSchema.deletarUsuario.parse(filtro);
-
-  const usuarioDeletado = await usuarioRepository.deletarUsuarioPorId(id);
-  return usuarioDeletado;
-}
-  
 
 static async atualizar(parametros) {
 
@@ -80,7 +66,6 @@ static async atualizar(parametros) {
     throw new Error("O recurso solicitado não foi encontrado no servidor.");
   }
 
-  // Verifica se a matrícula fornecida já está em uso por outro usuário
   const usuarioComMesmaMatricula = await usuarioRepository.buscarUsuarioPorMatricula(matricula);
 
 
@@ -88,7 +73,6 @@ static async atualizar(parametros) {
     throw new Error("já existe um usuário com essa matrícula");
   }
 
-  // Configura o filtro para atualização
   const filtro = {
     where: { id: id },
     data: {
@@ -108,7 +92,6 @@ static async atualizar(parametros) {
     },
   };
 
-  // Atualiza o usuário no repositório e retorna o resultado
   const usuarioAtualizado = await usuarioRepository.atualizarUsuario(filtro);
  
   return usuarioAtualizado;
