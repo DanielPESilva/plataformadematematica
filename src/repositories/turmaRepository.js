@@ -2,35 +2,22 @@ import { prisma } from "../configs/prismaClient.js";
 
 class turmaRepository {
 
-  static async findAll(filtros) {
+  static async listar(filtro) {
+    return await prisma.turma.findMany(filtro);
+};
 
-    const [turmas] = await Promise.all([
-      prisma.turma.findMany({
-        ...filtros
-      }),
-      prisma.turma.count({ where: filtros.where }),
-    ]);
+static async listarPorId(filtro) {
+  return await prisma.turma.findUnique(filtro);
+};
 
-    return {turmas};
-  }
-
-  static async findById(id) {
-    const filtros = this.constructFilters();
-    const turmas = await prisma.turma.findFirst({
-      where: { id:id },
-      select: filtros.select,
-    });
-    console.log("3 -(service) Verifica se o titulo está no repository: "+ JSON.stringify(id))
-    return turmas;
-  }
-
-   async atualizar(id, data){
-    return await prisma.turma.update({ where: { id }, data});
-  }
+   static async atualizar(data){
+    return await prisma.turma.update(data);
+  };
 
 static constructFilters(parametros) {
   let filtro = {
       where: {
+          ...(parametros.id != undefined && { id: parametros.id }),
           ...(parametros.nome && { nome: { contains: parametros.nome } }), // Filtro para o nome da turma
           ...(parametros.aluno_id != undefined && { aluno: { some: { id: parametros.aluno_id } } }), // Filtro para aluno relacionado
           ...(parametros.professor_id != undefined && { professor: { some: { id: parametros.professor_id } } }) // Filtro para professor relacionado
@@ -38,12 +25,6 @@ static constructFilters(parametros) {
       select: {
           id: true,          // Incluir o ID da turma na consulta
           nome: true,        // Incluir o nome da turma na consulta
-          modulo: {
-              select: {
-                  id: true,    // Incluir o ID do módulo na consulta
-                  nome: true   // Incluir o nome do módulo na consulta
-              }
-          }
       }
   };
   return filtro;

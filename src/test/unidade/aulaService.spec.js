@@ -194,7 +194,7 @@ describe('3 - (PATCH) Testando o método que atualiza aulas.', () => {
         AulaSchemas.UpdateSchema.parse.mockReturnValue(parametros);
         AulaRepository.buscarPorId.mockResolvedValue(null);
 
-        await expect(AulaService.atualizar(parametros)).rejects.toThrow("O recurso solicitado não foi encontrado no servidor.");
+        await expect(AulaService.atualizar(parametros)).rejects.toThrow("Nenhuma aula encontrada.");
     });
 });
 

@@ -1,7 +1,4 @@
 import { describe, expect, test } from '@jest/globals';
-import AulaRepository from '../../repositories/AulaRepository.js';
-import AulaService from '../../services/AulaService.js';
-import faker from 'faker-br';
 import { z } from "zod";
 
 jest.mock('../../repositories/AulaRepository.js', () => ({
@@ -12,7 +9,7 @@ jest.mock('../../repositories/AulaRepository.js', () => ({
 beforeEach(() => {
     jest.clearAllMocks();
 });
-/*
+
 describe("listarSchema validação", () => {
 const { z } = require('zod');
 const listarSchema = z.object({
@@ -341,7 +338,7 @@ const atualizarSchema = z.object({
         expect(result.success).toBe(false);
         expect(result.error.issues[0].message).toBe("A imagem informada deve ser do tipo string.");
     });
-});*/
+});
 
 describe("deletarSchema", () => {
 const deletarSchema = z.object({

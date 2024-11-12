@@ -66,7 +66,6 @@ class AulaRepository {
         select: {
           aluno_id:true,
           feito:true,
-          aula_id:true,
           aula:{
             select:{
               id: true,                // Incluir o ID na consulta

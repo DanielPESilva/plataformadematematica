@@ -5,31 +5,44 @@ class AulaService {
 
   static async listar(parametros) {
     const parametrosValidados = AulaSchema.listarSchema.parse(parametros);
+    const { page, perPage } = parametrosValidados;
+    const offset = (page - 1) * perPage;
         
-        if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
-            const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
-            const aulas = await AulaRepository.findAllAulas(filtroRepository);
-            if (aulas.length === 0) {
-                throw new Error("Nenhuma aula encontrada.");
-            }
-            return aulas;
-        }
-
-        if (parametrosValidados.aluno_id) {
-            const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
-            const aulasFeitasRevisadas = await AulaRepository.findAllFeitos(filtroRepository);
-            if (aulasFeitasRevisadas.length === 0) {
-                throw new Error("Nenhuma aula encontrada.");
-            }
-            return aulasFeitasRevisadas;
-        }
-
-        const todasAsAulas = await AulaRepository.findAllAulas();
-        if (todasAsAulas.length === 0) {
+    if (parametrosValidados.titulo || parametrosValidados.modulo_id) {
+        const filtroRepository = AulaRepository.createFilterAula(parametrosValidados);
+        const aulas = await AulaRepository.findAllAulas({
+        ...filtroRepository,
+      skip: offset,
+      take: perPage
+      });
+        if (aulas.length === 0) {
             throw new Error("Nenhuma aula encontrada.");
         }
-        return todasAsAulas;
-  }
+        return aulas;
+    }
+
+    if (parametrosValidados.aluno_id) {
+        const filtroRepository = AulaRepository.createFilterFeito(parametrosValidados);
+        const aulasFeitasRevisadas = await AulaRepository.findAllFeitos({
+        ...filtroRepository,
+        skip: offset,
+        take: perPage
+        });
+        if (aulasFeitasRevisadas.length === 0) {
+            throw new Error("Nenhuma aula encontrada.");
+        }
+        return aulasFeitasRevisadas;
+    }
+
+    const todasAsAulas = await AulaRepository.findAllAulas({
+    skip: offset,
+    take: perPage
+    });
+    if (todasAsAulas.length === 0) {
+        throw new Error("Nenhuma aula encontrada.");
+    }
+    return todasAsAulas;
+}
 
   static async listarPorID(idDoParam) {
     const IdValidado = AulaSchema.listarPorIdSchema.parse(idDoParam);
