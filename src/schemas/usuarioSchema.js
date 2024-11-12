@@ -35,8 +35,6 @@ class UsuarioSchema {
         grupo_id: z.number().int().positive("ID deve ser um número positivo").optional(),
     });
 
-
-
 }
 
 export default UsuarioSchema;

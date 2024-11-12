@@ -93,38 +93,58 @@ static criarUsuario = async (req, res) => {
 
 static atualizar = async (req, res) => {
   try {
-    let id = parseInt(req.params.id);
-
-    if (isNaN(id)) {
-      return sendError(res, 400, "Requisição com sintaxe incorreta ou outros problemas.");
-    }
-
+    let id = req.params.id
     let parametros = {
-      id: id,
+      id: parseInt(id),
       ...req.body
-    };
-
-    const usuario = await UsuarioService.atualizar(parametros);
-
-    return sendResponse(res, 200, { 
-      error: false, 
-      message: "Requisição bem sucedida, recurso foi atualizado", 
-      data: usuario 
-    });
-
-  } catch (err) {
-    console.error(err);
-    if (err instanceof ZodError) {
-      return sendError(res, 400, err.errors[0].message);
-    } else if (err.message === "O recurso solicitado não foi encontrado no servidor.") {
-      return sendError(res, 404, ["O recurso solicitado não foi encontrado no servidor."]);
-    } else if (err.message === "já existe um usuário com essa matrícula") {
-      return sendError(res, 400, ["Já existe um usuário com essa matrícula."]);
-    } else {
-      return sendError(res, 500, "Ocorreu um erro interno no servidor!");
     }
-  }
-};
+    
+    const usuario = await UsuarioService.atualizar(parametros)
+
+      return sendResponse(res,200, {data:usuario});
+
+    } catch (err) {
+     console.error(err)
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "O recurso solicitado não foi encontrado no servidor."){
+        return sendError(res,404,["O recurso solicitado não foi encontrado no servidor."]);
+
+      }else if(err.message == "ja existe um usuario com essa matricula"){
+        return sendError(res,404,["ja existe um usuario com essa matricula"]);
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+    }
+}
+
+
+static atualizarSenha = async (req, res) => {
+  try {
+    let id = req.params.id
+    const {senhaNova, senhaAntiga} = req.body
+    
+    const usuario = await UsuarioService.atualizarSenha({id, senhaAntiga, senhaNova })
+
+      return sendResponse(res,201, {data:usuario});
+
+    } catch (err) {
+     console.error(err)
+      if(err instanceof ZodError){
+        return sendError(res,400,err.errors[0].message);
+
+      }else if(err.message == "Usuário não existe."){
+        return sendError(res,404,[err.message]);
+
+      }else if(err.message == "Senha Antiga informada está incorreta."){
+        return sendError(res,403,[err.message]);
+      }else{
+        return sendError(res,500,"Ocorreu um erro interno no servidor!");
+      }
+    }
+}
+
 
   static inserir_csv = async (req, res) => {
     try {

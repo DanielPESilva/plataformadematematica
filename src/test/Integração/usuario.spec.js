@@ -164,7 +164,7 @@ describe('PATCH /usuario - Atualizar usuário', () => {
    
       expect(req.body.error).toEqual(false);
       expect(req.status).toBe(200); 
-      expect(req.body.message).toEqual("Requisição bem sucedida, recurso foi atualizado");
+      expect(req.body.message).toEqual("Requisição bem sucedida.");
       expect(req.body.data).toBeInstanceOf(Object);
       expect(req.body.data.id).toBeDefined();
       expect(req.body.data.nome).toBeDefined();

@@ -48,13 +48,14 @@ static async criarUsuario(data) {
   if (matriculaExist) {
     throw new Error("A matrícula já está em uso");
   }
+  const filtroRepository = await usuarioRepository.criarUsuario(validatedData)
+  return filtroRepository;
+};
 
-  const usuarioCriado = await usuarioRepository.criarUsuario(validatedData);
-  return usuarioCriado;
-}
 
-static async atualizar(parametros) {
 
+
+static async atualizar (parametros){
   const parametrosValidos = UsuarioSchema.atualizarUsuario.parse(parametros);
   const { id, nome, matricula, active, senha, grupo_id } = parametrosValidos;
 

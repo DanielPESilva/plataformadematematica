@@ -30,6 +30,8 @@ static async buscarUsuarioPorId(id) {
     });
 };
 
+
+
 static async buscarId(id) {
   return await prisma.usuario.findUnique({
       where: { id:id }
