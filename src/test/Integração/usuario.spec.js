@@ -147,6 +147,55 @@ it("1-deve retornar um usuario.", async () => {
             expect(req.body.message).toEqual("Requisição com sintaxe incorreta ou outros problemas.")
         })
         
+        describe('POST /usuario - Verificar matrícula já em uso', () => {
+            it("4-Deve retornar um erro quando a matrícula já estiver em uso.", async () => {
+                const usuarioExistente = await request(app)
+                    .post('/usuario')
+                    .set("Authorization", `Bearer ${token}`)
+                    .set("Accept", "application/json")
+                    .send({
+                        nome: faker.name.findName(),
+                        matricula: "matriculaDuplicada",
+                        active: true,
+                        grupo_id: 2,
+                        senha: "senhaHash"
+                    });
+                const res = await request(app)
+                    .post('/usuario')
+                    .set("Authorization", `Bearer ${token}`)
+                    .set("Accept", "application/json")
+                    .send({
+                        nome: faker.name.findName(),
+                        matricula: "matriculaDuplicada",
+                        active: true,
+                        grupo_id: 2,
+                        senha: "senhaHash"
+                    });
+
+                expect(res.body.error).toEqual(true);
+                expect(res.status).toBe(400);
+                expect(res.body.message).toEqual("Requisição com sintaxe incorreta ou outros problemas.");
+            });
+        });
+        describe('POST /usuario - Verificar grupo não encontrado', () => {
+            it("5-Deve retornar um erro quando o grupo informado não for encontrado.", async () => {
+                const res = await request(app)
+                    .post('/usuario')
+                    .set("Authorization", `Bearer ${token}`)
+                    .set("Accept", "application/json")
+                    .send({
+                        nome: faker.name.findName(),
+                        matricula: Date.now().toString(),
+                        active: true,
+                        grupo_id: 9999, // ID de grupo inexistente
+                        senha: "senhaHash"
+                    });
+
+                expect(res.body.error).toEqual(true);
+                expect(res.status).toBe(404);
+                expect(res.body.message).toEqual("O recurso solicitado não foi encontrado no servidor.");
+            });
+        });
 }); 
     
 
@@ -211,6 +260,7 @@ describe('PATCH /usuario - Atualizar usuário', () => {
         expect(res.body.error).toEqual(true);
         expect(res.status).toBe(400);
         expect(res.body.message).toEqual("Requisição com sintaxe incorreta ou outros problemas.");
-    });
+     });
+
     });
 

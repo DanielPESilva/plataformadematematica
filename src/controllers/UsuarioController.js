@@ -84,7 +84,7 @@ static atualizar = async (req, res) => {
         return sendError(res,404,["O recurso solicitado não foi encontrado no servidor."]);
 
       }else if(err.message == "ja existe um usuario com essa matricula"){
-        return sendError(res,404,["ja existe um usuario com essa matricula"]);
+        return sendError(res,400,["ja existe um usuario com essa matricula"]);
       }else{
         return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }

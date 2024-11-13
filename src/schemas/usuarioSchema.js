@@ -12,6 +12,7 @@ class UsuarioSchema {
         id: z.preprocess((val)=>{
             if(parseInt(val)){
                 return parseInt(val)
+                
             }
             return null
         }, z.number().positive())
@@ -33,6 +34,12 @@ class UsuarioSchema {
         active: z.boolean().optional(),
         senha: z.string().trim().min(6).optional(),
         grupo_id: z.number().int().positive("ID deve ser um número positivo").optional(),
+    });
+
+    static atualizarSenha = z.object({
+        id: z.number().int().positive("ID deve ser um número positivo."),
+        senhaAntiga: z.string().min(6, "Senha antiga deve ter no mínimo 6 caracteres."),
+        senhaNova: z.string().min(6, "Senha nova deve ter no mínimo 6 caracteres.")
     });
 
 }

@@ -42,7 +42,6 @@ static async criarUsuario(data) {
   }
 
   const matriculaExist = await usuarioRepository.buscarUsuarioPorMatricula(matricula);
-  console.log(matriculaExist);
 
   if (matriculaExist) {
     throw new Error("A matrícula já está em uso");

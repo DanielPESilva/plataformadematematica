@@ -74,6 +74,26 @@ describe('Usuario Controller',  () => {
             expect(response.body.errors[0].message).toBeDefined();
         });
     });
+    
 });
 
+describe('Usuario Controller - Casos de Erro', () => {
+    describe('PATCH /usuario/:id', () => {
+      it('Deve retornar erro 400 quando já existe um usuário com a mesma matrícula ao atualizar', async () => {
+        UsuarioService.atualizar.mockRejectedValue(new Error('ja existe um usuario com essa matricula'));
 
+        const response = await request(app)
+          .patch('/usuario/1')
+          .send({ nome: 'Daniel Silva', matricula: '12345', senha: 'senhaAtualizada' });
+  
+
+        expect(UsuarioService.atualizar).toHaveBeenCalled();
+
+        expect(response.status).toBe(400);
+
+        expect(response.body.errors).toEqual(['ja existe um usuario com essa matricula']);
+        expect(response.body.data).toEqual([]); 
+        expect(response.body.error).toEqual(true);
+      });
+    });
+  });
