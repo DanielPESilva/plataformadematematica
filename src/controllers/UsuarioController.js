@@ -14,25 +14,17 @@ class systemUsuarioController {
   static listar = async (req, res) => {
     try {
         const filtros = req.query;
-
         const usuarios = await UsuarioService.listarUsuarios(filtros);
         return sendResponse(res, 200, { data: usuarios });
     } catch (err) {
-        if (err instanceof ZodError) {
-
-            return sendError(res, 400, err.errors[0].message);
-        } else {
-            return sendError(res, 500, "Ocorreu um erro interno no servidor!");
-        }
+        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
     }
 };
-
 
 static buscarPorId = async (req, res) => {
   try {
 
       const usuario = await UsuarioService.buscarUsuarioPorId(req.params);
-
       return sendResponse(res, 200, { data: usuario });
 
   } catch (err) {
@@ -43,28 +35,14 @@ static buscarPorId = async (req, res) => {
       } else {
           return sendError(res, 500, "Ocorreu um erro interno no servidor!");
       }
-  }
+  };
 };
 
 
 static criarUsuario = async (req, res) => {
   try {
-    const usuarioData = {
-      ...req.body,
-      matricula: String(req.body.matricula),
-    };
-
-    const { nome, matricula, senha, active, grupo_id } = UsuarioSchema.criarUsuario.parse(usuarioData);
-
-    const parametros = {
-      nome: nome,
-      matricula: matricula,
-      senha: senha,
-      active: Boolean(active),
-      grupo_id: parseInt(grupo_id),
-    };
-
-    const usuario = await UsuarioService.criarUsuario(parametros);
+   
+    const usuario = await UsuarioService.criarUsuario(req.body);
 
     return sendResponse(res, 201, {
       error: false,
@@ -76,7 +54,6 @@ static criarUsuario = async (req, res) => {
     if (error.message === "A matrícula já está em uso") {
       return sendError(res, 400, "A matrícula já está em uso");
     }
-
     if (error.message === "grupo não encontrado.") {
       return sendError(res, 404, "O grupo informado não foi encontrado.");
     } else if (error instanceof ZodError) {

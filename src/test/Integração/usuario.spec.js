@@ -8,6 +8,8 @@ import exp from "constants";
 import { array, object } from "zod";
 import { console } from "inspector";
 
+
+
 let token = null;
 let usuarioCriado = null;
 
@@ -30,7 +32,6 @@ describe('GET /usuario - Listar todos os usuários.', () => {
             .get('/usuario')
             .set("Accept", "application/json")
             .set("Authorization", `Bearer ${token}`);
-
         expect(res.status).toBe(200);
         expect(res.body.code).toBe(200);
         expect(res.body).toHaveProperty('data');
@@ -77,7 +78,10 @@ describe('GET /usuario - Listar todos os usuários.', () => {
         expect(res.status).toBe(400); 
         expect(res.body.message).toEqual("Requisição com sintaxe incorreta ou outros problemas.");
     });
-});
+
+    
+    });
+    
 
 
 describe('POST /usuario - Listar usuários por ID', () => {

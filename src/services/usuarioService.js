@@ -33,21 +33,27 @@ static async buscarUsuarioPorId(filtro) {
 
 static async criarUsuario(data) {
 
-  const validatedData = UsuarioSchema.criarUsuario.parse(data);
+  const { nome,matricula, active,senha,grupo_id} = UsuarioSchema.criarUsuario.parse(data);
 
 
-  const grupoExiste = await usuarioRepository.buscarGrupoPorId(validatedData.grupo_id);
+  const grupoExiste = await usuarioRepository.buscarGrupoPorId(grupo_id);
   if (!grupoExiste) {
     throw new Error("grupo não encontrado.");
   }
 
-  const matriculaExist = await usuarioRepository.buscarUsuarioPorMatricula(validatedData.matricula);
+  const matriculaExist = await usuarioRepository.buscarUsuarioPorMatricula(matricula);
   console.log(matriculaExist);
 
   if (matriculaExist) {
     throw new Error("A matrícula já está em uso");
   }
-  const filtroRepository = await usuarioRepository.criarUsuario(validatedData)
+  const filtroRepository = await usuarioRepository.criarUsuario({
+    nome:nome,
+    matricula:matricula,
+    active: active,
+    senha: senha,
+    grupo_id: grupo_id
+  })
   return filtroRepository;
 };
 
