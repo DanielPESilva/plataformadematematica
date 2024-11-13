@@ -19,7 +19,6 @@ class UsuarioService {
 
 static async buscarUsuarioPorId(filtro) {
   const {id} = UsuarioSchema.buscarUsuarioPorId.parse(filtro)
-    // UsuarioSchema.buscarUsuarioPorId.parse({ });
     const usuario = await usuarioRepository.buscarUsuarioPorId(id);
     
     if (!usuario) {

@@ -11,7 +11,7 @@ describe('Autenticação', () => {
     it("1-Deve chamar a rota de autenticação e pegar o token", async () => {
         const req = await request(app)
         .post('/login')
-        .set("Accept", "aplication/json")
+        .set("Accept", "application/json")
         .send({
             matricula:"12345",
             senha:"senhatest"
@@ -36,6 +36,7 @@ describe('POST /usuario/csv - Cria usuarios utizando arquivos csv.', () => {
                 .set("Authorization", `Bearer ${token}`)
                 .attach('file-csv', filePath)
         console.log(res.body)
+        console.log(res.body);
         expect(res.body.error).toEqual(false)
         expect(res.status).toBe(201)
         expect(res.body.message).toEqual("Requisição bem sucedida, recurso foi criado")
@@ -78,21 +79,24 @@ describe('POST /usuario/csv - Cria usuarios utizando arquivos csv.', () => {
             .set("Authorization", `Bearer ${token}`)
         
         expect(res.body.error).toEqual(true)
+        console.log(res.body)
+        console.log(res.body)
         expect(res.status).toBe(400)
         expect(res.body.message).toEqual("Requisição com sintaxe incorreta ou outros problemas.")
     })
 
 })
 
-describe('PETCCH /usuario/senha - Altera a senha do usuário.', () => {
+describe('PATCH /usuario/senha - Altera a senha do usuário.', () => {
     it("1-Deve retornar um status 201 quando o recurso for atualizado.", async () => {
         const res = await request(app)
-        .patch('/usuario/senha/4')
+        .patch('/usuario/senha/1')
+        .set("Accept", "application/json")
         .set("Authorization", `Bearer ${token}`)
-        .set("Accept", "aplication/json")
+        .set("Accept", "application/json")
         .send({
-            senhaNova: "senhatest",
-            senhaAntiga: "senhatest"
+            senhaAntiga: "senhatest",
+            senhaNova: "senhatest"
         })
         expect(res.body.error).toEqual(false)
         expect(res.status).toBe(201)

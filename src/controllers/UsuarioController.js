@@ -18,8 +18,6 @@ class systemUsuarioController {
         const usuarios = await UsuarioService.listarUsuarios(filtros);
         return sendResponse(res, 200, { data: usuarios });
     } catch (err) {
-        console.error(err);
-
         if (err instanceof ZodError) {
 
             return sendError(res, 400, err.errors[0].message);
@@ -38,7 +36,6 @@ static buscarPorId = async (req, res) => {
       return sendResponse(res, 200, { data: usuario });
 
   } catch (err) {
-      console.error(err);
       if (err instanceof ZodError) {
           return sendError(res, 400, err.errors[0].message);
       } else if (err.message === "Usuário não encontrado.") {
@@ -75,7 +72,6 @@ static criarUsuario = async (req, res) => {
       data: usuario,
     });
   } catch (error) {
-    console.error(error);
     
     if (error.message === "A matrícula já está em uso") {
       return sendError(res, 400, "A matrícula já está em uso");
@@ -104,7 +100,6 @@ static atualizar = async (req, res) => {
       return sendResponse(res,200, {data:usuario});
 
     } catch (err) {
-     console.error(err)
       if(err instanceof ZodError){
         return sendError(res,400,err.errors[0].message);
 
@@ -130,7 +125,6 @@ static atualizarSenha = async (req, res) => {
       return sendResponse(res,201, {data:usuario});
 
     } catch (err) {
-     console.error(err)
       if(err instanceof ZodError){
         return sendError(res,400,err.errors[0].message);
 
@@ -156,7 +150,6 @@ static atualizarSenha = async (req, res) => {
 
       return sendResponse(res, 201, { data: retorno });
     } catch (err) {
-      console.error(err);
 
       if(err.message == "Arquivo do tipo errado." ){
         return sendError(res,404,[err.message]);
