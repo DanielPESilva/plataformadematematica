@@ -45,7 +45,6 @@ describe('Usuario Controller',  () => {
             const response = await request(app)
                 .post('/usuario')
                 .send({ nome: "Daniel", matricula: "1234561231231", grupo_id: 1, active: true, senha: "senha super forte" });
-            console.log(response.body);
             
             expect(UsuarioService.criarUsuario).toHaveBeenCalled();
             expect(response.body.data).toBeDefined();

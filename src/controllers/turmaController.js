@@ -65,7 +65,6 @@ class TurmaController{
     return sendResponse(res,201, {data:response});
 
     } catch (err) {
-      console.log(err.message)
 
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);

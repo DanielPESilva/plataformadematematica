@@ -161,8 +161,6 @@ static async atualizar (parametros){
     let usuario_existentes = await usuarioRepository.listar_csv();
     const grupo = await usuarioRepository.grupo_alunos();
     const turmas_ids = await usuarioRepository.buscar_turmas();
-    console.log(turmas_ids)
-
     let usuario_csv = [];
     const header = ["nome", "matricula", "senha"];
 
