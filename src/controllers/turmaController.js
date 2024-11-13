@@ -18,12 +18,12 @@ class TurmaController{
       return sendResponse(res,201, {data: response});
 
     } catch (err) {
-      console.log(err)
+      
 
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
   
-        }else if(err.message == "nem um modulo foi encontrado." ){
+        }else if(err instanceof Error ){
           return sendError(res,404,["nem um modulo foi encontrado."]);
   
         }else{
@@ -40,13 +40,12 @@ class TurmaController{
       return sendResponse(res,201, {data:response});
 
     } catch (err) {
-      console.log(err)
 
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
   
-        }else if(err.message == "nem um modulo foi encontrado." ){
-          return sendError(res,404,["nem um modulo foi encontrado."]);
+        }else if(err.message ===  "nenhuma turma foi encontrada."){
+          return sendError(res,404,["Nenhuma turma foi encontrada."]);
   
         }else{
           return sendError(res,500,"Ocorreu um erro interno no servidor!");
@@ -66,13 +65,13 @@ class TurmaController{
     return sendResponse(res,201, {data:response});
 
     } catch (err) {
-      console.log(err)
+      console.log(err.message)
 
         if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
   
-        }else if(err.message == "Aqui vai a mensagem de Erro que vc gerou lá no service." ){
-          return sendError(res,404,["Aqui vai a mensagem de Erro que vc gerou lá no service."]);
+        }else if(err.message == "O recurso solicitado não foi encontrado no servidor." ){
+          return sendError(res,404,["O recurso solicitado não foi encontrado no servidor."]);
   
         }else{
           return sendError(res,500,"Ocorreu um erro interno no servidor!");
