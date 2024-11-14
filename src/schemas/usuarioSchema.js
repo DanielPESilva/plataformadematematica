@@ -37,7 +37,13 @@ class UsuarioSchema {
     });
 
     static atualizarSenha = z.object({
-        id: z.number().int().positive("ID deve ser um número positivo."),
+        id:z.preprocess((val) => Number(val), z.number({
+            invalid_type_error: "Id do usuário informado não é do tipo number."
+        }).int({
+            message: "Id do usuário informado não é um número inteiro."
+        }).positive({
+            message: "Id do usuário informado não é um inteiro positivo."
+        })).optional(),
         senhaAntiga: z.string().min(6, "Senha antiga deve ter no mínimo 6 caracteres."),
         senhaNova: z.string().min(6, "Senha nova deve ter no mínimo 6 caracteres.")
     });

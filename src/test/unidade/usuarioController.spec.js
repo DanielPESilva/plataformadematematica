@@ -1,7 +1,9 @@
+import path from "path";
 import request from 'supertest';
 import app from '../../app'; // Certifique-se de ajustar o caminho para o seu arquivo de aplicação
 import UsuarioService from '../../services/usuarioService';
 jest.mock('../../services/usuarioService');
+
 
 jest.mock
 
@@ -96,3 +98,43 @@ describe('Usuario Controller - Casos de Erro', () => {
       });
     });
   });
+
+  describe('patch /usuarios',  () => {
+    describe("500",()=>{
+        it("Dever retornar o erro 500 ao tentar atualiza ruma senha",async ()=> {
+            UsuarioService.atualizarSenha.mockRejectedValue(new Error('Erro desconhecido'));
+
+            const response = await request(app).patch('/usuario/senha/4')
+
+
+            expect(UsuarioService.atualizarSenha).toHaveBeenCalled();
+            expect(response.status).toBe(500);
+            expect(response.body.data).toBeDefined();
+            expect(response.body.message).toBeDefined();
+            expect(response.body.error).toEqual(true);
+
+        });
+    });
+});
+
+describe('patch /usuarios',  () => {
+    const filePath = path.resolve(process.cwd(), './src/test/arquivos/correto.csv');
+    describe("500",()=>{
+        it("Dever retornar o erro 500 ao tentar atualiza ruma senha",async ()=> {
+            UsuarioService.inserir_csv.mockRejectedValue(new Error('Erro desconhecido'));
+            const response = await request(app)
+            .post('/usuario/csv')
+            .attach('file-csv', filePath)
+
+            console.log(response.body)
+
+            expect(UsuarioService.inserir_csv).toHaveBeenCalled();
+            expect(response.status).toBe(500);
+            expect(response.body.data).toBeDefined();
+            expect(response.body.message).toBeDefined();
+            expect(response.body.error).toEqual(true);
+
+        });
+    });
+});
+
