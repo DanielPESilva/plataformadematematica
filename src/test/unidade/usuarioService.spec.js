@@ -261,4 +261,43 @@ describe('UsuarioService', () => {
             await expect(UsuarioService.inserir_csv(arquivo)).rejects.toThrow('Estrutura do CSV está incorreta.');
         });
     });
+
+    describe('buscarUsuarioPorId', () => {
+        it('should return user by id', async () => {
+            const filtro = { id: 1 };
+            const validFiltro = { id: 1 };
+            const usuario = { id: 1, nome: 'test' };
+
+            UsuarioSchema.buscarUsuarioPorId.parse.mockReturnValue(validFiltro);
+            usuarioRepository.buscarUsuarioPorId.mockResolvedValue(usuario);
+
+            const result = await UsuarioService.buscarUsuarioPorId(filtro);
+
+            expect(UsuarioSchema.buscarUsuarioPorId.parse).toHaveBeenCalledWith(filtro);
+            expect(usuarioRepository.buscarUsuarioPorId).toHaveBeenCalledWith(validFiltro.id);
+            expect(result).toEqual(usuario);
+        });
+
+        it('should throw error if user not found', async () => {
+            const filtro = { id: 1 };
+            const validFiltro = { id: 1 };
+
+            UsuarioSchema.buscarUsuarioPorId.parse.mockReturnValue(validFiltro);
+            usuarioRepository.buscarUsuarioPorId.mockResolvedValue(null);
+
+            await expect(UsuarioService.buscarUsuarioPorId(filtro)).rejects.toThrow('Usuário não encontrado.');
+        });
+
+        it('should throw error if user id is not present', async () => {
+            const filtro = { id: 1 };
+            const validFiltro = { id: 1 };
+            const usuario = { nome: 'test' };
+
+            UsuarioSchema.buscarUsuarioPorId.parse.mockReturnValue(validFiltro);
+            usuarioRepository.buscarUsuarioPorId.mockResolvedValue(usuario);
+
+            await expect(UsuarioService.buscarUsuarioPorId(filtro)).rejects.toThrow('Houve um problema ao buscar o usuário. Verifique a sintaxe ou outros problemas.');
+        });
+    });
+
 });
