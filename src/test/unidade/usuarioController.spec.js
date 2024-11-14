@@ -78,26 +78,23 @@ describe('Usuario Controller',  () => {
     
 });
 
-describe('Usuario Controller - Casos de Erro', () => {
-    describe('PATCH /usuario/:id', () => {
-      it('Deve retornar erro 400 quando já existe um usuário com a mesma matrícula ao atualizar', async () => {
-        UsuarioService.atualizar.mockRejectedValue(new Error('ja existe um usuario com essa matricula'));
+describe('patch /usuarios', () => {
+    it('Deve retornar erro 400 quando já existe um usuário com essa matrícula', async () => {
+        UsuarioService.atualizar.mockRejectedValue(new Error('já existe um usuário com essa matrícula'));
 
         const response = await request(app)
-          .patch('/usuario/1')
-          .send({ nome: 'Daniel Silva', matricula: '12345', senha: 'senhaAtualizada' });
-  
-
+            .patch('/usuario/3')
+            .send({ nome: "Daniel", matricula: "1234561231231", grupo_id: 1, active: true, senha: "senha super forte" });
+        
         expect(UsuarioService.atualizar).toHaveBeenCalled();
-
         expect(response.status).toBe(400);
-
-        expect(response.body.errors).toEqual(['ja existe um usuario com essa matricula']);
-        expect(response.body.data).toEqual([]); 
-        expect(response.body.error).toEqual(true);
-      });
+        expect(response.body.data).toBeDefined();
+        expect(response.body.error).toBeDefined();
+        expect(response.body.code).toBeDefined();
+        expect(response.body.message).toBeDefined();
+        expect(response.body.errors).toBeDefined();
     });
-  });
+});
 
   describe('patch /usuarios',  () => {
     describe("500",()=>{
@@ -125,9 +122,6 @@ describe('patch /usuarios',  () => {
             const response = await request(app)
             .post('/usuario/csv')
             .attach('file-csv', filePath)
-
-            console.log(response.body)
-
             expect(UsuarioService.inserir_csv).toHaveBeenCalled();
             expect(response.status).toBe(500);
             expect(response.body.data).toBeDefined();

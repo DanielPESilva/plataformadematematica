@@ -1,15 +1,18 @@
+//routes
 import authPaths from "../routes/auth.js";
-import usersPaths from "../routes/users.js";
 import turmaPaths from "../routes/turma.js"
-import authSchemas from "../schemas/authSchema.js";
-import turmaSchema from "../schemas/turmaSchema.js";
-import loginSchema from "../schemas/loginSchemaDoc.js"
 import moduloRoutes from "../routes/modulo.js";
-import moduloSchema from "../schemas/moduloSchemaDoc.js";
 import usuarioCsvRoutes from "../routes/usuario-csv.js";
-import usuarioCsvSchema from "../schemas/usuario-csvSchemaDoc.js";
 import aulaRoutes from "../routes/aula.js";
+import usuarioRoutes from "../routes/usuario.js"; 
+//schemas
+import usuarioCsvSchema from "../schemas/usuario-csvSchemaDoc.js";
+import authSchemas from "../schemas/authSchema.js";
+import loginSchema from "../schemas/loginSchemaDoc.js"
+import turmaSchema from "../schemas/turmaSchema.js";
 import aulaSchema from "../schemas/aulaSchemaDoc.js";
+import moduloSchema from "../schemas/moduloSchemaDoc.js";
+import usuarioSchema from "../schemas/usuarioSchema.js";
 
 // Função para definir as URLs do servidor dependendo do ambiente
 const getServersInCorrectOrder = () => {
@@ -59,11 +62,11 @@ const getSwaggerOptions = () => {
             ],
             paths: {
                 ...authPaths,
-                ...usersPaths,
                 ...turmaPaths,
                 ...moduloRoutes,
                 ...usuarioCsvRoutes,
                 ...aulaRoutes,
+                ...usuarioRoutes,
             },
             components: {
                 securitySchemes: {
@@ -80,6 +83,7 @@ const getSwaggerOptions = () => {
                     ...moduloSchema,
                     ...usuarioCsvSchema,
                     ...aulaSchema,
+                    ...usuarioSchema,
                 }
             },
             security: [{
