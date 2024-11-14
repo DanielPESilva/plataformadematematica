@@ -12,7 +12,7 @@ jest.mock('../../repositories/turmaRepository.js', () => ({
   findByTituloExceptId:jest.fn(),
   userExist: jest.fn(),
   turmaMatricular: jest.fn(),
-  removerUsuarioDaTurma: jest.fn(),
+  removerturmaDaTurma: jest.fn(),
   delete: jest.fn(),
   mockResolvedValue:jest.fn(),
   constructFilters: jest.fn(),
