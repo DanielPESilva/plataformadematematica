@@ -35,7 +35,6 @@ describe('POST /usuario/csv - Cria usuarios utizando arquivos csv.', () => {
                 .set("Accept", "application/json")
                 .set("Authorization", `Bearer ${token}`)
                 .attach('file-csv', filePath)
-        console.log(res.body)
         expect(res.body.error).toEqual(false)
         expect(res.status).toBe(201)
         expect(res.body.message).toEqual("Requisição bem sucedida, recurso foi criado")
@@ -84,16 +83,18 @@ describe('POST /usuario/csv - Cria usuarios utizando arquivos csv.', () => {
 
 })
 
-describe('PETCCH /usuario/senha - Altera a senha do usuário.', () => {
+describe('PATCH /usuario/senha - Altera a senha do usuário.', () => {
     it("1-Deve retornar um status 201 quando o recurso for atualizado.", async () => {
         const res = await request(app)
         .patch('/usuario/senha/4')
         .set("Authorization", `Bearer ${token}`)
         .set("Accept", "aplication/json")
         .send({
+            id: 2,
             senhaNova: "senhatest",
             senhaAntiga: "senhatest"
-        })
+        })        
+            console.log(res.body)
         expect(res.body.error).toEqual(false)
         expect(res.status).toBe(201)
         expect(res.body.message).toEqual("Requisição bem sucedida, recurso foi criado")
@@ -122,7 +123,6 @@ describe('PETCCH /usuario/senha - Altera a senha do usuário.', () => {
             senhaAntiga:"senhatest",
             senhaNova:"senhatest"
         })
-        console.log(res.body)
         expect(res.body.error).toEqual(true)
         expect(res.status).toBe(404)
         expect(res.body.message).toEqual("O recurso solicitado não foi encontrado no servidor.")
@@ -130,16 +130,16 @@ describe('PETCCH /usuario/senha - Altera a senha do usuário.', () => {
 
     it("4-Deve retornar um erro 403 quando a senha antiga não estiver correta.", async () => {
         const res = await request(app)
-        .patch('/usuario/senha/4')
-        .set("Authorization", `Bearer ${token}`)
-        .set("Accept", "aplication/json")
-        .send({
-            senhaNova: "senhatest",
-            senhaAntiga: "senhaincorreta"
-        })
-        console.log(res.body)
-        expect(res.body.error).toEqual(true)
-        expect(res.status).toBe(403)
-        expect(res.body.message).toEqual("Sem permissão para atender a requisição.")
+       .patch('/usuario/senha/4')
+     .set("Authorization", `Bearer ${token}`)
+      .set("Accept", "aplication/json")
+      .send({
+        senhaNova: "senhatest",
+          senhaAntiga: "senhaincorreta"
+      })
+
+       expect(res.body.error).toEqual(true)
+     expect(res.status).toBe(403)
+       expect(res.body.message).toEqual("Sem permissão para atender a requisição.")
     })
-})
+ })

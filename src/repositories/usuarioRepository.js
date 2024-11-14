@@ -52,7 +52,6 @@ static async buscarGrupoPorId(id) {
   });
 };
 
-//lucas que fez
 static async buscarSenha(id){
   return await prisma.usuario.findUnique({
     where: { id:id },

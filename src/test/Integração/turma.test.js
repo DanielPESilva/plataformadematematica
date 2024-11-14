@@ -28,8 +28,6 @@ describe('GET /turma - Listar todas as turmas.', () => {
             .set("Accept", "application/json")
             .set("Authorization", `Bearer ${token}`);
 
-                console.log(res.body)
-
         expect(res.status).toBe(201);
         expect(res.body.code).toBe(201);
         expect(res.body).toHaveProperty('data');
@@ -135,7 +133,6 @@ describe('GET /turma - Listar todas as turmas.', () => {
                 .set("Accept", "application/json")
                 .set("Authorization", `Bearer ${token}`)
                 .send(updatedData)
-            console.log(res.body)
             expect(res.body.error).toBe(true);
             expect(res.status).toBe(404);
             expect(res.body.message).toBe("O recurso solicitado não foi encontrado no servidor.");

@@ -14,31 +14,20 @@ class systemUsuarioController {
   static listar = async (req, res) => {
     try {
         const filtros = req.query;
-
         const usuarios = await UsuarioService.listarUsuarios(filtros);
         return sendResponse(res, 200, { data: usuarios });
     } catch (err) {
-        console.error(err);
-
-        if (err instanceof ZodError) {
-
-            return sendError(res, 400, err.errors[0].message);
-        } else {
-            return sendError(res, 500, "Ocorreu um erro interno no servidor!");
-        }
+        return sendError(res, 500, "Ocorreu um erro interno no servidor!");
     }
 };
-
 
 static buscarPorId = async (req, res) => {
   try {
 
       const usuario = await UsuarioService.buscarUsuarioPorId(req.params);
-
       return sendResponse(res, 200, { data: usuario });
 
   } catch (err) {
-      console.error(err);
       if (err instanceof ZodError) {
           return sendError(res, 400, err.errors[0].message);
       } else if (err.message === "Usuário não encontrado.") {
@@ -46,28 +35,14 @@ static buscarPorId = async (req, res) => {
       } else {
           return sendError(res, 500, "Ocorreu um erro interno no servidor!");
       }
-  }
+  };
 };
 
 
 static criarUsuario = async (req, res) => {
   try {
-    const usuarioData = {
-      ...req.body,
-      matricula: String(req.body.matricula),
-    };
-
-    const { nome, matricula, senha, active, grupo_id } = UsuarioSchema.criarUsuario.parse(usuarioData);
-
-    const parametros = {
-      nome: nome,
-      matricula: matricula,
-      senha: senha,
-      active: Boolean(active),
-      grupo_id: parseInt(grupo_id),
-    };
-
-    const usuario = await UsuarioService.criarUsuario(parametros);
+   
+    const usuario = await UsuarioService.criarUsuario(req.body);
 
     return sendResponse(res, 201, {
       error: false,
@@ -75,12 +50,10 @@ static criarUsuario = async (req, res) => {
       data: usuario,
     });
   } catch (error) {
-    console.error(error);
     
     if (error.message === "A matrícula já está em uso") {
       return sendError(res, 400, "A matrícula já está em uso");
     }
-
     if (error.message === "grupo não encontrado.") {
       return sendError(res, 404, "O grupo informado não foi encontrado.");
     } else if (error instanceof ZodError) {
@@ -104,7 +77,6 @@ static atualizar = async (req, res) => {
       return sendResponse(res,200, {data:usuario});
 
     } catch (err) {
-     console.error(err)
       if(err instanceof ZodError){
         return sendError(res,400,err.errors[0].message);
 
@@ -112,7 +84,7 @@ static atualizar = async (req, res) => {
         return sendError(res,404,["O recurso solicitado não foi encontrado no servidor."]);
 
       }else if(err.message == "ja existe um usuario com essa matricula"){
-        return sendError(res,404,["ja existe um usuario com essa matricula"]);
+        return sendError(res,400,["ja existe um usuario com essa matricula"]);
       }else{
         return sendError(res,500,"Ocorreu um erro interno no servidor!");
       }
@@ -130,7 +102,6 @@ static atualizarSenha = async (req, res) => {
       return sendResponse(res,201, {data:usuario});
 
     } catch (err) {
-     console.error(err)
       if(err instanceof ZodError){
         return sendError(res,400,err.errors[0].message);
 
@@ -156,7 +127,6 @@ static atualizarSenha = async (req, res) => {
 
       return sendResponse(res, 201, { data: retorno });
     } catch (err) {
-      console.error(err);
 
       if(err.message == "Arquivo do tipo errado." ){
         return sendError(res,404,[err.message]);

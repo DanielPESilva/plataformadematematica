@@ -19,7 +19,6 @@ class UsuarioService {
 
 static async buscarUsuarioPorId(filtro) {
   const {id} = UsuarioSchema.buscarUsuarioPorId.parse(filtro)
-    // UsuarioSchema.buscarUsuarioPorId.parse({ });
     const usuario = await usuarioRepository.buscarUsuarioPorId(id);
     
     if (!usuario) {
@@ -34,21 +33,26 @@ static async buscarUsuarioPorId(filtro) {
 
 static async criarUsuario(data) {
 
-  const validatedData = UsuarioSchema.criarUsuario.parse(data);
+  const { nome,matricula, active,senha,grupo_id} = UsuarioSchema.criarUsuario.parse(data);
 
 
-  const grupoExiste = await usuarioRepository.buscarGrupoPorId(validatedData.grupo_id);
+  const grupoExiste = await usuarioRepository.buscarGrupoPorId(grupo_id);
   if (!grupoExiste) {
     throw new Error("grupo não encontrado.");
   }
 
-  const matriculaExist = await usuarioRepository.buscarUsuarioPorMatricula(validatedData.matricula);
-  console.log(matriculaExist);
+  const matriculaExist = await usuarioRepository.buscarUsuarioPorMatricula(matricula);
 
   if (matriculaExist) {
     throw new Error("A matrícula já está em uso");
   }
-  const filtroRepository = await usuarioRepository.criarUsuario(validatedData)
+  const filtroRepository = await usuarioRepository.criarUsuario({
+    nome:nome,
+    matricula:matricula,
+    active: active,
+    senha: senha,
+    grupo_id: grupo_id
+  })
   return filtroRepository;
 };
 
@@ -157,8 +161,6 @@ static async atualizar (parametros){
     let usuario_existentes = await usuarioRepository.listar_csv();
     const grupo = await usuarioRepository.grupo_alunos();
     const turmas_ids = await usuarioRepository.buscar_turmas();
-    console.log(turmas_ids)
-
     let usuario_csv = [];
     const header = ["nome", "matricula", "senha"];
 
