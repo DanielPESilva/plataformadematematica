@@ -1,388 +1,179 @@
-import { describe, expect, test } from '@jest/globals';
-import { z } from "zod";
+// Importando as dependências e mockando o moduloRepository
+import moduloService from "../../services/moduloService.js";
+import moduloRepository from '../../repositories/moduloRepository.js';
+import moduloSchema from "../../schemas/moduloSchema.js";
+import path from 'path';
+import sharp from 'sharp';
 
-jest.mock('../../repositories/AulaRepository.js', () => ({
-    modulo_exist: jest.fn(),
-    create: jest.fn(),
+// Mock dos métodos do moduloRepository
+jest.mock('../../repositories/moduloRepository.js', () => ({
+    listar: jest.fn(),
+    listarPorId: jest.fn(),
+    inserir: jest.fn(),
+    atualizar: jest.fn(),
+    deletar: jest.fn(),
+    moduloExist: jest.fn(),
+    constructFilters: jest.fn(),
 }));
+jest.mock('sharp');
 
-beforeEach(() => {
-    jest.clearAllMocks();
-});
-
-describe("listarSchema validação", () => {
-const { z } = require('zod');
-const listarSchema = z.object({
-    turma_id: z.preprocess((val) => Number(val), z.number({
-        invalid_type_error: "Id informado não é do tipo number."
-    }).int({
-        message: "Id informado não é um número inteiro."
-    }).positive({
-        message: "Id informado não é positivo."
-    })).optional(),
-    titulo: z.string({
-        invalid_type_error:'O titulo informado não é do tipo string.'
-    }).optional(),
-    descricao: z.string({
-        invalid_type_error: "A descrição informada deve ser do tipo string."
-    }).optional(),
-    image: z.string({
-        invalid_type_error: "A imagem informada deve ser do tipo string."
-    }).optional()
-});
-
-
-    test("Deve validar com dados válidos", () => {
-        const validData = {
-            turma_id: 1,
-            titulo: "Título do Módulo",
-            descricao: "Descrição do Módulo",
-            image: "https://exemplo.com/imagem.jpg"
-        };
-
-        const result = listarSchema.safeParse(validData);
-        expect(result.success).toBe(true);
+describe('ModuloService', () => {
+    afterEach(() => {
+        jest.clearAllMocks();
     });
 
-    test("Deve retornar erro se turma_id não for número", () => {
-        const invalidData = {
-            turma_id: "texto",
-        };
+    describe('listar', () => {
+        it('deve retornar busca quando encontrar módulos', async () => {
+            const filtro = { titulo: 'Teste' };
+            const busca = [{ id: 1, turma_id: 1, titulo: 'Teste', descricao: 'Descrição de Teste', image: 'imagem.png' }];
 
-        const result = listarSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        expect(result.error.issues[0].message).toBe("Id informado não é do tipo number.");
-    });
+            moduloRepository.constructFilters.mockReturnValue(filtro);
+            moduloRepository.listar.mockResolvedValue(busca);
 
-    test("Deve retornar erro se turma_id não for um número inteiro", () => {
-        const invalidData = {
-            turma_id: 1.5, 
-        };
+            const result = await moduloService.listar(filtro);
 
-        const result = listarSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        expect(result.error.issues[0].message).toBe("Id informado não é um número inteiro.");
-    });
-
-    test("Deve retornar erro se turma_id não for positivo", () => {
-        const invalidData = {
-            turma_id: -5, 
-        };
-
-        const result = listarSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        expect(result.error.issues[0].message).toBe("Id informado não é positivo.");
-    });
-
-    test("Deve retornar erro se titulo não for string", () => {
-        const invalidData = {
-            titulo: 123 
-        };
-
-        const result = listarSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        expect(result.error.issues[0].message).toBe("O titulo informado não é do tipo string.");
-    });
-
-    test("Deve retornar erro se descricao não for string", () => {
-        const invalidData = {
-            descricao: true 
-        };
-
-        const result = listarSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        expect(result.error.issues[0].message).toBe("A descrição informada deve ser do tipo string.");
-    });
-
-    test("Deve retornar erro se image não for string", () => {
-        const invalidData = {
-            image: 12345 
-        };
-
-        const result = listarSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        expect(result.error.issues[0].message).toBe("A imagem informada deve ser do tipo string.");
-    });
-
-    test("Deve validar com dados opcionais ausentes", () => {
-        const validData = {}; 
-
-        const result = listarSchema.safeParse(validData);
-        expect(result.success).toBe(true);
-    });
-});
-describe("listarPoIdSchema - getId validação", () => {
-const { z } = require('zod');
-const listarPoIdSchema = z.object({
-    id: z.preprocess(
-        (val) => Number(val),
-        z.number({
-            invalid_type_error: "Id informado não é do tipo number.",
-        })
-        .int({ message: "Id informado não é um número inteiro." })
-        .positive({ message: "Id informado não é positivo." })
-    )
-});
-
-
-    test("Deve passar quando id é um número inteiro positivo", () => {
-        const result = listarPoIdSchema.safeParse({ id: 5 });
-        expect(result.success).toBe(true);
-    });
-
-    test("Deve falhar quando id não é um número", () => {
-        const result = listarPoIdSchema.safeParse({ id: "texto" });
-        expect(result.success).toBe(false);
-        expect(result.error.errors[0].message).toBe("Id informado não é do tipo number.");
-    });
-
-    test("Deve falhar quando id é um número decimal", () => {
-        const result = listarPoIdSchema.safeParse({ id: 5.5 });
-        expect(result.success).toBe(false);
-        expect(result.error.errors[0].message).toBe("Id informado não é um número inteiro.");
-    });
-
-    test("Deve falhar quando id é um número negativo", () => {
-        const result = listarPoIdSchema.safeParse({ id: -3 });
-        expect(result.success).toBe(false);
-        expect(result.error.errors[0].message).toBe("Id informado não é positivo.");
-    });
-
-    test("Deve converter string numérica para número e validar como positivo inteiro", () => {
-        const result = listarPoIdSchema.safeParse({ id: "10" });
-        expect(result.success).toBe(true);
-    });
-
-    test("Deve falhar quando id é zero", () => {
-        const result = listarPoIdSchema.safeParse({ id: 0 });
-        expect(result.success).toBe(false);
-        expect(result.error.errors[0].message).toBe("Id informado não é positivo.");
-    });
-});
-
-describe("inserirSchema - POST validation", () => {
-const inserirSchema = z.object({
-    turma_id: z.preprocess(
-        (val) => Number(val),
-        z.number({
-            invalid_type_error: "Id informado não é do tipo number.",
-        })
-        .int({ message: "Id informado não é um número inteiro." })
-        .positive({ message: "Id informado não é positivo." })
-    ),
-    titulo: z.string({
-        invalid_type_error: 'O titulo informado não é do tipo string.'
-    }),
-    descricao: z.string({
-        invalid_type_error: "A descrição informada deve ser do tipo string."
-    }),
-    image: z.string({
-        invalid_type_error: "A imagem informada deve ser do tipo string."
-    })
-});
-
-    test("Deve passar com dados válidos", () => {
-        const result = inserirSchema.safeParse({
-            turma_id: 10,
-            titulo: "Título de Teste",
-            descricao: "Descrição de Teste",
-            image: "http://exemplo.com/imagem.jpg"
+            expect(moduloRepository.constructFilters).toHaveBeenCalledWith(filtro);
+            expect(moduloRepository.listar).toHaveBeenCalledWith(filtro);
+            expect(result).toEqual(busca);
         });
-        expect(result.success).toBe(true);
-    });
 
-    test("Deve falhar se turma_id não for um número inteiro positivo", () => {
-        const result = inserirSchema.safeParse({
-            turma_id: -5,
-            titulo: "Título de Teste",
-            descricao: "Descrição de Teste",
-            image: "http://exemplo.com/imagem.jpg"
+        it('deve lançar erro se não encontrar nenhum módulo', async () => {
+            const filtro = { titulo: 'Inexistente' };
+
+            moduloRepository.constructFilters.mockReturnValue(filtro);
+            moduloRepository.listar.mockResolvedValue(null);
+
+            await expect(moduloService.listar(filtro)).rejects.toThrow("nem um modulo foi encontrado.");
         });
-        expect(result.success).toBe(false);
-        expect(result.error.errors[0].message).toBe("Id informado não é positivo.");
     });
 
-    test("Deve converter string numérica para número e validar como positivo inteiro", () => {
-        const result = inserirSchema.safeParse({
-            turma_id: "10",
-            titulo: "Título de Teste",
-            descricao: "Descrição de Teste",
-            image: "http://exemplo.com/imagem.jpg"
+    describe('listarPorId', () => {
+        it('deve retornar o módulo quando encontrar por ID', async () => {
+            const id = 1;
+            const modulo = { id: 1, turma_id: 1, titulo: 'Teste', descricao: 'Descrição de Teste', image: 'imagem.png' };
+
+            moduloRepository.constructFilters.mockReturnValue({ id });
+            moduloRepository.listarPorId.mockResolvedValue(modulo);
+
+            const result = await moduloService.listarPorId(id);
+
+            expect(moduloRepository.constructFilters).toHaveBeenCalledWith({ id });
+            expect(moduloRepository.listarPorId).toHaveBeenCalledWith({ id });
+            expect(result).toEqual(modulo);
         });
-        expect(result.success).toBe(true);
-    });
 
-    test("Deve falhar se titulo não for string", () => {
-        const result = inserirSchema.safeParse({
-            turma_id: 10,
-            titulo: 123,
-            descricao: "Descrição de Teste",
-            image: "http://exemplo.com/imagem.jpg"
+        it('deve lançar erro se não encontrar o módulo por ID', async () => {
+            const id = 999;
+
+            moduloRepository.constructFilters.mockReturnValue({ id });
+            moduloRepository.listarPorId.mockResolvedValue(null);
+
+            await expect(moduloService.listarPorId(id)).rejects.toThrow("nem um modulo foi encontrado.");
         });
-        expect(result.success).toBe(false);
-        expect(result.error.errors[0].message).toBe("O titulo informado não é do tipo string.");
     });
 
-    test("Deve falhar se descricao não for string", () => {
-        const result = inserirSchema.safeParse({
-            turma_id: 10,
-            titulo: "Título de Teste",
-            descricao: 456,
-            image: "http://exemplo.com/imagem.jpg"
+    describe('inserir', () => {
+        it('deve inserir o módulo se os dados forem válidos', async () => {
+            const data = { turma_id: 1, titulo: 'Teste', descricao: 'Descrição', image: 'http://example.com/imagem.png' };
+            const file = { mimetype: 'image/png', buffer: Buffer.from([]) };
+            const imageUrl = 'http://example.com/imagem.png';
+
+            moduloRepository.moduloExist.mockResolvedValue(true);
+            moduloRepository.inserir.mockResolvedValue({ id: 1, ...data, image: imageUrl });
+
+            sharp.mockImplementation(() => ({
+                resize: jest.fn().mockReturnThis(),
+                toFormat: jest.fn().mockReturnThis(),
+                toFile: jest.fn().mockResolvedValue(),
+            }));
+
+            const result = await moduloService.inserir(data, file, imageUrl);
+
+            expect(moduloRepository.moduloExist).toHaveBeenCalledWith(data.turma_id);
+            expect(moduloRepository.inserir).toHaveBeenCalledWith(expect.objectContaining(data));
+            expect(result).toEqual({ id: 1, ...data, image: imageUrl });
         });
-        expect(result.success).toBe(false);
-        expect(result.error.errors[0].message).toBe("A descrição informada deve ser do tipo string.");
-    });
 
-    test("Deve falhar se image não for string", () => {
-        const result = inserirSchema.safeParse({
-            turma_id: 10,
-            titulo: "Título de Teste",
-            descricao: "Descrição de Teste",
-            image: 789
+        it('deve lançar erro se a turma não for encontrada', async () => {
+            const data = { turma_id: 1, titulo: 'Teste', descricao: 'Descrição', image: 'imagem.png' };
+            const file = { mimetype: 'image/png', buffer: Buffer.from([]) };
+            const imageUrl = 'http://example.com/imagem.png';
+    
+            // Configurando o mock para retornar false, simulando que a turma não existe
+            moduloRepository.moduloExist.mockResolvedValue(false); // A turma não existe
+            moduloRepository.inserir.mockResolvedValue({ id: 1, ...data, image: imageUrl });
+    
+            // Executando o teste e esperando que um erro seja lançado
+            await expect(moduloService.inserir(data, file, imageUrl)).rejects.toThrow("A turma informada não existe.");
+    
+            // Verificando se as funções do repositório foram chamadas corretamente
+            expect(moduloRepository.moduloExist).toHaveBeenCalledWith(data.turma_id);
+            expect(moduloRepository.inserir).not.toHaveBeenCalled(); // O módulo não deve ser inserido se a turma não existir
         });
-        expect(result.success).toBe(false);
-        expect(result.error.errors[0].message).toBe("A imagem informada deve ser do tipo string.");
-    });
 
-    test("Deve falhar se turma_id for um número decimal", () => {
-        const result = inserirSchema.safeParse({
-            turma_id: 10.5,
-            titulo: "Título de Teste",
-            descricao: "Descrição de Teste",
-            image: "http://exemplo.com/imagem.jpg"
+        it('deve lançar erro se o arquivo não for uma imagem', async () => {
+            const data = { turma_id: 1, titulo: 'Teste', descricao: 'Descrição', image: 'imagem.png' };
+            const file = { mimetype: 'application/pdf' }; // Arquivo não é uma imagem
+            const imageUrl = 'http://example.com/imagem.png';
+
+            await expect(moduloService.inserir(data, file, imageUrl)).rejects.toThrow("Arquivo não é uma imagem.");
         });
-        expect(result.success).toBe(false);
-        expect(result.error.errors[0].message).toBe("Id informado não é um número inteiro.");
     });
 
-    test("Deve falhar se turma_id for zero", () => {
-        const result = inserirSchema.safeParse({
-            turma_id: 0,
-            titulo: "Título de Teste",
-            descricao: "Descrição de Teste",
-            image: "http://exemplo.com/imagem.jpg"
+    describe('atualizar', () => {
+        it('deve atualizar o módulo se ele existir', async () => {
+            const id = 1;
+            const data = { turma_id: 1, titulo: 'Atualizado', descricao: 'Nova descrição', image: 'nova-imagem.png' };
+            const moduloExist = { id: 1, turma_id: 1, titulo: 'Teste', descricao: 'Descrição de Teste', image: 'imagem.png' };
+
+            moduloRepository.constructFilters.mockReturnValue({ id });
+            moduloRepository.listarPorId.mockResolvedValue(moduloExist);
+            moduloRepository.atualizar.mockResolvedValue({ id, ...data });
+
+            const result = await moduloService.atualizar(id, data);
+
+            expect(moduloRepository.listarPorId).toHaveBeenCalledWith({ id });
+            expect(moduloRepository.atualizar).toHaveBeenCalledWith(expect.objectContaining({
+                where: { id },
+                data,
+            }));
+            expect(result).toEqual({ id, ...data });
         });
-        expect(result.success).toBe(false);
-        expect(result.error.errors[0].message).toBe("Id informado não é positivo.");
-    });
-});
 
-describe("atualizarSchema", () => {
-const atualizarSchema = z.object({
-    turma_id: z.preprocess((val) => Number(val), z.number({
-        invalid_type_error: "Id informado não é do tipo number.",
-    }).int({
-        message: "Id informado não é um número inteiro."
-    }).positive({
-        message: "Id informado não é positivo."
-    })).optional(),
-    titulo: z.string({
-        invalid_type_error: 'O titulo informado não é do tipo string.'
-    }).optional(),
-    descricao: z.string({
-        invalid_type_error: "A descrição informada deve ser do tipo string."
-    }).optional(),
-    image: z.string({
-        invalid_type_error: "A imagem informada deve ser do tipo string."
-    }).optional()
-});
+        it('deve lançar erro se o módulo não existir', async () => {
+            const id = 999;
+            const data = { turma_id: 1, titulo: 'Atualizado', descricao: 'Nova descrição', image: 'nova-imagem.png' };
 
+            moduloRepository.constructFilters.mockReturnValue({ id });
+            moduloRepository.listarPorId.mockResolvedValue(null);
 
-    test("deve passar com todos os campos válidos", () => {
-        const validData = {
-            turma_id: 1,
-            titulo: "Título válido",
-            descricao: "Descrição válida",
-            image: "Imagem válida"
-        };
-        expect(atualizarSchema.safeParse(validData).success).toBe(true);
+            await expect(moduloService.atualizar(id, data)).rejects.toThrow("O recurso solicitado não foi encontrado no servidor.");
+        });
     });
 
-    test("deve passar com campos opcionais ausentes", () => {
-        const dataWithMissingFields = {};
-        expect(atualizarSchema.safeParse(dataWithMissingFields).success).toBe(true);
+    describe('deletar', () => {
+        it('deve deletar o módulo se ele existir', async () => {
+            const id = 1;
+            const modulo = { id };
+
+            moduloRepository.constructFilters.mockReturnValue({ id });
+            moduloRepository.listarPorId.mockResolvedValue(modulo);
+            moduloRepository.deletar.mockResolvedValue(true);
+
+            const result = await moduloService.deletar(id);
+
+            expect(moduloRepository.listarPorId).toHaveBeenCalledWith({ id });
+            expect(moduloRepository.deletar).toHaveBeenCalledWith(id);
+            expect(result).toBe(true);
+        });
+
+        it('deve lançar erro se o módulo não existir', async () => {
+            const id = 999;
+
+            moduloRepository.constructFilters.mockReturnValue({ id });
+            moduloRepository.listarPorId.mockResolvedValue(null);
+
+            await expect(moduloService.deletar(id)).rejects.toThrow("O recurso solicitado não foi encontrado no servidor.");
+        });
     });
-
-    test("deve falhar se turma_id não for um número", () => {
-        const invalidData = { turma_id: "abc" };
-        const result = atualizarSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        expect(result.error.issues[0].message).toBe("Id informado não é do tipo number.");
-    });
-
-    test("deve falhar se turma_id não for um número inteiro positivo", () => {
-        const invalidData = { turma_id: -1 };
-        const result = atualizarSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        expect(result.error.issues[0].message).toBe("Id informado não é positivo.");
-    });
-
-    test("deve falhar se titulo não for uma string", () => {
-        const invalidData = { titulo: 123 };
-        const result = atualizarSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        expect(result.error.issues[0].message).toBe("O titulo informado não é do tipo string.");
-    });
-
-    test("deve falhar se descricao não for uma string", () => {
-        const invalidData = { descricao: 123 };
-        const result = atualizarSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        expect(result.error.issues[0].message).toBe("A descrição informada deve ser do tipo string.");
-    });
-
-    test("deve falhar se image não for uma string", () => {
-        const invalidData = { image: 123 };
-        const result = atualizarSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        expect(result.error.issues[0].message).toBe("A imagem informada deve ser do tipo string.");
-    });
-});
-
-describe("deletarSchema", () => {
-const deletarSchema = z.object({
-  id: z.preprocess(
-    (val) => Number(val),
-    z.number({
-      invalid_type_error: "Id informado não é do tipo number.",
-    })
-      .int({ message: "Id informado não é um número inteiro." })
-      .positive({ message: "Id informado não é positivo." })
-  ),
-});
-
-  test("Deve passar com um número inteiro positivo", () => {
-    const resultado = deletarSchema.safeParse({ id: 5 });
-    expect(resultado.success).toBe(true);
-  });
-
-  test("Deve falhar se o id não for um número", () => {
-    const resultado = deletarSchema.safeParse({ id: "abc" });
-    expect(resultado.success).toBe(false);
-    if (!resultado.success) {
-      expect(resultado.error.issues[0].message).toBe("Id informado não é do tipo number.");
-    }
-  });
-
-  test("Deve falhar se o id não for um número inteiro", () => {
-    const resultado = deletarSchema.safeParse({ id: 5.5 });
-    expect(resultado.success).toBe(false);
-    if (!resultado.success) {
-      expect(resultado.error.issues[0].message).toBe("Id informado não é um número inteiro.");
-    }
-  });
-
-  test("Deve falhar se o id for um número negativo", () => {
-    const resultado = deletarSchema.safeParse({ id: -5 });
-    expect(resultado.success).toBe(false);
-    if (!resultado.success) {
-      expect(resultado.error.issues[0].message).toBe("Id informado não é positivo.");
-    }
-  });
-
-  test("Deve converter string numérica para número e validar com sucesso", () => {
-    const resultado = deletarSchema.safeParse({ id: "10" });
-    expect(resultado.success).toBe(true);
-  });
 });

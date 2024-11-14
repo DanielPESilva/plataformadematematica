@@ -47,7 +47,7 @@ class ModuloService {
                 image: imageUrl
             }
 
-            const turma = await moduloRepository.turma_exist(moduloResponse.turma_id)
+            const turma = await moduloRepository.moduloExist(moduloResponse.turma_id)
 
             if (!turma) {
                 throw new Error("A turma informada não existe.");

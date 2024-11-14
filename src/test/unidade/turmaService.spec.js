@@ -1,5 +1,22 @@
 import { describe, expect, test } from '@jest/globals';
 import { z } from "zod";
+import turmaService from '../../services/turmaService';
+import turmaRepository from '../../repositories/turmaRepository';
+
+jest.mock('../../repositories/turmaRepository.js', () => ({
+  findAll: jest.fn(),
+  findById: jest.fn(),
+  create: jest.fn(),
+  findByTitulo: jest.fn(),
+  atualizar:jest.fn(),
+  findByTituloExceptId:jest.fn(),
+  userExist: jest.fn(),
+  turmaMatricular: jest.fn(),
+  removerturmaDaTurma: jest.fn(),
+  delete: jest.fn(),
+  mockResolvedValue:jest.fn(),
+  constructFilters: jest.fn(),
+}));
 
 const listarSchema = z.object({
   id: z.preprocess(
