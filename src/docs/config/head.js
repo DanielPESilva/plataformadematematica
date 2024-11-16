@@ -1,13 +1,23 @@
+//routes
 import authPaths from "../routes/auth.js";
-import usersPaths from "../routes/users.js";
 import turmaPaths from "../routes/turma.js"
+import moduloRoutes from "../routes/modulo.js";
+import usuarioCsvRoutes from "../routes/usuario-csv.js";
+import aulaRoutes from "../routes/aula.js";
+import usuarioRoutes from "../routes/usuario.js"; 
+//schemas
+import usuarioCsvSchema from "../schemas/usuario-csvSchemaDoc.js";
 import authSchemas from "../schemas/authSchema.js";
+import loginSchema from "../schemas/loginSchemaDoc.js"
 import turmaSchema from "../schemas/turmaSchema.js";
+import aulaSchema from "../schemas/aulaSchemaDoc.js";
+import moduloSchema from "../schemas/moduloSchemaDoc.js";
+import usuarioSchema from "../schemas/usuarioSchema.js";
 
 // Função para definir as URLs do servidor dependendo do ambiente
 const getServersInCorrectOrder = () => {
-    const devUrl = { url: process.env.SWAGGER_DEV_URL || "http://localhost:3051" };
-    const prodUrl = { url: process.env.SWAGGER_PROD_URL || "http://localhost:3051" };
+    const devUrl = { url: "http://localhost:3051" };
+    const prodUrl = { url: "http://localhost:3051" };
 
     if (process.env.NODE_ENV === "production") return [prodUrl, devUrl];
     else return [devUrl, prodUrl];
@@ -26,8 +36,16 @@ const getSwaggerOptions = () => {
             servers: getServersInCorrectOrder(),
             tags: [
                 {
-                    name: "Auth",
+                    name: "Login",
                     description: "Rotas para autenticação"
+                },
+                {
+                    name: "Aula",
+                    description: "Rotas para gestão de aulas"
+                },
+                {
+                    name: "Modulo",
+                    description: "Rotas para gestão de modulos"
                 },
                 {
                     name: "Turmas",
@@ -37,11 +55,18 @@ const getSwaggerOptions = () => {
                     name: "Usuários", 
                     description: "Rotas para gestão de usuários"
                 },
+                {
+                    name: "Usuários/csv", 
+                    description: "Rotas para gestão de usuários"
+                },
             ],
             paths: {
                 ...authPaths,
-                ...usersPaths,
-                ...turmaPaths
+                ...turmaPaths,
+                ...moduloRoutes,
+                ...usuarioCsvRoutes,
+                ...aulaRoutes,
+                ...usuarioRoutes,
             },
             components: {
                 securitySchemes: {
@@ -53,7 +78,12 @@ const getSwaggerOptions = () => {
                 },
                 schemas: {
                     ...authSchemas,
-                    ...turmaSchema
+                    ...turmaSchema,
+                    ...loginSchema,
+                    ...moduloSchema,
+                    ...usuarioCsvSchema,
+                    ...aulaSchema,
+                    ...usuarioSchema,
                 }
             },
             security: [{

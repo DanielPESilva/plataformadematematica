@@ -1,109 +1,146 @@
 import request from "supertest";
-import { describe, expect, it } from '@jest/globals';
-import app from '../../app.js';
-import faker from "faker-br"
-import Faker from "faker-br/lib/index.js";
+import { describe, expect, it} from '@jest/globals';
+import app from '../../app.js'
+import path from "path";
+import fs from "fs";
+import faker from 'faker-br';
 
+let token = null
 
-describe('GET /turma', () => {
-    
-    it('1 - Deve retornar uma lista com todas as turmas', async () => {
+describe('Autenticação', () => {
+    it("1-Deve chamar a rota de autenticação e pegar o token", async () => {
         const req = await request(app)
-            .get('/turma') 
-        
-        expect(req.status).toBe(200); 
-        expect(req.body.error).toBe(false); 
-        expect(req.body.message).toEqual({"message": "Turmas encontrado(a)."});
-    });
+        .post('/login')
+        .set("Accept", "aplication/json")
+        .send({
+            matricula:"12345",
+            senha:"senhatest"
+        })
+        token = req.body.data.token
+    })
+});
 
-    it('2 - Deve retornar um erro quando nenhuma turma for encontrada', async () => {
-        
-        const req = await request(app)
+describe('GET /turma - Listar todas as turmas.', () => {
+    it('1- Deve retornar todas as turmas.', async () => {
+
+        const res = await request(app)
             .get('/turma')
-            .query({ titulo: null }); 
-        
-        expect(req.status).toBe(200);
-        expect(req.body.error).toBe(false); 
-        expect(req.body.message).toEqual({"message": "Turmas encontrado(a)."}); 
+            .set("Accept", "application/json")
+            .set("Authorization", `Bearer ${token}`);
+
+        expect(res.status).toBe(201);
+        expect(res.body.code).toBe(201);
+        expect(res.body).toHaveProperty('data');
+        expect(Array.isArray(res.body.data)).toBe(true);
+        expect(res.body.message).toBe("Requisição bem sucedida, recurso foi criado");
+        expect(res.body.data.length).toBeGreaterThan(0);
     });
-});
 
-  describe('get turma por id', () => {
-  it("1-deve retornar uma turma.", async () => {
-      const req = await request(app)
-      .get('/turma/1')
-      expect(req.body.error).toEqual(false)
-      expect(req.status).toBe(200)
-      expect(req.body.message).toEqual("Requisição bem sucedida.")
-      expect(req.body.data).toBeInstanceOf(Object)
-      expect(req.body.data.id).toBeDefined()
-      expect(req.body.data.titulo).toBeDefined()
-      expect(req.body.data.usuario_has_turma).toBeDefined()
-  })
+    it('3- Deve retornar erro 404 quando houver retorno', async () => {
+        const res = await request(app)
+            .get('/turma')
+            .set("Authorization", `Bearer ${token}`)
+            .set("Accept", "application/json")
+            .query({
+                nome: "nome que não existe no banco"
+            });
+            console.log(res.body)
 
-  it("2-deve retornar um erro quando nem uma turma for encontrada.", async () => {
-      const req = await request(app)
-      .get('/turma/89898981')
-      expect(req.body.error).toEqual(true)
-      expect(req.status).toBe(400)
-      expect(req.body.message).toEqual( {"message": "Turma não encontrado(a)."})
-  })
-});
 
-describe('create turma', () => {
-  it("1-deve retornar uma turma.", async () => {
-      const req = await request(app)
-      .post('/turma')
-      .send({
-          id:23,
-          titulo: faker.name.findName(),
-      })
+        expect(res.body.error).toBe(true);
+        expect(res.status).toBe(404);
+        expect(res.body.message).toBe("O recurso solicitado não foi encontrado no servidor.");
+    });
 
-      expect(req.body.error).toEqual(false)
-      expect(req.status).toBe(201)
-      expect(req.body.message).toEqual( {"message": "Turma criado(a) com sucesso."})
-      expect(req.body.data).toBeInstanceOf(Object)
-      expect(req.body.data.id).toBeDefined()
-      expect(req.body.data.titulo).toBeDefined()
-  })
 
-  it("2-deve retornar um erro quando turma já existir.", async () => {
-      const req = await request(app)
-      .post('/turma')
-      .send({
-          id:22,
-          titulo: faker.name.findName(),
-      })
-      expect(req.body.error).toEqual(true)
-      expect(req.status).toBe(500)
-      expect(req.body.message).toEqual(undefined)
-  });
-});
+    describe('GET /turma/:id - Listar todas as turmas pelo ID.', () => {
+        it('1- Deve retornar as turmas utilizando o ID.', async () => {
+    
+            const res = await request(app)
+                .get('/turma/1')
+                .set("Accept", "application/json")
+                .set("Authorization", `Bearer ${token}`)
+    
+            expect(res.status).toBe(201);
+            expect(res.body.code).toBe(201);
+            expect(res.body.error).toBe(false);
+            expect(res.body).toHaveProperty('data');
+            expect(res.body.message).toBe("Requisição bem sucedida, recurso foi criado");
+        });
 
-describe('patch turma', () => {
-  it("1-deve atualizar os dados de uma turma.", async () => {
-      const req = await request(app)
-      .patch(`/turma/90`)
-      .send({
-          titulo: faker.name.findName()
-      })
-      
-      expect(req.body.error).toEqual(false)
-      expect(req.status).toBe(201)
-      expect(req.body.message).toEqual("Requisição bem sucedida, recurso foi criado")
-      expect(req.body.data).toBeInstanceOf(Object)
-      expect(req.body.data.id).toBeDefined()
-      expect(req.body.data.titulo).toBeDefined()
-  })
+        it('2- Deve retornar erro 404 quando não encontrar uma turma', async () => {
+    
+            const res = await request(app)
+                .get('/turma/9999')
+                .set("Accept", "application/json")
+                .set("Authorization", `Bearer ${token}`)
+    
+            expect(res.status).toBe(404);
+            expect(res.body.code).toBe(404);
+            expect(res.body.message).toBe("O recurso solicitado não foi encontrado no servidor.");
+            expect(res.body.errors[0]).toBe("Nenhuma turma foi encontrada.");
+        });
+        
+        it('3- Deve retornar erro 400 quando houver um bad request', async () => {
+            const res = await request(app)
+                .get('/turma/ASduasidg')
+            expect(res.body.error).toBe(true);
+            expect(res.status).toBe(400);
+            expect(res.body.message).toBe("Requisição com sintaxe incorreta ou outros problemas.");
+            expect(res.body.errors[0].message).toBe("Id informado não é do tipo number.");
+        });
+ });
 
-  it("2-deve retornar um erro casa a turma não exista.", async () => {
-      const req = await request(app)
-      .patch('/turma/20909090')
-      .send({
-          titulo: faker.name.findName(),
-      })
-      expect(req.body.error).toEqual(true)
-      expect(req.status).toBe(500)
-      expect(req.body.message).toEqual("Servidor encontrou um erro interno.")
-  })
+
+    describe('PATCH /turma/:id - Atualizar uma turma.', () => {
+        it('1- turma deve ser atualizada e deverá retornar uma respota positiva.', async () => {
+            const updatedData = {
+                nome: faker.commerce.productName(), 
+                id: 2
+            }
+            const res = await request(app)
+                .patch('/turma/1')
+                .set("Accept", "application/json")
+                .set("Authorization", `Bearer ${token}`)
+                .send(updatedData)
+    
+            expect(res.status).toBe(201);
+            expect(res.body.code).toBe(201);
+            expect(res.body.error).toBe(false);
+            expect(res.body).toHaveProperty('data');
+            expect(res.body.message).toBe("Requisição bem sucedida, recurso foi criado");
+        });
+        it('2- Deve retornar erro 404 quando não encontrar uma turma', async () => {
+
+            const updatedData = {
+                nome: faker.commerce.productName(), 
+                id: 2
+            }
+    
+            const res = await request(app)
+                .patch('/turma/999')
+                .set("Accept", "application/json")
+                .set("Authorization", `Bearer ${token}`)
+                .send(updatedData)
+    
+            expect(res.status).toBe(404);
+            expect(res.body.code).toBe(404);
+            expect(res.body.message).toBe("O recurso solicitado não foi encontrado no servidor.");
+        });
+        
+        it('3- Deve retornar erro 400 quando houver um bad request', async () => {
+            const updatedData = {
+                nome: faker.commerce.productName(), 
+            }
+            const res = await request(app)
+                .patch('/turma/string')
+                .set("Accept", "application/json")
+                .set("Authorization", `Bearer ${token}`)
+                .send(updatedData)
+            expect(res.body.error).toBe(true);
+            expect(res.status).toBe(400);
+            expect(res.body.message).toBe("Requisição com sintaxe incorreta ou outros problemas.");
+        });
+    });
+    
 })

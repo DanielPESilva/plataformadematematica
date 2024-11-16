@@ -1,81 +1,137 @@
+import { number } from "zod";
 import {prisma} from "../configs/prismaClient.js";
+import bcrypt from 'bcrypt';
+
 
 class usuarioRepository {
-  async create(data) {
-    return await prisma.usuario.create({ data });
-  }
-
-  async update(id, data) {
-    return await prisma.usuario.update({ where: { id }, data });
-  }
-
-  async delete(id) {
-    return await prisma.usuario.delete({ where: { id } });
-  }
-
-  async findByMatricula(matricula) {
-    const filtros = this.constructFilters();
-    const user = await prisma.usuario.findUnique({
-      where: { matricula },
-      select: filtros.select,
+  
+  static async listarUsuarios(filtros) {
+    return await prisma.usuario.findMany({
+        where: filtros,
+        select: {
+            id: true,
+            nome: true,
+            matricula: true,
+            active: true,
+        },
     });
-    return user;
-  }
+}
 
-  async findByEmail(email) {
-    const filtros = this.constructFilters();
-    const user = await prisma.usuario.findUnique({
-      where: { email },
-      select: filtros.select,
+static async buscarUsuarioPorId(id) {
+  
+    return await prisma.usuario.findUnique({
+        where: { id:id },
+        select: {
+            id: true,
+            nome: true,
+            matricula: true,
+            active: true,
+        },
     });
-    return user;
-  }
+};
 
-  async findById(id) {
-    const filtros = this.constructFilters();
-    const user = await prisma.usuario.findUnique({
+
+
+static async buscarId(id) {
+  return await prisma.usuario.findUnique({
+      where: { id:id }
+  });
+};
+
+static async atualizarUsuario(filtro) {
+  return await prisma.usuario.update(filtro);
+};
+
+
+static async buscarGrupoPorId(id) {
+  return await prisma.grupo.findUnique({
       where: { id },
-      select: filtros.select,
+      select: {
+          id: true,
+      },
+  });
+};
+
+static async buscarSenha(id){
+  return await prisma.usuario.findUnique({
+    where: { id:id },
+    select: {
+        id: true,
+        matricula: true,
+        senha:true
+    },
+})
+}
+
+
+static async buscarUsuarioPorMatricula(matricula) {
+  return await prisma.usuario.findFirst({
+    where: {
+      matricula: matricula
+    },
+    select: {
+      id: true,
+      nome: true,
+      senha: true,
+      matricula: true,
+      active: true
+    }
+  });
+}
+
+
+
+
+  static async criarUsuario(data) {
+    data.senha = await bcrypt.hash(data.senha, parseInt(process.env.SALT, 10));
+
+return await prisma.usuario.create({data});
+
+}
+
+
+
+  static async listar_csv() {
+    return await prisma.usuario.findMany({
+      select: {
+        nome: true,
+        matricula: true,
+      },
     });
-    return user;
   }
 
-  async findAll(filtros, page, perPage) {
-    const skip = (page -1) * perPage;
-    const take = perPage;
-
-    const [users, total] = await Promise.all([
-        prisma.usuario.findMany({
-            ...filtros,
-            skip,
-            take,
-        }),
-        prisma.usuario.count({ where: filtros.where })
-    ])
-    return { users, total, page, perPage };
+  static async buscar_turmas() {
+    return await prisma.turma.findMany();
   }
 
-  constructFilters(nome, matricula) {
-    let filtros = {
+  static async inserir_alunos(insert) {
+    return await prisma.aluno.createMany({
+      data: insert,
+    });
+  }
+
+  static async grupo_alunos() {
+    return await prisma.grupo.findFirst({
       where: {
-        active: "Y",
+        nome: { contains: "alunos" },
+      },
+    });
+  }
+
+  static async inserir_usuarios(insert) {
+    return await prisma.usuario.create({
+      data: {
+        ...insert,
       },
       select: {
-        usu_id: true,
-        usu_nome: true,
-        usu_tel: true,
-        usu_email: true,
-        usu_matricula: true,
-        usu_cpf: true,
-        usu_senha: false,
+        id: true,
+        nome: true,
+        matricula: true,
+        grupo_id: true,
+        active: true,
       },
-    };
-
-    if (nome) filtros.where.usu_nome = { contains: nome };
-    if (matricula) filtros.where.usu_matricula = { contains: matricula };
-
-    return filtros;
+    });
   }
 }
 
-export default new usuarioRepository();
+export default usuarioRepository;

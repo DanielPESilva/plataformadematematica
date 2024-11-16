@@ -5,99 +5,201 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
 -- Schema plataforma_matematica
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
 -- Schema plataforma_matematica
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `plataforma_matematica` DEFAULT CHARACTER SET utf8mb4 ;
+CREATE SCHEMA IF NOT EXISTS `plataforma_matematica` DEFAULT CHARACTER SET utf8 ;
 USE `plataforma_matematica` ;
 
 -- -----------------------------------------------------
--- Table `plataforma_matematica`.`questao`
+-- Table `plataforma_matematica`.`rota`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`questao` (
-  `id` INT(11) NOT NULL,
-  `posicao` VARCHAR(45) NULL DEFAULT NULL,
-  `titulo` VARCHAR(45) NOT NULL,
-  `pdf` VARCHAR(45) NOT NULL,
-  `link_video` VARCHAR(45) NOT NULL,
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`rota` (
+  `id` INT NOT NULL AUTO_INCREMENT UNIQUE,
+  `rota` VARCHAR(45) NOT NULL,
+  `get` TINYINT(1) NOT NULL,
+  `post` TINYINT(1) NOT NULL,
+  `patch` TINYINT(1) NOT NULL,
+  `put` TINYINT(1) NOT NULL,
+  `delete` TINYINT(1) NOT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `plataforma_matematica`.`modulo`
+-- Table `plataforma_matematica`.`grupo`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`modulo` (
-  `id` INT(11) NOT NULL,
-  `titulo` VARCHAR(45) NOT NULL,
-  `tema` VARCHAR(45) NOT NULL,
-  `descriao` VARCHAR(45) NULL DEFAULT NULL,
-  `questao_id` INT(11) NOT NULL,
-  PRIMARY KEY (`id`, `questao_id`),
-  INDEX `fk_modulo_questao2_idx` (`questao_id` ASC) VISIBLE,
-  CONSTRAINT `fk_modulo_questao2`
-    FOREIGN KEY (`questao_id`)
-    REFERENCES `plataforma_matematica`.`questao` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
-
-
--- -----------------------------------------------------
--- Table `plataforma_matematica`.`turma`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`turma` (
-  `id` INT(11) NOT NULL,
-  `titulo` VARCHAR(45) NOT NULL,
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`grupo` (
+  `id` INT NOT NULL AUTO_INCREMENT UNIQUE,
+  `nome` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
 -- Table `plataforma_matematica`.`usuario`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`usuario` (
-  `id` INT(11) NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT UNIQUE,
+  `nome` VARCHAR(100) NOT NULL,
+  `grupo_id` INT NOT NULL,
+  `senha` VARCHAR(240) NOT NULL,
+  `matricula` VARCHAR(20) NOT NULL UNIQUE,
+  `active` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`id`, `grupo_id`),
+  INDEX `fk_usuario_grupo1_idx` (`grupo_id` ASC),
+  CONSTRAINT `fk_usuario_grupo1`
+    FOREIGN KEY (`grupo_id`)
+    REFERENCES `plataforma_matematica`.`grupo` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `plataforma_matematica`.`turma`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`turma` (
+  `id` INT NOT NULL AUTO_INCREMENT UNIQUE,
   `nome` VARCHAR(45) NOT NULL,
-  `telefone` VARCHAR(45) NULL DEFAULT NULL,
-  `email` VARCHAR(45) NOT NULL,
-  `matricula` INT(11) NOT NULL,
-  `cpf` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `plataforma_matematica`.`usuario_has_turma`
+-- Table `plataforma_matematica`.`professor`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`usuario_has_turma` (
-  `usuario_id` INT(11) NOT NULL,
-  `turma_id` INT(11) NOT NULL,
-  PRIMARY KEY (`usuario_id`, `turma_id`),
-  INDEX `fk_usuario_has_turma_turma1_idx` (`turma_id` ASC) VISIBLE,
-  INDEX `fk_usuario_has_turma_usuario_idx` (`usuario_id` ASC) VISIBLE,
-  CONSTRAINT `fk_usuario_has_turma_turma1`
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`professor` (
+  `id` INT NOT NULL AUTO_INCREMENT UNIQUE,
+  `turma_id` INT NOT NULL,
+  `usuario_id` INT NOT NULL,
+  PRIMARY KEY (`id`, `turma_id`, `usuario_id`),
+  INDEX `fk_professor_turma1_idx` (`turma_id` ASC),
+  INDEX `fk_professor_usuario1_idx` (`usuario_id` ASC),
+  CONSTRAINT `fk_professor_turma1`
     FOREIGN KEY (`turma_id`)
     REFERENCES `plataforma_matematica`.`turma` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_usuario_has_turma_usuario`
+  CONSTRAINT `fk_professor_usuario1`
     FOREIGN KEY (`usuario_id`)
     REFERENCES `plataforma_matematica`.`usuario` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8mb4;
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `plataforma_matematica`.`aluno`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`aluno` (
+  `id` INT NOT NULL AUTO_INCREMENT UNIQUE,
+  `usuario_id` INT NOT NULL,
+  `turma_id` INT NOT NULL,
+  PRIMARY KEY (`id`, `usuario_id`, `turma_id`),
+  INDEX `fk_aluno_usuario1_idx` (`usuario_id` ASC),
+  INDEX `fk_aluno_turma1_idx` (`turma_id` ASC),
+  CONSTRAINT `fk_aluno_usuario1`
+    FOREIGN KEY (`usuario_id`)
+    REFERENCES `plataforma_matematica`.`usuario` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_aluno_turma1`
+    FOREIGN KEY (`turma_id`)
+    REFERENCES `plataforma_matematica`.`turma` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `plataforma_matematica`.`modulo`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`modulo` (
+  `id` INT NOT NULL AUTO_INCREMENT UNIQUE,
+  `turma_id` INT NOT NULL,
+  `titulo` VARCHAR(100) NOT NULL,
+  `image` VARCHAR(200) NULL,
+  `descricao` TEXT NULL,
+  PRIMARY KEY (`id`, `turma_id`),
+  INDEX `fk_modulo_turma_idx` (`turma_id` ASC),
+  CONSTRAINT `fk_modulo_turma`
+    FOREIGN KEY (`turma_id`)
+    REFERENCES `plataforma_matematica`.`turma` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `plataforma_matematica`.`aula`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`aula` (
+  `id` INT NOT NULL AUTO_INCREMENT UNIQUE,
+  `modulo_id` INT NOT NULL,
+  `titulo` VARCHAR(100) NULL,
+  `video` VARCHAR(240) NOT NULL,
+  `pdf_questoes` VARCHAR(200) NULL,
+  `pdf_resolucao` VARCHAR(200) NULL,
+  `descricao` TEXT NULL,
+  PRIMARY KEY (`id`, `modulo_id`),
+  INDEX `fk_aula_modulo1_idx` (`modulo_id` ASC),
+  CONSTRAINT `fk_aula_modulo1`
+    FOREIGN KEY (`modulo_id`)
+    REFERENCES `plataforma_matematica`.`modulo` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `plataforma_matematica`.`feito`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`feito` (
+  `id` INT NOT NULL AUTO_INCREMENT UNIQUE,
+  `feito` TINYINT(1) NULL,
+  `revisar` TINYINT(1) NULL,
+  `aula_id` INT NOT NULL,
+  `aluno_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_feito_aula1_idx` (`aula_id` ASC),
+  INDEX `fk_feito_aluno1_idx` (`aluno_id` ASC),
+  CONSTRAINT `fk_feito_aula1`
+    FOREIGN KEY (`aula_id`)
+    REFERENCES `plataforma_matematica`.`aula` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_feito_aluno1`
+    FOREIGN KEY (`aluno_id`)
+    REFERENCES `plataforma_matematica`.`aluno` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `plataforma_matematica`.`permissoes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `plataforma_matematica`.`permissoes` (
+  `rota_id` INT NOT NULL,
+  `grupo_id` INT NOT NULL,
+  PRIMARY KEY (`rota_id`, `grupo_id`),
+  INDEX `fk_permissoes_rota1_idx` (`rota_id` ASC),
+  INDEX `fk_permissoes_grupo1_idx` (`grupo_id` ASC),
+  CONSTRAINT `fk_permissoes_rota1`
+    FOREIGN KEY (`rota_id`)
+    REFERENCES `plataforma_matematica`.`rota` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_permissoes_grupo1`
+    FOREIGN KEY (`grupo_id`)
+    REFERENCES `plataforma_matematica`.`grupo` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

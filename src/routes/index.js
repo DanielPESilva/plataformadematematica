@@ -1,19 +1,16 @@
 import express from "express";
+import imagens from "./ImagensRoute.js"
 import users from "./UsuarioRoutes.js";
 import login from "./loginRoute.js";
 import turma from "./TurmaRoutes.js";
-import questao from "./QuestaoRoute.js";
+import aula from "./AulaRoute.js";
+import modulo from "./ModuloRoutes.js"
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import getSwaggerOptions from "../docs/config/head.js";
-import logRoutes from "../middlewares/LogRoutesMiddleware.js";
-
 
 const routes = (app) => {
 
-    if (process.env.DEBUGLOG === "true") {
-        app.use(logRoutes);
-    }
 
     // Configurando a documentação da Swagger UI para ser servida diretamente em '/'
     const swaggerDocs = swaggerJsDoc(getSwaggerOptions());
@@ -22,12 +19,15 @@ const routes = (app) => {
         swaggerUI.setup(swaggerDocs)(req, res, next);
     });
 
+    app.use(imagens);
+
     app.use(express.json(),
         // rotas para autentição e autorização (permissão)
         login,
         turma,
-        questao,
-        users
+        aula,
+        users,
+        modulo
 
     );
 

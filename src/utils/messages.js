@@ -68,53 +68,6 @@ export const messages = {
         pageNotContainsData: (page) => `A página ${page} não contém dados.`,
     },
 
-    // Mensagens de validação genéricas
-    validationGeneric: {
-        // deve retornar um objeto com a propriedade message
-        fieldIsRequired: (fieldName) => {
-            return { message: `O campo ${fieldName} é obrigatório.` };
-        },
-        fieldIsRepeated: (fieldName) => {
-            return { message: `O campo ${fieldName} informado já está cadastrado.` };
-        },
-        invalidInputFormatForField: (fieldName) => {
-            return { message: `Formato de entrada inválido para o campo ${fieldName}.` };
-        },
-        resourceInUse: (fieldName) => {
-            return { message: `Recurso em uso em ${fieldName}.` };
-        },
-        invalid: (fieldName) => {
-            return { message: `Valor informado em ${fieldName} é inválido.` };
-        },
-        notFound: (fieldName) => {
-            return { message: `Valor informado para o campo ${fieldName} não foi encontrado.` };
-        },
-        resourceFound: (fieldName) => {
-            return { message: `${fieldName} encontrado(a).` };
-        },
-        resourceNotFound: (fieldName) => {
-            return { message: `${fieldName} não encontrado(a).` };
-        },
-        mustBeOneOf: (fieldName, values) => {
-            return { message: `O campo ${fieldName} deve ser um dos seguintes valores: ${values.join(", ")}` };
-        },
-        resourceCreated: (fieldName) => {
-            return { message: `${fieldName} criado(a) com sucesso.` };
-        },
-        alunomatriculado: (fieldName) => {
-            return { message: `${fieldName} matriculado com sucesso.` };
-        },
-        resourceAlreadyExists: (fieldName) => {
-            return { message: `${fieldName} já existe.` };
-        },
-        resourceDeleted: (fieldName) => {
-            return { message: `${fieldName} foi deletado.` };
-        },
-        resourceRemove: (fieldName) => {
-            return { message: `${fieldName} foi removido.` };
-        },
-
-    },
 
     // categorias de erros para referencias e integridades
     validationReference: {
@@ -215,7 +168,5 @@ export const sendResponse = (res,code, resp = {}) => {
         }, ...resp
     });
 };
-
-
 
 export default messages;
