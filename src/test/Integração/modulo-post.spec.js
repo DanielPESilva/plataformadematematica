@@ -21,7 +21,7 @@ describe('Autenticação', () => {
 });
 
 
-describe.skip('POST modulo - Criando modulos.', () => {
+describe('POST modulo - Criando modulos.', () => {
     const filePath = path.resolve(process.cwd(), './src/test/arquivos/image.png');
     const filePathTypeErrado = path.resolve(process.cwd(), './src/test/arquivos/pdf.pdf');
 
@@ -73,9 +73,25 @@ describe.skip('POST modulo - Criando modulos.', () => {
                 .field('titulo', faker.commerce.productName())
                 .field('descricao', faker.commerce.productMaterial())
                 .attach('imagem', filePath)
-        
+
         expect(res.body.error).toEqual(true)
         expect(res.status).toBe(404)
         expect(res.body.message).toEqual("O recurso solicitado não foi encontrado no servidor.")
+    })
+
+    it('3-Gera erro quando um parametro for do tipo errado.', async () => {
+
+        fs.promises.access(filePath)
+            const res = await request(app)
+                .post('/modulo')
+                .set("Accept", "application/json")
+                .set("Authorization", `Bearer ${token}`)
+                .field('turma_id', 1)
+                .field('descricao', faker.commerce.productMaterial())
+                .attach('imagem', filePath)
+
+        expect(res.body.error).toBe(true);
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe("Requisição com sintaxe incorreta ou outros problemas.");
     })
 })

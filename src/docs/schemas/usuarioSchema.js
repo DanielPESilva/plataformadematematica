@@ -15,7 +15,7 @@ const usuarioSchema = {
         ] 
     },
 
-    atualizarUsuarioBody:{
+    updateUsuarioBody:{
         type: "object",
         example:{
             id:1,
@@ -34,6 +34,23 @@ const usuarioSchema = {
             active:true,
             senha:"123456",
             grupo_id:1
+        }
+    },
+
+    updateUsuarioRes:{
+        type: "object",
+        example:{
+            error:false,
+            code:200,
+            message:"Requisição bem sucedida.",
+            errors: [],
+            data:{
+                id:1,
+                nome:"João",
+                matricula:"123456",
+                active:true,
+                grupo_id:1
+            }
         }
     },
 

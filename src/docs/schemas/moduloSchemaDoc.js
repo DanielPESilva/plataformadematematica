@@ -1,4 +1,23 @@
 const moduloSchema = {
+
+    moduloRes:{
+        type: "object",
+        example:{
+        "error": false,
+        "code": 200,
+        "message": "Requisição bem sucedida.",
+        "errors": [],
+        "data": {
+          "id": 1,
+          "turma_id": 1,
+          "titulo": "Módulo 1",
+          "descricao": "Descrição do Módulo 1 do 1º Ano",
+          "image": "http://localhost:3051/imagens/teste.png"
+        }
+        }
+        
+    },
+
     createcsvRes: {
         type: "object",
         example: {

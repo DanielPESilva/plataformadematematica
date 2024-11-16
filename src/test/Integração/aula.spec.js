@@ -6,6 +6,7 @@ import fs from "fs";
 import faker from 'faker-br';
 
 let token = null
+let aula_id_criado = null
 
 describe('Autenticação', () => {
     it("1-Deve chamar a rota de autenticação e pegar o token", async () => {
@@ -149,10 +150,20 @@ describe('PATCH /aula/:id - Atualizar uma aula.', () => {
     });
     it('2- Deve retornar erro 404 quando não encontrar uma aula', async () => {
 
+        const updatedData = {
+            titulo: faker.commerce.productName(), 
+            modulo_id: 2,
+            video: faker.internet.url(), 
+            descricao: faker.commerce.productMaterial(), 
+            pdf_questoes: "questoes1.pdf", 
+            pdf_resolucao: "gabarito1.pdf"
+        }
+
         const res = await request(app)
-            .get('/aula/999')
+            .patch('/aula/999')
             .set("Accept", "application/json")
             .set("Authorization", `Bearer ${token}`)
+            .send(updatedData)
 
         expect(res.status).toBe(404);
         expect(res.body.code).toBe(404);
@@ -182,7 +193,7 @@ describe('PATCH /aula/:id - Atualizar uma aula.', () => {
     });
 });
 
-describe.skip('POST /aula - Cria aulas e salva arquivos pdf.', () => {
+describe('POST /aula - Cria aulas e salva arquivos pdf.', () => {
     const filePath = path.resolve(process.cwd(), './src/test/arquivos/pdf.pdf');
     const filePathTypeErrado = path.resolve(process.cwd(), './src/test/arquivos/image.png');
 
@@ -200,6 +211,7 @@ describe.skip('POST /aula - Cria aulas e salva arquivos pdf.', () => {
                 .field('descricao', faker.commerce.productMaterial())
                 .attach('pdf_questoes', filePath)
                 .attach('pdf_resolucao', filePath)
+                aula_id_criado = res.body.data.id
         
         expect(res.body.error).toEqual(false)
         expect(res.status).toBe(201)
@@ -252,10 +264,10 @@ describe.skip('POST /aula - Cria aulas e salva arquivos pdf.', () => {
 
 describe('POST /aula/status - Coloca o status de feito para uma tarefa de um certo aluno.', () => {
     
-    it.skip('1- Deve atualizar o status do aluno, para fazer com que certa aula tenha sido feita por ele.', async () => {
+    it('1- Deve atualizar o status do aluno, para fazer com que certa aula tenha sido feita por ele.', async () => {
         const status = {
-            aluno_id: 2, 
-            aula_id: 3,
+            aluno_id: 3, 
+            aula_id: aula_id_criado,
             feito: true, 
         }
         const res = await request(app)
@@ -344,12 +356,13 @@ describe('GET /aula/arquivo/ - busca arquivos.', () => {
 })
 
 describe('DELETE /aula/:id - Dele uma aula através do id dela.', () => {
-    it.skip('1- Deve deletar uma aula utilizando o ID.', async () => {
+    it('1- Deve deletar uma aula utilizando o ID.', async () => {
 
         const res = await request(app)
-            .delete('/aula/12')
+            .delete("/aula/"+aula_id_criado)
             .set("Accept", "application/json")
             .set("Authorization", `Bearer ${token}`)
+        console.log(res.body)
 
         expect(res.status).toBe(200);
         expect(res.body.code).toBe(200);

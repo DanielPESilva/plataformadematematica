@@ -4,10 +4,34 @@ const moduloRoutes = {
             tags: ["Modulo"],
             summary: "listar os modulos da api",
             security: [{ bearerAuth: [] }],
-
-            
+            parameters: [
+                {
+                    name: "turma_id",
+                    in: "query",
+                    description: "ID da turma.",
+                    schema: {
+                        type: "integer"
+                    }
+                },
+                {
+                    name: "titulo",
+                    in: "query",
+                    description: "titulo do modulo.",
+                    schema: {
+                        type: "string"
+                    }
+                },
+                {
+                    name: "descricao",
+                    in: "query",
+                    description: "descricao do modulo.",
+                    schema: {
+                        type: "string"
+                    }
+                }
+            ],
             responses: {
-                "201": {
+                "200": {
                     description: "Requisição bem sucedida, recurso foi criado",
                     content: {
                         "application/json": {

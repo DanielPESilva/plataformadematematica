@@ -17,6 +17,7 @@ const PermissaoMiddleware = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.PRIVATE_KEY);
     const id = decoded.data._id;
+    let permissao = false
 
 
     const usuario = await prisma.usuario.findUnique( {       
@@ -41,8 +42,9 @@ const PermissaoMiddleware = async (req, res, next) => {
     permissoes.find(p => {
         const rotaMatch = p.rota == rotaAtual;
         const metodoPermitido = p[metodoAtual];
+        console.log(rotaMatch && metodoPermitido)
         if(rotaMatch && metodoPermitido){
-            next()
+          permissao = true
         }
     })
 
@@ -53,9 +55,10 @@ const PermissaoMiddleware = async (req, res, next) => {
     if (!usuario.active) {
       return sendError(res, 403, { message: 'Usuário Inativo' });
     }
-
-    return sendError(res, 403, { message: 'Acesso negado' });
-
+    if(!permissao){
+      return sendError(res, 403, { message: 'Acesso negado' });
+    }
+    next()
   } catch (err) {
     console.error(err)
     return sendError(res, 500, ["OCORREU UM ERRO INTERNO"])

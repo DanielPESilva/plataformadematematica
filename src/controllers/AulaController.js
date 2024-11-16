@@ -174,7 +174,7 @@ class AulaController {
       return sendResponse(res, 200, { data: aulaDeletada } );
 
     } catch (err) {
-
+      console.error(err)
       if (err instanceof ZodError) {
         return sendError(res, 400, err.errors[0].message);
 

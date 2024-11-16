@@ -1,12 +1,12 @@
 import { sendError } from "../utils/messages.js";
 import path from "path";
 import fs from 'fs'
-// import { fileURLToPath } from 'url';
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = path.dirname(__filename);
 import AulaController from "../controllers/AulaController.js"
 import express from "express"
 const router = express.Router();
+
+import AuthMiddleware from "../middlewares/AuthMiddleware.js";
+import PermissaoMiddleware from "../middlewares/permissaoMiddleware.js";
 
 import multer from "multer";
 

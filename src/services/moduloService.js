@@ -15,7 +15,7 @@ class ModuloService {
         const consulta = moduloRepository.constructFilters(filtroValidated)
         const busca = await moduloRepository.listar(consulta)
 
-        if (!busca) {
+        if (busca.length == 0) {
             throw new Error("nem um modulo foi encontrado.");
         }
 
@@ -47,8 +47,8 @@ class ModuloService {
                 image: imageUrl
             }
 
-            const turma = await moduloRepository.moduloExist(moduloResponse.turma_id)
-
+            const turma = await moduloRepository.turma_exist(moduloResponse.turma_id)
+            console.log(turma)
             if (!turma) {
                 throw new Error("A turma informada não existe.");
             }
@@ -66,33 +66,52 @@ class ModuloService {
             return response
         }
 
-    static async atualizar(id, data) {
+    static async atualizar(data, file, imageUrl) {
+
+        const tipo = file.mimetype
+            if (!tipo.includes('image')) {  
+                throw new Error("Arquivo não é uma imagem.");
+            }
+        
         const parametro = moduloSchema.atualizarSchema.parse(data);
     
-        const {turma_id, titulo, descricao, image } = parametro;
-    
-        const parsedIdSchema = moduloSchema.listarPoIdSchema.parse({id:id});
-        const consulta = moduloRepository.constructFilters(parsedIdSchema)
+        const {turma_id, titulo, descricao, id } = parametro;
+
+        const turma = await moduloRepository.turma_exist(turma_id)
+
+        if (!turma) {
+            throw new Error("A turma informada não existe.");
+        }
+        const consulta = moduloRepository.constructFilters({id:id})
         const moduloExist = await moduloRepository.listarPorId(consulta);
     
-        if (moduloExist== null) {
-            throw new Error("O recurso solicitado não foi encontrado no servidor.");
+        if (!moduloExist) {
+            throw new Error("O modulo não existe.");
         }
+
+        const outputPath = path.join(process.cwd(), `./uploads/imagens/${parametro.image}`);
+        const formato = parametro.image.split('.')
+
+        sharp(file.buffer)
+        .resize(480, 280) 
+        .toFormat(formato[formato.length - 1], { quality: 100 }) 
+        .toFile(outputPath);
     
         let atualizacao = {
             where: { id: id },
             data: {
-                turma_id: turma_id,    
-                titulo: titulo,      
-                descricao: descricao ,   
-                image: image
+                turma: { connect: { id: 1 } },
+                ...(turma_id != null && { turma: { connect: { id: turma_id } }, }),
+                ...(titulo != null && { titulo: titulo }),
+                ...(descricao != null && { descricao: descricao }),
+                ...(imageUrl != null && { image: imageUrl }),
             },
             select: {
-            id: true,          
-            turma_id: true,    
-            titulo: true,      
-            descricao: true,   
-            image: true
+                id: true,          
+                turma_id: true,    
+                titulo: true,      
+                descricao: true,   
+                image: true
             }
         };
 
@@ -104,7 +123,7 @@ class ModuloService {
         const consulta = moduloRepository.constructFilters(deleteSchema)
         const modulo = await moduloRepository.listarPorId(consulta);
         if (!modulo) {
-            throw new Error("O recurso solicitado não foi encontrado no servidor.");
+            throw new Error("Modulo não existe.");
         }
         const response = await moduloRepository.deletar(deleteSchema.id);
         return response

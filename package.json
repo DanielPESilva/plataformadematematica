@@ -8,7 +8,7 @@
     "prisma": "npx prisma db pull && npx prisma generate",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "coverage": "jest --coverage",
+    "coverage": "node ./sql/seed.js && jest --coverage",
     "seed": "node ./sql/seed.js",
     "dev": "nodemon server.js",
     "kill3051": "sudo kill -9 $(sudo lsof -t -i:3051)"

@@ -132,26 +132,6 @@ return await prisma.usuario.create({data});
       },
     });
   }
-
-  static createFilterUsuario(parametros) {
-    let filtro = {
-      where: {
-        ...(parametros.nome && { nome: { contains: parametros.nome } }),
-        ...(parametros.matricula != undefined && {
-          matricula: parametros.matricula,
-        }),
-        ...(parametros.active != undefined && { active: parametros.active }),
-      },
-      select: {
-        id: true,
-        nome: true,
-        senha: true,
-        matricula: true,
-        active: true,
-      },
-    };
-    return filtro;
-  }
 }
 
 export default usuarioRepository;

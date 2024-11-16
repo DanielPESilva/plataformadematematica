@@ -36,20 +36,20 @@ describe('GET /turma - Listar todas as turmas.', () => {
         expect(res.body.data.length).toBeGreaterThan(0);
     });
 
-    it('2- Deve retornar erro 400 quando houver um bad request', async () => {
+    it('3- Deve retornar erro 404 quando houver retorno', async () => {
         const res = await request(app)
             .get('/turma')
             .set("Authorization", `Bearer ${token}`)
             .set("Accept", "application/json")
-            .send({
-                nome: true
+            .query({
+                nome: "nome que não existe no banco"
             });
+            console.log(res.body)
 
 
         expect(res.body.error).toBe(true);
-        expect(res.status).toBe(400);
-        expect(res.body.message).toBe("Requisição com sintaxe incorreta ou outros problemas.");
-        expect(res.body.errors[0].message).toBe("O nome informado não é do tipo string.");
+        expect(res.status).toBe(404);
+        expect(res.body.message).toBe("O recurso solicitado não foi encontrado no servidor.");
     });
 
 
@@ -111,31 +111,35 @@ describe('GET /turma - Listar todas as turmas.', () => {
             expect(res.body.message).toBe("Requisição bem sucedida, recurso foi criado");
         });
         it('2- Deve retornar erro 404 quando não encontrar uma turma', async () => {
+
+            const updatedData = {
+                nome: faker.commerce.productName(), 
+                id: 2
+            }
     
             const res = await request(app)
-                .get('/turma/999')
+                .patch('/turma/999')
                 .set("Accept", "application/json")
                 .set("Authorization", `Bearer ${token}`)
+                .send(updatedData)
     
             expect(res.status).toBe(404);
             expect(res.body.code).toBe(404);
             expect(res.body.message).toBe("O recurso solicitado não foi encontrado no servidor.");
-            expect(res.body.errors[0]).toBe("Nenhuma turma foi encontrada.");
         });
         
         it('3- Deve retornar erro 400 quando houver um bad request', async () => {
             const updatedData = {
                 nome: faker.commerce.productName(), 
-                id: "teste"
             }
             const res = await request(app)
-                .patch('/turma/1999')
+                .patch('/turma/string')
                 .set("Accept", "application/json")
                 .set("Authorization", `Bearer ${token}`)
                 .send(updatedData)
             expect(res.body.error).toBe(true);
-            expect(res.status).toBe(404);
-            expect(res.body.message).toBe("O recurso solicitado não foi encontrado no servidor.");
+            expect(res.status).toBe(400);
+            expect(res.body.message).toBe("Requisição com sintaxe incorreta ou outros problemas.");
         });
     });
     

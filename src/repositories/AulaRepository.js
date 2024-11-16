@@ -34,6 +34,7 @@ class AulaRepository {
     })
   }
   static async delete(id) {
+    await prisma.feito.deleteMany({ where: { aula_id: id } });
     return await prisma.aula.delete({ where: { id: id } });
   }; 
   

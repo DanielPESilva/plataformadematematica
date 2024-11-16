@@ -9,9 +9,9 @@ env.config();
 class TurmaController{
   static listar = async (req, res) => {
     try {
-      const {  nome } = req.body;
+      const { nome } = req.query;
       const filtro = {
-        nome:nome
+        nome: nome
       };
       const response = await turmaService.listar(filtro);
 
@@ -19,11 +19,7 @@ class TurmaController{
 
     } catch (err) {
       
-
-        if(err instanceof ZodError){
-          return sendError(res,400,err.errors[0].message);
-  
-        }else if(err instanceof Error ){
+        if(err instanceof Error ){
           return sendError(res,404,["nem um modulo foi encontrado."]);
   
         }else{
