@@ -16,7 +16,7 @@ describe('Teste de Autenticação', () => {
         expect(res.status).toBe(200)
     })
 
-    it("1-Deve retornar um erro quando o usuario não existir", async () => {
+    it("2-Deve retornar um erro quando o usuario não existir", async () => {
         const req = await request(app)
         .post('/login')
         .set("Accept", "aplication/json")
@@ -30,7 +30,7 @@ describe('Teste de Autenticação', () => {
         expect(req.body.errors[0].message).toEqual("Usuario não exite na base de dados verifique se a matricula esta correto!")
     })
 
-    it("1-Deve deve retornar um erro quando a senha estiver errada", async () => {
+    it("3-Deve deve retornar um erro quando a senha estiver errada", async () => {
         const req = await request(app)
         .post('/login')
         .set("Accept", "aplication/json")

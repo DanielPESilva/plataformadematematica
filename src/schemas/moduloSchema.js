@@ -57,6 +57,7 @@ class moduloSchema {
             }).positive({
                 message: "Id informado não é positivo."
             })).optional(),
+            id: z.coerce.number().int(),
             titulo: z.string({
                 invalid_type_error:'O titulo informado não é do tipo string.'
             }).optional(),

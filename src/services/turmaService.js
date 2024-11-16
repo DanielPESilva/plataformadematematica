@@ -7,7 +7,7 @@ class turmaService {
       const filtroValidated = TurmaSchema.listarSchema.parse(filtro)
       const consulta = turmaRepository.constructFilters(filtroValidated)
       const busca = await turmaRepository.listar(consulta)
-      if (!busca) {
+      if (busca.length == 0) {
           throw new Error("nenhuma turma foi encontrada.");
       }
       return busca
