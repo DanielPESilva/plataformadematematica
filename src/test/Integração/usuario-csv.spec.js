@@ -94,7 +94,6 @@ describe('PATCH /usuario/senha - Altera a senha do usuário.', () => {
             senhaNova: "senhatest",
             senhaAntiga: "senhatest"
         })        
-            console.log(res.body)
         expect(res.body.error).toEqual(false)
         expect(res.status).toBe(201)
         expect(res.body.message).toEqual("Requisição bem sucedida, recurso foi criado")
