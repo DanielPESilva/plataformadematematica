@@ -24,9 +24,6 @@ const turmaSchema = {
      //Para o update da turma
     TurmaDetalhes: {
         type: "object",
-        properties: {
-            titulo: { type: "string", description: "Titulo da Turma" },
-        },
         example: {
             titulo: "1º série D",
         }

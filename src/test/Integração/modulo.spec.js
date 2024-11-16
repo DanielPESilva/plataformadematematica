@@ -18,6 +18,8 @@ describe('Autenticação', () => {
         })
         token = req.body.data.token
     })
+
+
 });
  // ----------- listar modulo ---------
  describe("Listar modulo", () => {
@@ -38,7 +40,7 @@ describe('Autenticação', () => {
              .get(`/modulo`)
              .set("Authorization", `Bearer ${token}`)
              .set("Content-Type", "application/json")
-             .send({
+             .query({
                 turma_id:100000,
             })
 
@@ -52,8 +54,8 @@ describe('Autenticação', () => {
             .get(`/modulo`)
             .set("Authorization", `Bearer ${token}`)
             .set("Content-Type", "application/json")
-            .send({
-                titulo:1234,
+            .query({
+                turma_id:"string",
             })
 
             expect(res.statusCode).toBe(400);

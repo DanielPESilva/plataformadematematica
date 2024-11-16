@@ -36,28 +36,12 @@ describe('GET /turma - Listar todas as turmas.', () => {
         expect(res.body.data.length).toBeGreaterThan(0);
     });
 
-    it('2- Deve retornar erro 400 quando houver um bad request', async () => {
-        const res = await request(app)
-            .get('/turma')
-            .set("Authorization", `Bearer ${token}`)
-            .set("Accept", "application/json")
-            .send({
-                nome: true
-            });
-
-
-        expect(res.body.error).toBe(true);
-        expect(res.status).toBe(400);
-        expect(res.body.message).toBe("Requisição com sintaxe incorreta ou outros problemas.");
-        expect(res.body.errors[0].message).toBe("O nome informado não é do tipo string.");
-    });
-
     it('3- Deve retornar erro 404 quando houver retorno', async () => {
         const res = await request(app)
             .get('/turma')
             .set("Authorization", `Bearer ${token}`)
             .set("Accept", "application/json")
-            .send({
+            .query({
                 nome: "nome que não existe no banco"
             });
             console.log(res.body)

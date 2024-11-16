@@ -79,7 +79,7 @@ const getSwaggerOptions = () => {
                 schemas: {
                     ...authSchemas,
                     ...turmaSchema,
-                    ... loginSchema,
+                    ...loginSchema,
                     ...moduloSchema,
                     ...usuarioCsvSchema,
                     ...aulaSchema,

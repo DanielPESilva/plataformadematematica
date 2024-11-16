@@ -57,14 +57,14 @@ const usuarioRoutes = {
             }
         },
         post:{
-           tags:["Usários"],
+           tags:["Usuários"],
            summary:"Cria um novo usuário",
            security:[{ bearerAuth: [] }],
            requestBody:{
             content:{
                 "aplication/json":{
                     schema:{
-                        $ref: "#/components/schemas/createUsuárioBody"
+                        $ref: "#/components/schemas/createUsuarioBody"
                     }
                 }
             },
@@ -76,7 +76,7 @@ const usuarioRoutes = {
                 content:{
                     "application/json":{
                         schema:{
-                            $ref:"#/components/schemas/createUsuárioRes"
+                            $ref:"#/components/schemas/createUsuarioRes"
                         }
                     }
                 }
@@ -118,7 +118,7 @@ const usuarioRoutes = {
                     content: {
                         "application/json": {
                             schema: {
-                                $ref: "#/components/schemas/get_usuario_por_id"
+                                $ref: "#/components/schemas/get_usuario_id"
                             }
                         }
                     }

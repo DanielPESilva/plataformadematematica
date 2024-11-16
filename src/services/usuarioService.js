@@ -92,7 +92,6 @@ static async atualizar (parametros){
       nome: true,
       matricula: true,
       active: true,
-      senha: true,
       grupo_id: true,
     },
   };

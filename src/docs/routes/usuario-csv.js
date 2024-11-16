@@ -1,7 +1,7 @@
 const usuarioCsvRoutes = {
     "/usuario/csv": {
         post: {
-            tags: ["Usuário/csv"],
+            tags: ["Usuários/csv"],
             summary: "Cria varias contas de usuarios ao mesmo tempo utilizando um arquivo csv.",
             security: [{ bearerAuth: [] }],
             requestBody: {

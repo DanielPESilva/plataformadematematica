@@ -8,7 +8,7 @@ env.config()
 class ModuloController{
   static listar = async (req, res) => {
     try {
-      const { turma_id, titulo, descricao, image } = req.body;
+      const { turma_id, titulo, descricao, image } = req.query;
       const filtro = {
         turma_id: turma_id,
         titulo: titulo,
@@ -104,7 +104,7 @@ class ModuloController{
       return sendResponse(res,200, {data:response});
 
   } catch (err) {
-
+    console.error(err)
       if(err instanceof ZodError){
           return sendError(res,400,err.errors[0].message);
   
